@@ -16,7 +16,7 @@ CUDA_HDR = $(SRC_CUDA)cuda.hpp $(SRC_CUDA)uarch.hpp
 CUDA_PATH = /usr/local/cuda/
 
 SOURCE += $(COMMON_SRC) $(CUDA_SRC)
-HEADERS += $(COMMON_HDR) $(CUDA_HRC)
+HEADERS += $(COMMON_HDR) $(CUDA_HDR)
 
 OUTPUT=gpufetch
 

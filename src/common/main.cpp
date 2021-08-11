@@ -5,6 +5,7 @@
 #include "args.hpp"
 #include "global.hpp"
 #include "../cuda/cuda.hpp"
+#include "../cuda/uarch.hpp"
 
 static const char* VERSION = "0.01";
 
@@ -52,7 +53,19 @@ int main(int argc, char* argv[]) {
   if(gpu == NULL)
     return EXIT_FAILURE;
 
-  printf("Name: %s\n", gpu->name);
+  printf("Name:               %s\n", get_str_gpu_name(gpu));
+  printf("Microarchitecture:  %s\n", get_str_uarch(gpu));
+  printf("Compute Capability: %s\n", get_str_cc(gpu));
+  printf("Technology:         %s\n", get_str_process(gpu));
+  printf("Max Frequency:      %s\n", get_str_freq(gpu));
+  printf("SM:                 %s\n", get_str_sm(gpu));
+  printf("Cores/MP:           %s\n", get_str_cores_sm(gpu));
+  printf("CUDA cores:         %s\n", get_str_cuda_cores(gpu));
+  printf("Memory size:        %s\n", get_str_memory_size(gpu));
+  printf("Memory type:        %s\n", get_str_memory_type(gpu));
+  printf("L1 size:            %s\n", get_str_l1(gpu));
+  printf("L2 size:            %s\n", get_str_l2(gpu));
+  printf("Peak performance:   %s\n", get_str_peak_performance(gpu));
 
   return EXIT_FAILURE;
 }

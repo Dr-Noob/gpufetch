@@ -28,6 +28,10 @@ char* get_str_uarch(struct gpu_info* gpu) {
   return NULL;
 }
 
+char* get_str_cc(struct gpu_info* gpu) {
+  return NULL;
+}
+
 char* get_str_process(struct gpu_info* gpu) {
   return NULL;
 }
