@@ -6,13 +6,21 @@ SANITY_FLAGS=-Wfloat-equal -Wshadow -Wpointer-arith
 PREFIX ?= /usr
 
 SRC_COMMON=src/common/
+SRC_CUDA=src/cuda/
 
-COMMON_SRC = $(SRC_COMMON)main.cpp $(SRC_COMMON)args.cpp $(SRC_COMMON)global.cpp
-COMMON_HDR = $(SRC_COMMON)args.hpp $(SRC_COMMON)global.hpp
+COMMON_SRC = $(SRC_COMMON)main.cpp $(SRC_COMMON)gpu.cpp $(SRC_COMMON)args.cpp $(SRC_COMMON)global.cpp
+COMMON_HDR = $(SRC_COMMON)gpu.hpp $(SRC_COMMON)args.hpp $(SRC_COMMON)global.hpp
 
-SOURCE += $(COMMON_SRC)
-HEADERS += $(COMMON_HDR)
+CUDA_SRC = $(SRC_CUDA)cuda.cpp $(SRC_CUDA)uarch.cpp
+CUDA_HDR = $(SRC_CUDA)cuda.hpp $(SRC_CUDA)uarch.hpp
+CUDA_PATH = /usr/local/cuda/
+
+SOURCE += $(COMMON_SRC) $(CUDA_SRC)
+HEADERS += $(COMMON_HDR) $(CUDA_HRC)
+
 OUTPUT=gpufetch
+
+CXXFLAGS+= -I $(CUDA_PATH)/samples/common/inc -I $(CUDA_PATH)/targets/x86_64-linux/include -L $(CUDA_PATH)/targets/x86_64-linux/lib -lcudart
 
 all: CXXFLAGS += -O3
 all: $(OUTPUT)

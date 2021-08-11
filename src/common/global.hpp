@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <cstddef>
 
 #define STRING_UNKNOWN "Unknown"
 

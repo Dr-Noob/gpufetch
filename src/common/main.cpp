@@ -4,6 +4,7 @@
 
 #include "args.hpp"
 #include "global.hpp"
+#include "../cuda/cuda.hpp"
 
 static const char* VERSION = "0.01";
 
@@ -46,6 +47,12 @@ int main(int argc, char* argv[]) {
     print_version();
     return EXIT_SUCCESS;
   }
+
+  struct gpu_info* gpu = get_gpu_info();
+  if(gpu == NULL)
+    return EXIT_FAILURE;
+
+  printf("Name: %s\n", gpu->name);
 
   return EXIT_FAILURE;
 }
