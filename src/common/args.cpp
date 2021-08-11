@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "args.h"
-#include "global.h"
+#include "args.hpp"
+#include "global.hpp"
 
 struct args_struct {
   bool help_flag;

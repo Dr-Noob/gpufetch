@@ -7,8 +7,8 @@ PREFIX ?= /usr
 
 SRC_COMMON=src/common/
 
-COMMON_SRC = $(SRC_COMMON)main.c $(SRC_COMMON)args.c $(SRC_COMMON)global.c
-COMMON_HDR = $(SRC_COMMON)args.h $(SRC_COMMON)global.h
+COMMON_SRC = $(SRC_COMMON)main.cpp $(SRC_COMMON)args.cpp $(SRC_COMMON)global.cpp
+COMMON_HDR = $(SRC_COMMON)args.hpp $(SRC_COMMON)global.hpp
 
 SOURCE += $(COMMON_SRC)
 HEADERS += $(COMMON_HDR)

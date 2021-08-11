@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "global.h"
+#include "global.hpp"
 
 #ifdef _WIN32
 

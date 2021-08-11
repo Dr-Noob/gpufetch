@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "args.h"
-#include "global.h"
+#include "args.hpp"
+#include "global.hpp"
 
 static const char* VERSION = "0.01";
 
