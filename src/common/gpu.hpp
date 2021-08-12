@@ -27,7 +27,7 @@ struct cache {
 };
 
 struct topology {
-  int32_t shared_mp;
+  int32_t streaming_mp;
   int32_t cores_per_mp;
   int32_t cuda_cores;
 };
