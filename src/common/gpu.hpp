@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../cuda/nvmlb.hpp"
+#include "../cuda/pci.hpp"
+
 enum {
   GPU_VENDOR_NVIDIA
 };
@@ -42,6 +45,8 @@ struct gpu_info {
   struct uarch* arch;
   char* name;
   int64_t freq;
+  struct pci* pci;
+  struct nvml_data* nvmld;
   struct topology* topo;
   struct memory* mem;
   struct cache* cach;

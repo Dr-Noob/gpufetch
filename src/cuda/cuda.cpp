@@ -2,6 +2,7 @@
 #include <cuda_runtime.h>
 
 #include "cuda.hpp"
+#include "nvmlb.hpp"
 #include "uarch.hpp"
 #include "../common/global.hpp"
 
@@ -29,6 +30,7 @@ int64_t get_peak_performance(struct gpu_info* gpu) {
 
 struct gpu_info* get_gpu_info() {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
+  gpu->pci = NULL;
 
   printf("Waiting for CUDA driver to start...\n");
   int dev = 0;
@@ -40,6 +42,11 @@ struct gpu_info* get_gpu_info() {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(deviceProp.name) + 1));
   strcpy(gpu->name, deviceProp.name);
   gpu->freq = 10000;
+
+  gpu->nvmld = nvml_init();
+  if(nvml_get_pci_info(dev, gpu->nvmld)) {
+    gpu->pci = get_pci_from_nvml(gpu->nvmld);
+  }
 
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(gpu);
