@@ -55,6 +55,7 @@ int main(int argc, char* argv[]) {
 
   printf("Name:               %s\n", get_str_gpu_name(gpu));
   printf("Microarchitecture:  %s\n", get_str_uarch(gpu->arch));
+  printf("GPU chip:           %s\n", get_str_chip(gpu->arch));
   printf("Compute Capability: %s\n", get_str_cc(gpu->arch));
   printf("Technology:         %s\n", get_str_process(gpu->arch));
   printf("Max Frequency:      %s\n", get_str_freq(gpu));

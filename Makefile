@@ -12,7 +12,7 @@ COMMON_SRC = $(SRC_COMMON)main.cpp $(SRC_COMMON)gpu.cpp $(SRC_COMMON)args.cpp $(
 COMMON_HDR = $(SRC_COMMON)gpu.hpp $(SRC_COMMON)args.hpp $(SRC_COMMON)global.hpp
 
 CUDA_SRC = $(SRC_CUDA)cuda.cpp $(SRC_CUDA)uarch.cpp $(SRC_CUDA)pci.cpp $(SRC_CUDA)nvmlb.cpp
-CUDA_HDR = $(SRC_CUDA)cuda.hpp $(SRC_CUDA)uarch.hpp $(SRC_CUDA)pci.hpp $(SRC_CUDA)nvmlb.hpp
+CUDA_HDR = $(SRC_CUDA)cuda.hpp $(SRC_CUDA)uarch.hpp $(SRC_CUDA)pci.hpp $(SRC_CUDA)nvmlb.hpp $(SRC_CUDA)chips.hpp
 CUDA_PATH = /usr/local/cuda/
 
 SOURCE += $(COMMON_SRC) $(CUDA_SRC)

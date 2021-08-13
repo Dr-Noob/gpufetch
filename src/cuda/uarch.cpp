@@ -4,9 +4,10 @@
 #include <cstddef>
 
 #include "../common/global.hpp"
+#include "../common/gpu.hpp"
+#include "chips.hpp"
 
 typedef uint32_t MICROARCH;
-typedef uint32_t GPUCHIP;
 
 // Data not available
 #define NA                   -1
@@ -14,6 +15,7 @@ typedef uint32_t GPUCHIP;
 // Unknown manufacturing process
 #define UNK                  -1
 
+// MICROARCH values
 enum {
   UARCH_UNKNOWN,
   UARCH_TESLA,
@@ -24,15 +26,6 @@ enum {
   UARCH_VOLTA,
   UARCH_TURING,
   UARCH_AMPERE,
-};
-
-// TODO
-enum {
-  CHIP_GA100,
-  CHIP_GA102,
-  CHIP_GA104,
-  CHIP_GA106,
-  CHIP_GA107
 };
 
 static const char *uarch_str[] = {
@@ -51,10 +44,13 @@ struct uarch {
   int32_t cc_major;
   int32_t cc_minor;
   int32_t compute_capability;
+
   MICROARCH uarch;
   GPUCHIP chip;
-  char* uarch_str;
+
   int32_t process;
+  char* uarch_str;
+  char* chip_str;
 };
 
 void map_cc_to_uarch(struct uarch* arch) {
@@ -109,11 +105,14 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, dev);
 
+  arch->chip_str = NULL;
   arch->cc_major = deviceProp.major;
   arch->cc_minor = deviceProp.minor;
   arch->compute_capability = deviceProp.major * 10 + deviceProp.minor;
 
   map_cc_to_uarch(arch);
+
+  arch->chip = get_chip_from_pci(gpu->pci);
 
   return arch;
 }
@@ -131,6 +130,10 @@ char* get_str_cc(struct uarch* arch) {
 
 char* get_str_process(struct uarch* arch) {
   return NULL;
+}
+
+char* get_str_chip(struct uarch* arch) {
+  return arch->chip_str;
 }
 
 void free_uarch_struct(struct uarch* arch) {
