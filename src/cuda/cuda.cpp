@@ -6,8 +6,13 @@
 #include "uarch.hpp"
 #include "../common/global.hpp"
 
-struct cache* get_cache_info(struct gpu_info* gpu) {
+struct cache* get_cache_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   struct cache* cach = (struct cache*) emalloc(sizeof(struct cache));
+
+  cach->L2 = (struct cach*) emalloc(sizeof(struct cach));
+  cach->L2->size = prop.l2CacheSize;
+  cach->L2->num_caches = 1;
+  cach->L2->exists = true;
 
   return cach;
 }
@@ -22,8 +27,12 @@ struct topology* get_topology_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   return topo;
 }
 
-struct memory* get_memory_info(struct gpu_info* gpu) {
+struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   struct memory* mem = (struct memory*) emalloc(sizeof(struct memory));
+
+  mem->size_bytes = (unsigned long long) prop.totalGlobalMem;
+  mem->freq = prop.memoryClockRate * 1e-3f;
+  mem->bus_width = prop.memoryBusWidth;
 
   return mem;
 }
@@ -53,7 +62,8 @@ struct gpu_info* get_gpu_info() {
   }
 
   gpu->arch = get_uarch_from_cuda(gpu);
-  gpu->cach = get_cache_info(gpu);
+  gpu->cach = get_cache_info(gpu, deviceProp);
+  gpu->mem = get_memory_info(gpu, deviceProp);
   gpu->topo = get_topology_info(gpu, deviceProp);
   gpu->peak_performance = get_peak_performance(gpu);
 

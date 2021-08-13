@@ -64,7 +64,8 @@ int main(int argc, char* argv[]) {
   printf("CUDA cores:         %d\n", get_str_cuda_cores(gpu));
   printf("Memory size:        %s\n", get_str_memory_size(gpu));
   printf("Memory type:        %s\n", get_str_memory_type(gpu));
-  printf("L1 size:            %s\n", get_str_l1(gpu));
+  printf("Memory frequency:   %s\n", get_str_memory_clock(gpu));
+  printf("Bus width:          %s\n", get_str_bus_width(gpu));
   printf("L2 size:            %s\n", get_str_l2(gpu));
   printf("Peak performance:   %s\n", get_str_peak_performance(gpu));
 

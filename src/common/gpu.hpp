@@ -27,7 +27,6 @@ struct cach {
 };
 
 struct cache {
-  struct cach* L1;
   struct cach* L2;
 };
 
@@ -38,8 +37,10 @@ struct topology {
 };
 
 struct memory {
-  int32_t size_bytes;
+  int64_t size_bytes;
   MEMTYPE type;
+  int32_t bus_width;
+  int32_t freq;
 };
 
 struct gpu_info {
@@ -59,7 +60,8 @@ char* get_str_gpu_name(struct gpu_info* gpu);
 char* get_str_freq(struct gpu_info* gpu);
 char* get_str_memory_size(struct gpu_info* gpu);
 char* get_str_memory_type(struct gpu_info* gpu);
-char* get_str_l1(struct gpu_info* gpu);
+char* get_str_bus_width(struct gpu_info* gpu);
+char* get_str_memory_clock(struct gpu_info* gpu);
 char* get_str_l2(struct gpu_info* gpu);
 char* get_str_peak_performance(struct gpu_info* gpu);
 

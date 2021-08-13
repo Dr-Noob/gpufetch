@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cassert>
+#include <cerrno>
 
 #include "../common/global.hpp"
 #include "gpu.hpp"
@@ -13,6 +14,22 @@
 #define STRING_GIGAHERZ   "GHz"
 #define STRING_KILOBYTES  "KB"
 #define STRING_MEGABYTES  "MB"
+#define STRING_GIGABYTES  "GB"
+
+int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
+  int32_t ret;
+  int max_len = 10; // Max is 8 for digits, 2 for units
+  *str = (char *) emalloc(sizeof(char)* (max_len + 1));
+
+  if(value/1024 >= (1 << 20))
+    ret = snprintf(*str, max_len, "%.4g"STRING_GIGABYTES, (double)value/(1<<30));
+  else if(value/1024 >= (1 << 10))
+    ret = snprintf(*str, max_len, "%.4g"STRING_MEGABYTES, (double)value/(1<<20));
+  else
+    ret = snprintf(*str, max_len, "%.4g"STRING_KILOBYTES, (double)value/(1<<10));
+
+  return ret;
+}
 
 char* get_str_gpu_name(struct gpu_info* gpu) {
   return gpu->name;
@@ -34,20 +51,57 @@ char* get_str_freq(struct gpu_info* gpu) {
   return string;
 }
 
+// TODO: Refactor
 char* get_str_memory_size(struct gpu_info* gpu) {
-  return NULL;
+  char* string;
+  int32_t str_len = get_value_as_smallest_unit(&string, gpu->mem->size_bytes);
+
+  if(str_len < 0) {
+    printBug("get_value_as_smallest_unit: %s", strerror(errno));
+    return NULL;
+  }
+
+  return string;
 }
 
 char* get_str_memory_type(struct gpu_info* gpu) {
   return NULL;
 }
 
-char* get_str_l1(struct gpu_info* gpu) {
-  return NULL;
+char* get_str_bus_width(struct gpu_info* gpu) {
+  uint32_t size = 3+1+3+1;
+  assert(strlen(STRING_UNKNOWN)+1 <= size);
+  char* string = (char *) ecalloc(size, sizeof(char));
+
+  sprintf(string, "%d bit", gpu->mem->bus_width);
+
+  return string;
+}
+
+char* get_str_memory_clock(struct gpu_info* gpu) {
+  // Max 10 digits and 3 for 'MHz'
+  uint32_t size = (10+1+3+1);
+  assert(strlen(STRING_UNKNOWN)+1 <= size);
+  char* string = (char *) ecalloc(size, sizeof(char));
+
+  if(gpu->mem->freq == UNKNOWN_FREQ || gpu->mem->freq < 0)
+    snprintf(string,strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
+  else
+    snprintf(string,size,"%d "STRING_MEGAHERZ, gpu->mem->freq);
+
+  return string;
 }
 
 char* get_str_l2(struct gpu_info* gpu) {
-  return NULL;
+  char* string;
+  int32_t str_len = get_value_as_smallest_unit(&string, gpu->cach->L2->size);
+
+  if(str_len < 0) {
+    printBug("get_value_as_smallest_unit: %s", strerror(errno));
+    return NULL;
+  }
+
+  return string;
 }
 
 char* get_str_peak_performance(struct gpu_info* gpu) {
