@@ -12,8 +12,12 @@ struct cache* get_cache_info(struct gpu_info* gpu) {
   return cach;
 }
 
-struct topology* get_topology_info(struct gpu_info* gpu) {
+struct topology* get_topology_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   struct topology* topo = (struct topology*) emalloc(sizeof(struct topology));
+
+  topo->streaming_mp = prop.multiProcessorCount;
+  topo->cores_per_mp = _ConvertSMVer2Cores(prop.major, prop.minor);
+  topo->cuda_cores = topo->streaming_mp * topo->cores_per_mp;
 
   return topo;
 }
@@ -25,7 +29,7 @@ struct memory* get_memory_info(struct gpu_info* gpu) {
 }
 
 int64_t get_peak_performance(struct gpu_info* gpu) {
-  return 1000;
+  return gpu->freq * 1000000 * gpu->topo->cuda_cores * 2;
 }
 
 struct gpu_info* get_gpu_info() {
@@ -38,10 +42,10 @@ struct gpu_info* get_gpu_info() {
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, dev);
 
+  gpu->freq = deviceProp.clockRate * 1e-3f;
   gpu->vendor = GPU_VENDOR_NVIDIA;
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(deviceProp.name) + 1));
   strcpy(gpu->name, deviceProp.name);
-  gpu->freq = 10000;
 
   gpu->nvmld = nvml_init();
   if(nvml_get_pci_info(dev, gpu->nvmld)) {
@@ -50,21 +54,21 @@ struct gpu_info* get_gpu_info() {
 
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(gpu);
-  gpu->topo = get_topology_info(gpu);
+  gpu->topo = get_topology_info(gpu, deviceProp);
   gpu->peak_performance = get_peak_performance(gpu);
 
   return gpu;
 }
 
-char* get_str_sm(struct gpu_info* gpu) {
-  return NULL;
+int32_t get_str_sm(struct gpu_info* gpu) {
+  return gpu->topo->streaming_mp;
 }
 
-char* get_str_cores_sm(struct gpu_info* gpu) {
-  return NULL;
+int32_t get_str_cores_sm(struct gpu_info* gpu) {
+  return gpu->topo->cores_per_mp;
 }
 
-char* get_str_cuda_cores(struct gpu_info* gpu) {
-  return NULL;
+int32_t get_str_cuda_cores(struct gpu_info* gpu) {
+  return gpu->topo->cuda_cores;
 }
 

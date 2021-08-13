@@ -37,7 +37,7 @@ bool nvml_get_pci_info(int dev, struct nvml_data* data) {
     return false;
   }
 
-  if ((result = nvmlDeviceGetPciInfo(device, &data->pci)) != result) {
+  if ((result = nvmlDeviceGetPciInfo(device, &data->pci)) != NVML_SUCCESS) {
     printErr("nvmlDeviceGetPciInfo: %s\n", nvmlErrorString(result));
     return false;
   }

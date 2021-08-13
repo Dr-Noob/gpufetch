@@ -59,9 +59,9 @@ int main(int argc, char* argv[]) {
   printf("Compute Capability: %s\n", get_str_cc(gpu->arch));
   printf("Technology:         %s\n", get_str_process(gpu->arch));
   printf("Max Frequency:      %s\n", get_str_freq(gpu));
-  printf("SM:                 %s\n", get_str_sm(gpu));
-  printf("Cores/MP:           %s\n", get_str_cores_sm(gpu));
-  printf("CUDA cores:         %s\n", get_str_cuda_cores(gpu));
+  printf("SM:                 %d\n", get_str_sm(gpu));
+  printf("Cores/MP:           %d\n", get_str_cores_sm(gpu));
+  printf("CUDA cores:         %d\n", get_str_cuda_cores(gpu));
   printf("Memory size:        %s\n", get_str_memory_size(gpu));
   printf("Memory type:        %s\n", get_str_memory_type(gpu));
   printf("L1 size:            %s\n", get_str_l1(gpu));

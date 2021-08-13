@@ -7,6 +7,8 @@
 #include "../cuda/nvmlb.hpp"
 #include "../cuda/pci.hpp"
 
+#define UNKNOWN_FREQ -1
+
 enum {
   GPU_VENDOR_NVIDIA
 };
