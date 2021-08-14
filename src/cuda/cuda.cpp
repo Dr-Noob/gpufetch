@@ -27,12 +27,31 @@ struct topology* get_topology_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   return topo;
 }
 
+MEMTYPE guess_memory_type(struct memory* mem, struct gpu_info* gpu) {
+  // 1. Guess data rate
+  int32_t data_rate = -1;
+  int32_t dr8 = abs((mem->freq/8) - gpu->freq);
+  int32_t dr4 = abs((mem->freq/4) - gpu->freq);
+  int32_t dr2 = abs((mem->freq/2) - gpu->freq);
+  int32_t dr1 = abs((mem->freq/1) - gpu->freq);
+
+  int32_t min = mem->freq;
+  if(min > dr8) { data_rate = 8; min = dr8; }
+  if(min > dr4) { data_rate = 4; min = dr4; }
+  if(min > dr2) { data_rate = 2; min = dr2; }
+  if(min > dr1) { data_rate = 1; min = dr1; }
+
+  printf("data_rate=%d\n", data_rate);
+  return MEMTYPE_GDDR6;
+}
+
 struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   struct memory* mem = (struct memory*) emalloc(sizeof(struct memory));
 
   mem->size_bytes = (unsigned long long) prop.totalGlobalMem;
   mem->freq = prop.memoryClockRate * 1e-3f;
   mem->bus_width = prop.memoryBusWidth;
+  mem->type = guess_memory_type(mem, gpu);
 
   return mem;
 }
