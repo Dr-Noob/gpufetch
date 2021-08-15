@@ -9,6 +9,9 @@
 
 typedef uint32_t MICROARCH;
 
+// Any clock multiplier
+#define CM_ANY               -1
+
 // Data not available
 #define NA                   -1
 
@@ -262,6 +265,57 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
   map_chip_to_uarch(arch);
 
   return arch;
+}
+
+#define CHECK_MEMTYPE_START if (false) {}
+#define CHECK_MEMTYPE(arch, clkm, arch_, clkm_, memtype) \
+   else if (arch->uarch == arch_ && (clkm_ == CM_ANY || clkm == clkm_)) return memtype;
+#define CHECK_MEMTYPE_END else { printBug("guess_memtype_from_cmul_and_uarch: Found invalid convination: clkm=%d, uarch=%d", clkm, arch->uarch); return MEMTYPE_UNKNOWN; }
+
+MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
+  /*
+   * +---------+------------------+
+   * | MEMTYPE | Clock multiplier |
+   * +---------+------------------+
+   * | DDR3    |                1 |
+   * | DDR4    |                1 |
+   * | GDDR5   |                2 |
+   * | GDDR5X  |                4 |
+   * | GDDR6   |                4 |
+   * | GDDR6X  |                8 |
+   * | HBM     |                1 |
+   * | HBM2    |                1 |
+   * +---------+------------------+
+   *
+   * archs in parenthesis are not included in this rules
+   * and will be detected wrongly
+   */
+  CHECK_MEMTYPE_START
+  // TESLA
+  CHECK_MEMTYPE(arch, clkm, UARCH_TESLA, CM_ANY, MEMTYPE_UNKNOWN)
+  // FERMI
+  CHECK_MEMTYPE(arch, clkm, UARCH_FERMI,      1, MEMTYPE_DDR3)
+  CHECK_MEMTYPE(arch, clkm, UARCH_FERMI,      2, MEMTYPE_GDDR5)
+  // KEPLER (jetson)
+  CHECK_MEMTYPE(arch, clkm, UARCH_KEPLER,     1, MEMTYPE_DDR3)
+  CHECK_MEMTYPE(arch, clkm, UARCH_KEPLER,     2, MEMTYPE_GDDR5)
+  // MAXWELL (switch, jetson)
+  CHECK_MEMTYPE(arch, clkm, UARCH_MAXWELL,    1, MEMTYPE_DDR3)
+  CHECK_MEMTYPE(arch, clkm, UARCH_MAXWELL,    2, MEMTYPE_GDDR5)
+  // PASCAL
+  CHECK_MEMTYPE(arch, clkm, UARCH_PASCAL,     1, MEMTYPE_DDR4)
+  CHECK_MEMTYPE(arch, clkm, UARCH_PASCAL,     2, MEMTYPE_GDDR5)
+  CHECK_MEMTYPE(arch, clkm, UARCH_PASCAL,     4, MEMTYPE_GDDR5X)
+  // VOLTA (jetson)
+  CHECK_MEMTYPE(arch, clkm, UARCH_VOLTA, CM_ANY, MEMTYPE_HBM2)
+  // TURING
+  CHECK_MEMTYPE(arch, clkm, UARCH_TURING,     2, MEMTYPE_GDDR5)
+  CHECK_MEMTYPE(arch, clkm, UARCH_TURING,     4, MEMTYPE_GDDR6)
+  // AMPERE
+  CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     1, MEMTYPE_HBM2)
+  CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     4, MEMTYPE_GDDR6)
+  CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     8, MEMTYPE_GDDR6X)
+  CHECK_MEMTYPE_END
 }
 
 const char* get_str_uarch(struct uarch* arch) {

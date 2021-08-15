@@ -28,21 +28,20 @@ struct topology* get_topology_info(struct gpu_info* gpu, cudaDeviceProp prop) {
 }
 
 MEMTYPE guess_memory_type(struct memory* mem, struct gpu_info* gpu) {
-  // 1. Guess data rate
-  int32_t data_rate = -1;
-  int32_t dr8 = abs((mem->freq/8) - gpu->freq);
-  int32_t dr4 = abs((mem->freq/4) - gpu->freq);
-  int32_t dr2 = abs((mem->freq/2) - gpu->freq);
-  int32_t dr1 = abs((mem->freq/1) - gpu->freq);
+  // Guess clock multiplier
+  int32_t clk_mul = -1;
+  int32_t clk8 = abs((mem->freq/8) - gpu->freq);
+  int32_t clk4 = abs((mem->freq/4) - gpu->freq);
+  int32_t clk2 = abs((mem->freq/2) - gpu->freq);
+  int32_t clk1 = abs((mem->freq/1) - gpu->freq);
 
   int32_t min = mem->freq;
-  if(min > dr8) { data_rate = 8; min = dr8; }
-  if(min > dr4) { data_rate = 4; min = dr4; }
-  if(min > dr2) { data_rate = 2; min = dr2; }
-  if(min > dr1) { data_rate = 1; min = dr1; }
+  if(min > clk8) { clk_mul = 8; min = clk8; }
+  if(min > clk4) { clk_mul = 4; min = clk4; }
+  if(min > clk2) { clk_mul = 2; min = clk2; }
+  if(min > clk1) { clk_mul = 1; min = clk1; }
 
-  printf("data_rate=%d\n", data_rate);
-  return MEMTYPE_GDDR6;
+  return guess_memtype_from_cmul_and_uarch(clk_mul, gpu->arch);
 }
 
 struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {

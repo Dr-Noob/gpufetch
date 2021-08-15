@@ -16,6 +16,17 @@
 #define STRING_MEGABYTES  "MB"
 #define STRING_GIGABYTES  "GB"
 
+static const char *memtype_str[] = {
+  /*[MEMTYPE_UNKNOWN] = */ STRING_UNKNOWN,
+  /*[MEMTYPE_DDR3]    = */ "DDR3",
+  /*[MEMTYPE_DDR4]    = */ "DDR4",
+  /*[MEMTYPE_GDDR5]   = */ "GDDR5",
+  /*[MEMTYPE_GDDR5X]  = */ "GDDR5X",
+  /*[MEMTYPE_GDDR6]   = */ "GDDR6",
+  /*[MEMTYPE_GDDR6X]  = */ "GDDR6X",
+  /*[MEMTYPE_HBM2]    = */ "HBM2"
+};
+
 int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   int32_t ret;
   int max_len = 10; // Max is 8 for digits, 2 for units
@@ -65,7 +76,9 @@ char* get_str_memory_size(struct gpu_info* gpu) {
 }
 
 char* get_str_memory_type(struct gpu_info* gpu) {
-  return NULL;
+  char* str = (char *) emalloc(sizeof(char) * (strlen(memtype_str[gpu->mem->type]) +1));
+  strcpy(str, memtype_str[gpu->mem->type]);
+  return str;
 }
 
 char* get_str_bus_width(struct gpu_info* gpu) {
