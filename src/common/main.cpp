@@ -7,7 +7,7 @@
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
-static const char* VERSION = "0.02";
+static const char* VERSION = "0.03";
 
 void print_help(char *argv[]) {
   const char **t = args_str;
@@ -19,7 +19,7 @@ void print_help(char *argv[]) {
 
   printf("Options: \n");
   printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
-  printf("  -%c, --%s %*s Prints cpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
+  printf("  -%c, --%s %*s Prints gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
 
   printf("\nBUGS: \n");
   printf("    Report bugs to https://github.com/Dr-Noob/gpufetch/issues\n");
@@ -60,21 +60,8 @@ int main(int argc, char* argv[]) {
   if(gpu == NULL)
     return EXIT_FAILURE;
 
-  printf("Name:               %s\n", get_str_gpu_name(gpu));
-  printf("Microarchitecture:  %s\n", get_str_uarch(gpu->arch));
-  printf("GPU chip:           %s\n", get_str_chip(gpu->arch));
-  printf("Compute Capability: %s\n", get_str_cc(gpu->arch));
-  printf("Technology:         %s\n", get_str_process(gpu->arch));
-  printf("Max Frequency:      %s\n", get_str_freq(gpu));
-  printf("SM:                 %d\n", get_str_sm(gpu));
-  printf("Cores/MP:           %d\n", get_str_cores_sm(gpu));
-  printf("CUDA cores:         %d\n", get_str_cuda_cores(gpu));
-  printf("Memory size:        %s\n", get_str_memory_size(gpu));
-  printf("Memory type:        %s\n", get_str_memory_type(gpu));
-  printf("Memory frequency:   %s\n", get_str_memory_clock(gpu));
-  printf("Bus width:          %s\n", get_str_bus_width(gpu));
-  printf("L2 size:            %s\n", get_str_l2(gpu));
-  printf("Peak performance:   %s\n", get_str_peak_performance(gpu));
-
-  return EXIT_FAILURE;
+  if(print_gpufetch(gpu, get_style(), get_colors()))
+    return EXIT_SUCCESS;
+  else
+    return EXIT_FAILURE;
 }

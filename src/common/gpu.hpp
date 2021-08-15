@@ -64,6 +64,7 @@ struct gpu_info {
   int64_t peak_performance;
 };
 
+VENDOR get_gpu_vendor(struct gpu_info* gpu);
 char* get_str_gpu_name(struct gpu_info* gpu);
 char* get_str_freq(struct gpu_info* gpu);
 char* get_str_memory_size(struct gpu_info* gpu);

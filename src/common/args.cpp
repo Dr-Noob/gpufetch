@@ -6,9 +6,13 @@
 #include "args.hpp"
 #include "global.hpp"
 
+#define NUM_COLORS 4
+
 struct args_struct {
   bool help_flag;
   bool version_flag;
+  STYLE style;
+  struct color** colors;
 };
 
 const char args_chr[] = {
@@ -22,6 +26,14 @@ const char *args_str[] = {
 };
 
 static struct args_struct args;
+
+STYLE get_style() {
+  return args.style;
+}
+
+struct color** get_colors() {
+  return args.colors;
+}
 
 bool show_help() {
   return args.help_flag;
@@ -96,4 +108,11 @@ bool parse_args(int argc, char* argv[]) {
   }
 
   return true;
+}
+
+void free_colors_struct(struct color** cs) {
+  for(int i=0; i < NUM_COLORS; i++) {
+    free(cs[i]);
+  }
+  free(cs);
 }

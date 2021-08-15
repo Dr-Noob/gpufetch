@@ -27,6 +27,10 @@ static const char *memtype_str[] = {
   /*[MEMTYPE_HBM2]    = */ "HBM2"
 };
 
+VENDOR get_gpu_vendor(struct gpu_info* gpu) {
+  return gpu->vendor;
+}
+
 int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   int32_t ret;
   int max_len = 10; // Max is 8 for digits, 2 for units

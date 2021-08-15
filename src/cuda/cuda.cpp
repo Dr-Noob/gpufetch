@@ -95,15 +95,24 @@ struct gpu_info* get_gpu_info() {
   return gpu;
 }
 
-int32_t get_str_sm(struct gpu_info* gpu) {
-  return gpu->topo->streaming_mp;
+char* get_str_sm(struct gpu_info* gpu) {
+  uint32_t max_size = 10;
+  char* dummy = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(dummy, max_size, "%d", gpu->topo->streaming_mp);
+  return dummy;
 }
 
-int32_t get_str_cores_sm(struct gpu_info* gpu) {
-  return gpu->topo->cores_per_mp;
+char* get_str_cores_sm(struct gpu_info* gpu) {
+  uint32_t max_size = 10;
+  char* dummy = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(dummy, max_size, "%d", gpu->topo->cores_per_mp);
+  return dummy;
 }
 
-int32_t get_str_cuda_cores(struct gpu_info* gpu) {
-  return gpu->topo->cuda_cores;
+char* get_str_cuda_cores(struct gpu_info* gpu) {
+  uint32_t max_size = 10;
+  char* dummy = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(dummy, max_size, "%d", gpu->topo->cuda_cores);
+  return dummy;
 }
 
