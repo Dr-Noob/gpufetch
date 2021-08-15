@@ -355,5 +355,7 @@ char* get_str_chip(struct uarch* arch) {
 }
 
 void free_uarch_struct(struct uarch* arch) {
-
+  free(arch->uarch_str);
+  free(arch->chip_str);
+  free(arch);
 }

@@ -33,11 +33,11 @@ int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   *str = (char *) emalloc(sizeof(char)* (max_len + 1));
 
   if(value/1024 >= (1 << 20))
-    ret = snprintf(*str, max_len, "%.4g"STRING_GIGABYTES, (double)value/(1<<30));
+    ret = snprintf(*str, max_len, "%.4g" STRING_GIGABYTES, (double)value/(1<<30));
   else if(value/1024 >= (1 << 10))
-    ret = snprintf(*str, max_len, "%.4g"STRING_MEGABYTES, (double)value/(1<<20));
+    ret = snprintf(*str, max_len, "%.4g" STRING_MEGABYTES, (double)value/(1<<20));
   else
-    ret = snprintf(*str, max_len, "%.4g"STRING_KILOBYTES, (double)value/(1<<10));
+    ret = snprintf(*str, max_len, "%.4g" STRING_KILOBYTES, (double)value/(1<<10));
 
   return ret;
 }
@@ -55,9 +55,9 @@ char* get_str_freq(struct gpu_info* gpu) {
   if(gpu->freq == UNKNOWN_FREQ || gpu->freq < 0)
     snprintf(string,strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
   else if(gpu->freq >= 1000)
-    snprintf(string,size,"%.3f "STRING_GIGAHERZ, (float)(gpu->freq)/1000);
+    snprintf(string,size,"%.3f " STRING_GIGAHERZ, (float)(gpu->freq)/1000);
   else
-    snprintf(string,size,"%.3f "STRING_MEGAHERZ, (float)gpu->freq);
+    snprintf(string,size,"%.3f " STRING_MEGAHERZ, (float)gpu->freq);
 
   return string;
 }
@@ -100,7 +100,7 @@ char* get_str_memory_clock(struct gpu_info* gpu) {
   if(gpu->mem->freq == UNKNOWN_FREQ || gpu->mem->freq < 0)
     snprintf(string,strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
   else
-    snprintf(string,size,"%d "STRING_MEGAHERZ, gpu->mem->freq);
+    snprintf(string,size,"%d " STRING_MEGAHERZ, gpu->mem->freq);
 
   return string;
 }

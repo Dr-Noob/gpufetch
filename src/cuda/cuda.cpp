@@ -6,7 +6,7 @@
 #include "uarch.hpp"
 #include "../common/global.hpp"
 
-struct cache* get_cache_info(struct gpu_info* gpu, cudaDeviceProp prop) {
+struct cache* get_cache_info(cudaDeviceProp prop) {
   struct cache* cach = (struct cache*) emalloc(sizeof(struct cache));
 
   cach->L2 = (struct cach*) emalloc(sizeof(struct cach));
@@ -17,7 +17,7 @@ struct cache* get_cache_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   return cach;
 }
 
-struct topology* get_topology_info(struct gpu_info* gpu, cudaDeviceProp prop) {
+struct topology* get_topology_info(cudaDeviceProp prop) {
   struct topology* topo = (struct topology*) emalloc(sizeof(struct topology));
 
   topo->streaming_mp = prop.multiProcessorCount;
@@ -63,11 +63,13 @@ struct gpu_info* get_gpu_info() {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
 
-  printf("Waiting for CUDA driver to start...\n");
+  printf("Waiting for CUDA driver to start...");
+  fflush(stdout);
   int dev = 0;
   cudaSetDevice(dev);
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, dev);
+  printf("\r");
 
   gpu->freq = deviceProp.clockRate * 1e-3f;
   gpu->vendor = GPU_VENDOR_NVIDIA;
@@ -80,9 +82,9 @@ struct gpu_info* get_gpu_info() {
   }
 
   gpu->arch = get_uarch_from_cuda(gpu);
-  gpu->cach = get_cache_info(gpu, deviceProp);
+  gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);
-  gpu->topo = get_topology_info(gpu, deviceProp);
+  gpu->topo = get_topology_info(deviceProp);
   gpu->peak_performance = get_peak_performance(gpu);
 
   return gpu;
