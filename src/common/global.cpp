@@ -59,7 +59,7 @@ void printBug(const char *fmt, ...) {
   vsnprintf(buffer,buffer_size, fmt, args);
   va_end(args);
   fprintf(stderr, RED "[ERROR]: " RESET "%s\n",buffer);
-  fprintf(stderr,"Please, create a new issue with this error message in https://github.com/Dr-Noob/gpufetch/issues\n");
+  fprintf(stderr,"Please, create a new issue with this error message on https://github.com/Dr-Noob/gpufetch/issues\n");
   delete [] buffer;
 }
 

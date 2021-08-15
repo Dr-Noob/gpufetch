@@ -27,9 +27,10 @@ struct topology* get_topology_info(cudaDeviceProp prop) {
   return topo;
 }
 
-MEMTYPE guess_memory_type(struct memory* mem, struct gpu_info* gpu) {
+int32_t guess_clock_multipilier(struct gpu_info* gpu, struct memory* mem) {
   // Guess clock multiplier
   int32_t clk_mul = -1;
+
   int32_t clk8 = abs((mem->freq/8) - gpu->freq);
   int32_t clk4 = abs((mem->freq/4) - gpu->freq);
   int32_t clk2 = abs((mem->freq/2) - gpu->freq);
@@ -41,16 +42,20 @@ MEMTYPE guess_memory_type(struct memory* mem, struct gpu_info* gpu) {
   if(min > clk2) { clk_mul = 2; min = clk2; }
   if(min > clk1) { clk_mul = 1; min = clk1; }
 
-  return guess_memtype_from_cmul_and_uarch(clk_mul, gpu->arch);
+  return clk_mul;
 }
 
 struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {
   struct memory* mem = (struct memory*) emalloc(sizeof(struct memory));
 
   mem->size_bytes = (unsigned long long) prop.totalGlobalMem;
-  mem->freq = prop.memoryClockRate * 1e-3f;
+  mem->freq = prop.memoryClockRate * 0.001f;
   mem->bus_width = prop.memoryBusWidth;
-  mem->type = guess_memory_type(mem, gpu);
+  mem->clk_mul = guess_clock_multipilier(gpu, mem);
+  mem->type = guess_memtype_from_cmul_and_uarch(mem->clk_mul, gpu->arch);
+
+  // Fix frequency returned from CUDA to show real frequency
+  mem->freq = mem->freq  / mem->clk_mul;
 
   return mem;
 }

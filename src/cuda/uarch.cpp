@@ -270,7 +270,7 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
 #define CHECK_MEMTYPE_START if (false) {}
 #define CHECK_MEMTYPE(arch, clkm, arch_, clkm_, memtype) \
    else if (arch->uarch == arch_ && (clkm_ == CM_ANY || clkm == clkm_)) return memtype;
-#define CHECK_MEMTYPE_END else { printBug("guess_memtype_from_cmul_and_uarch: Found invalid convination: clkm=%d, uarch=%d", clkm, arch->uarch); return MEMTYPE_UNKNOWN; }
+#define CHECK_MEMTYPE_END else { printBug("guess_memtype_from_cmul_and_uarch: Found invalid combination: clkm=%d, uarch=%d", clkm, arch->uarch); return MEMTYPE_UNKNOWN; }
 
 MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
   /*

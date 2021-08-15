@@ -48,6 +48,7 @@ struct memory {
   MEMTYPE type;
   int32_t bus_width;
   int32_t freq;
+  int32_t clk_mul; // clock multiplier
 };
 
 struct gpu_info {
