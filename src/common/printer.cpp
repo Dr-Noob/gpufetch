@@ -344,6 +344,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   char* gpu_name = get_str_gpu_name(gpu);
   char* gpu_chip = get_str_chip(gpu->arch);
   char* uarch = get_str_uarch(gpu->arch);
+  char* comp_cap = get_str_cc(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
   char* sms = get_str_sm(gpu);
   char* corespersm = get_str_cores_sm(gpu);
@@ -356,15 +357,21 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   char* bus_width = get_str_bus_width(gpu);
   char* pp = get_str_peak_performance(gpu);
 
+  char* mem = (char *) emalloc(sizeof(char) * (strlen(mem_size) + strlen(mem_type) + 2));
+  sprintf(mem, "%s %s", mem_size, mem_type);
+
+  char* uarch_cc = (char *) emalloc(sizeof(char) * (strlen(uarch) + strlen(comp_cap) + 3));
+  sprintf(uarch_cc, "%s (%s)", uarch, comp_cap);
+
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   setAttribute(art, ATTRIBUTE_CHIP, gpu_chip);
-  setAttribute(art, ATTRIBUTE_UARCH, uarch);
+  setAttribute(art, ATTRIBUTE_UARCH, uarch_cc);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
   setAttribute(art, ATTRIBUTE_CORESPERMP, corespersm);
   setAttribute(art, ATTRIBUTE_CUDA_CORES, cores);
-  setAttribute(art, ATTRIBUTE_MEMORY, mem_size);
+  setAttribute(art, ATTRIBUTE_MEMORY, mem);
   setAttribute(art, ATTRIBUTE_MEMORY_FREQ, mem_freq);
   setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);
   setAttribute(art, ATTRIBUTE_L2, l2);
