@@ -27,6 +27,7 @@
 
 #define max(a,b) (((a)>(b))?(a):(b))
 #define MAX_ATTRIBUTES      100
+#define MAX_TERM_SIZE       1024
 
 enum {
   ATTRIBUTE_NAME,
@@ -360,7 +361,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   char* mem = (char *) emalloc(sizeof(char) * (strlen(mem_size) + strlen(mem_type) + 2));
   sprintf(mem, "%s %s", mem_size, mem_type);
 
-  char* uarch_cc = (char *) emalloc(sizeof(char) * (strlen(uarch) + strlen(comp_cap) + 3));
+  char* uarch_cc = (char *) emalloc(sizeof(char) * (strlen(uarch) + strlen(comp_cap) + 4));
   sprintf(uarch_cc, "%s (%s)", uarch, comp_cap);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
@@ -409,15 +410,19 @@ struct terminal* get_terminal_size() {
   CONSOLE_SCREEN_BUFFER_INFO csbi;
   if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi) == 0) {
     printWarn("GetConsoleScreenBufferInfo failed");
-    return NULL;
+    term->w = MAX_TERM_SIZE;
+    term->h = MAX_TERM_SIZE;
+    return term;
   }
   term->w = csbi.srWindow.Right - csbi.srWindow.Left + 1;
   term->h = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 #else
   struct winsize w;
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
-    printErr("ioctl: %s", strerror(errno));
-    return NULL;
+    printWarn("get_terminal_size: ioctl: %s", strerror(errno));
+    term->w = MAX_TERM_SIZE;
+    term->h = MAX_TERM_SIZE;
+    return term;
   }
   term->h = w.ws_row;
   term->w = w.ws_col;
