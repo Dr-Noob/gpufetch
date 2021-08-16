@@ -399,12 +399,6 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   free(art->attributes);
   free(art);
 
-  /* if(cs != NULL) free_colors_struct(cs);
-  free_cache_struct(cpu->cach);
-  free_topo_struct(cpu->topo);
-  free_freq_struct(cpu->freq);
-  free_cpuinfo_struct(cpu);*/
-
   return true;
 }
 

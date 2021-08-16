@@ -18,6 +18,7 @@ void print_help(char *argv[]) {
   printf("Simple yet fancy GPU architecture fetching tool\n\n");
 
   printf("Options: \n");
+  printf("  -%c, --%s %*s Selects the GPU to use (default: 0)\n", c[ARG_GPU], t[ARG_GPU], (int) (max_len-strlen(t[ARG_GPU])), "");
   printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
   printf("  -%c, --%s %*s Prints gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
 
@@ -56,7 +57,7 @@ If you want to help to improve gpufetch, please compare the output of the progra
 with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
 any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues");
 
-  struct gpu_info* gpu = get_gpu_info();
+  struct gpu_info* gpu = get_gpu_info(get_gpu_idx());
   if(gpu == NULL)
     return EXIT_FAILURE;
 

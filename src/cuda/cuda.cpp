@@ -64,17 +64,35 @@ int64_t get_peak_performance(struct gpu_info* gpu) {
   return gpu->freq * 1000000 * gpu->topo->cuda_cores * 2;
 }
 
-struct gpu_info* get_gpu_info() {
+struct gpu_info* get_gpu_info(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
 
+  if(gpu_idx < 0) {
+    printErr("GPU index must be equal or greater than zero");
+    return NULL;
+  }
+
   printf("Waiting for CUDA driver to start...");
   fflush(stdout);
-  int dev = 0;
-  cudaSetDevice(dev);
-  cudaDeviceProp deviceProp;
-  cudaGetDeviceProperties(&deviceProp, dev);
+
+  int num_gpus = -1;
+  cudaGetDeviceCount(&num_gpus);
   printf("\r                                   ");
+
+  if(num_gpus <= 0) {
+    printErr("No CUDA capable devices found!");
+    return NULL;
+  }
+
+  if(gpu_idx+1 > num_gpus) {
+    printErr("Requested GPU index %d in a system with %d GPUs", gpu_idx, num_gpus);
+    return NULL;
+  }
+
+  cudaSetDevice(gpu_idx);
+  cudaDeviceProp deviceProp;
+  cudaGetDeviceProperties(&deviceProp, gpu_idx);
 
   gpu->freq = deviceProp.clockRate * 1e-3f;
   gpu->vendor = GPU_VENDOR_NVIDIA;
@@ -82,7 +100,7 @@ struct gpu_info* get_gpu_info() {
   strcpy(gpu->name, deviceProp.name);
 
   gpu->nvmld = nvml_init();
-  if(nvml_get_pci_info(dev, gpu->nvmld)) {
+  if(nvml_get_pci_info(gpu_idx, gpu->nvmld)) {
     gpu->pci = get_pci_from_nvml(gpu->nvmld);
   }
 

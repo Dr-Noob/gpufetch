@@ -19,6 +19,7 @@ enum {
 };
 
 enum {
+  ARG_GPU,
   ARG_HELP,
   ARG_VERSION
 };
@@ -33,6 +34,7 @@ bool parse_args(int argc, char* argv[]);
 bool show_help();
 bool show_version();
 void free_colors_struct(struct color** cs);
+int get_gpu_idx();
 struct color** get_colors();
 STYLE get_style();
 
