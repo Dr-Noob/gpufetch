@@ -29,7 +29,7 @@
 #define COLOR_RESET        "\x1b[m"
 
 struct ascii_logo {
-  char* art;
+  const char* art;
   uint32_t width;
   uint32_t height;
   bool replace_blocks;
@@ -55,27 +55,77 @@ $C1   ######oo...         ..oo#######              \
 $C1          o###############o                     "
 
 // LONG LOGOS //
-#define ASCII_NVIDIA_L \
-"$C1                               ###############@               \
-$C1                       ######@                ######@         \
-$C1                  ###@                              ###@      \
-$C1              ##@                                     ###@    \
-$C1         ##@                                             ##@  \
-$C1         ##@                                             ##@  \
-$C1      @                    ##@                ##@        ##@  \
-$C1    #@   ##@   ########@   #####@   #####@    ##@        ##@  \
-$C1   #@    ##@   ##@    ##@  ##@    ###@  ###@  ##@        ##@  \
-$C1  #@     ##@   ##@    ##@  ##@    ##@    ##@  ##@       ##@   \
-$C1 #@      ##@   ##@    ##@  ##@    #########@  ##@     ###@    \
-$C1 #@      ##@   ##@    ##@  ##@    ##@         ##@   ####@     \
-$C1 #@       #@   ##@    ##@   ####@  ########@   #@  ##@        \
-$C1 ##@                                                          \
-$C1  ##@                                                         \
-$C1  ###@                                        ###@            \
-$C1    ####@                               #########@            \
-$C1      #########@               ###############@               \
-$C1          ##############################@                     "
+#define ASCII_NVIDIA_L_V1 \
+"$C1               'cccccccccccccccccccccccccc  \
+$C1               ;oooooooooooooooooooooooool  \
+$C1           .:::.     .oooooooooooooooooool  \
+$C1      .:cll;   ,c:::.     cooooooooooooool  \
+$C1   ,clo'      ;.   oolc:     ooooooooooool  \
+$C1.cloo    ;cclo .      .olc.    coooooooool  \
+$C1oooo   :lo,    ;ll;    looc    :oooooooool  \
+$C1 oooc   ool.   ;oooc;clol    :looooooooool  \
+$C1  :ooc   ,ol;  ;oooooo.   .cloo;     loool  \
+$C1    ool;   .olc.       ,:lool        .lool  \
+$C1      ool:.    ,::::ccloo.        :clooool  \
+$C1         oolc::.            ':cclooooooool  \
+$C1               ;oooooooooooooooooooooooool  "
 
+#define ASCII_NVIDIA_L_V2 \
+"$C1               'cccccccccccccccccccccccccc  \
+$C1               ;oooooooooooooooooooooooool  \
+$C1           .:::.$C2;;;;;$C1.oooooooooooooooooool  \
+$C1      .:cll;$C2;;;$C1,c:::.$C2;;;;;$C1cooooooooooooool  \
+$C1   ,clo'$C2;;;;;;$C1;.$C2;;;$C1oolc:$C2;;;;;$C1ooooooooooool  \
+$C1.cloo$C2;;;;$C1;cclo$C2;$C1.$C2;;;;;;$C1.olc.$C2;;;;$C1coooooooool  \
+$C1oooo$C2;;;$C1:lo,$C2;;;;$C1;ll;$C2;;;;$C1looc$C2;;;;$C1:oooooooool  \
+$C1 oooc$C2;;;$C1ool.$C2;;;$C1;oooc;clol$C2;;;;$C1:looooooooool  \
+$C1  :ooc$C2;;;$C1,ol;$C2;;$C1;oooooo.$C2;;;$C1.cloo;$C2;;;;;$C1loool  \
+$C1    ool;$C2;;;$C1.olc.$C2;;;;;;;$C1,:lool$C2;;;;;;;;$C1.lool  \
+$C1      ool:.$C2;;;;$C1,::::ccloo.$C2;;;;;;;;$C1:clooool  \
+$C1         oolc::.$C2;;;;;;;;;;;;$C1':cclooooooool  \
+$C1               ;oooooooooooooooooooooooool  "
+
+#define ASCII_NVIDIA_L_V3 \
+"$C1               'cccccccccccccccccccccccccc  \
+$C1               ;oooooooooooooooooooooooool  \
+$C1           .:::.     .oooooooooooooooooool  \
+$C1      .:cll;   ,c:::.     cooooooooooooool  \
+$C1   ,clo'      ;.   oolc:     ooooooooooool  \
+$C1.cloo    ;cclo .      .olc.    coooooooool  \
+$C1oooo   :lo,    ;ll;    looc    :oooooooool  \
+$C1 oooc   ool.   ;oooc;clol    :looooooooool  \
+$C1  :ooc   ,ol;  ;oooooo.   .cloo;     loool  \
+$C1    ool;   .olc.       ,:lool        .lool  \
+$C1      ool:.    ,::::ccloo.        :clooool  \
+$C1         oolc::.            ':cclooooooool  \
+$C1               ;oooooooooooooooooooooooool  \
+$C1                                            \
+$C2#####   ##     ## ##  ######   ##    ###    \
+$C2##   ## ##     ## ##  ##    ## ##   ## ##   \
+$C2##   ##  ##   ##  ##  ##     # ##  ##   ##  \
+$C2##   ##   #####   ##  ##    ## ## ######### \
+$C2##   ##    ###    ##  ######   ## ##     ## "
+
+#define ASCII_NVIDIA_L \
+"$C1               'cccccccccccccccccccccccccc   \
+$C1               ;oooooooooooooooooooooooool   \
+$C1           .:::.     .oooooooooooooooooool   \
+$C1      .:cll;   ,c:::.     cooooooooooooool   \
+$C1   ,clo'      ;.   oolc:     ooooooooooool   \
+$C1.cloo    ;cclo .      .olc.    coooooooool   \
+$C1oooo   :lo,    ;ll;    looc    :oooooooool   \
+$C1 oooc   ool.   ;oooc;clol    :looooooooool   \
+$C1  :ooc   ,ol;  ;oooooo.   .cloo;     loool   \
+$C1    ool;   .olc.       ,:lool        .lool   \
+$C1      ool:.    ,::::ccloo.        :clooool   \
+$C1         oolc::.            ':cclooooooool   \
+$C1               ;oooooooooooooooooooooooool   \
+$C1                                             \
+$C1                                             \
+$C2######.  ##   ##  ##  ######   ##    ###     \
+$C2##   ##  ##   ##  ##  ##   ##  ##   #: :#    \
+$C2##   ##   ## ##   ##  ##   ##  ##  #######   \
+$C2##   ##    ###    ##  ######   ## ##     ##  "
 typedef struct ascii_logo asciiL;
 
 //                      -----------------------------------------------------------------------------------------------------
@@ -83,7 +133,7 @@ typedef struct ascii_logo asciiL;
 //                      -----------------------------------------------------------------------------------------------------
 asciiL logo_nvidia    = { ASCII_NVIDIA,    48, 14, false, {COLOR_FG_CYAN},                 {COLOR_FG_CYAN, COLOR_FG_WHITE} };
 // Long variants        | --------------------------------------------------------------------------------------------------|
-asciiL logo_nvidia_l  = { ASCII_NVIDIA_L,  62, 19, true,  {COLOR_BG_CYAN, COLOR_BG_WHITE}, {COLOR_FG_CYAN, COLOR_FG_WHITE} };
-asciiL logo_unknown   = { NULL,            0,  0, false,  {COLOR_NONE},                    {COLOR_NONE,    COLOR_NONE}     };
+asciiL logo_nvidia_l  = { ASCII_NVIDIA_L,  45, 19, false, {COLOR_FG_GREEN, COLOR_FG_WHITE}, {COLOR_FG_WHITE, COLOR_FG_GREEN} };
+asciiL logo_unknown   = { NULL,            0,  0,  false, {COLOR_NONE},                    {COLOR_NONE,    COLOR_NONE}     };
 
 #endif
