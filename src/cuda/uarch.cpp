@@ -252,9 +252,12 @@ void map_chip_to_uarch(struct uarch* arch) {
 struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
   struct uarch* arch = (struct uarch*) emalloc(sizeof(struct uarch));
 
-  int dev = 0;
+  cudaError_t err = cudaSuccess;
   cudaDeviceProp deviceProp;
-  cudaGetDeviceProperties(&deviceProp, dev);
+  if ((err = cudaGetDeviceProperties(&deviceProp, gpu->idx)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
 
   arch->chip_str = NULL;
   arch->cc_major = deviceProp.major;

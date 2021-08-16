@@ -62,6 +62,7 @@ struct gpu_info {
   struct memory* mem;
   struct cache* cach;
   int64_t peak_performance;
+  int32_t idx;
 };
 
 VENDOR get_gpu_vendor(struct gpu_info* gpu);

@@ -67,8 +67,9 @@ int64_t get_peak_performance(struct gpu_info* gpu) {
 struct gpu_info* get_gpu_info(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
+  gpu->idx = gpu_idx;
 
-  if(gpu_idx < 0) {
+  if(gpu->idx < 0) {
     printErr("GPU index must be equal or greater than zero");
     return NULL;
   }
@@ -89,13 +90,13 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
     return NULL;
   }
 
-  if(gpu_idx+1 > num_gpus) {
-    printErr("Requested GPU index %d in a system with %d GPUs", gpu_idx, num_gpus);
+  if(gpu->idx+1 > num_gpus) {
+    printErr("Requested GPU index %d in a system with %d GPUs", gpu->idx, num_gpus);
     return NULL;
   }
 
   cudaDeviceProp deviceProp;
-  if ((err = cudaGetDeviceProperties(&deviceProp, gpu_idx)) != cudaSuccess) {
+  if ((err = cudaGetDeviceProperties(&deviceProp, gpu->idx)) != cudaSuccess) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
@@ -106,7 +107,7 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   strcpy(gpu->name, deviceProp.name);
 
   gpu->nvmld = nvml_init();
-  if(nvml_get_pci_info(gpu_idx, gpu->nvmld)) {
+  if(nvml_get_pci_info(gpu->idx, gpu->nvmld)) {
     gpu->pci = get_pci_from_nvml(gpu->nvmld);
   }
 
