@@ -35,7 +35,7 @@ VENDOR get_gpu_vendor(struct gpu_info* gpu) {
 double trunc(double val) {
   int digits = floor (log10 (abs (val))) + 1;
   int decimals = 4 - digits;
-  return val - (5 * pow(10, -(decimals + 1)));
+  return val - (4 * pow(10, -(decimals + 1)));
 }
 
 int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {

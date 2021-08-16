@@ -60,21 +60,21 @@ $C2##   ##   ## ##   ##  ##   ##  ##  #######   \
 $C2##   ##    ###    ##  ######   ## ##     ##  "
 
 #define ASCII_NVIDIA_L \
-"$C1                  ##############################  \
-$C1                  ##############################  \
-$C1                .::   '#########################  \
-$C1           ccllooo;:;.       ;##################  \
-$C1       cloc       :ooollcc:     :###############  \
-$C1    cloc      :ccl;      lolc,     ;############  \
-$C1.cloo:    :clo    ;c:      .ool;     ###########  \
-$C1  ooo:    ooo     :ool,  .cloo.    ;l###########  \
-$C1   ooo:    ooc    :ooooccooo.    :####  l#######  \
-$C1     ooc.   ool:  :oooooo'    ,cloo.        ####  \
-$C1      ool:.    olc:       .:cloo.          :####  \
-$C1         olc,     ;:::cccloo.          :########  \
-$C1            olcc::;              ,:cclo#########  \
-$C1                  :......o######################  \
-$C1                  :lll##########################  "
+"$C1                  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  \
+$C1                  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  \
+$C1                .::   'MMMMMMMMMMMMMMMMMMMMMMMMM  \
+$C1           ccllooo;:;.       ;MMMMMMMMMMMMMMMMMM  \
+$C1       cloc       :ooollcc:     :MMMMMMMMMMMMMMM  \
+$C1    cloc      :ccl;      lolc,     ;MMMMMMMMMMMM  \
+$C1.cloo:    :clo    ;c:      .ool;     MMMMMMMMMMM  \
+$C1  ooo:    ooo     :ool,  .cloo.    ;lMMMMMMMMMMM  \
+$C1   ooo:    ooc    :ooooccooo.    :MMMM  lMMMMMMM  \
+$C1     ooc.   ool:  :oooooo'    ,cloo.        MMMM  \
+$C1      ool:.    olc:       .:cloo.          :MMMM  \
+$C1         olc,     ;:::cccloo.          :MMMMMMMM  \
+$C1            olcc::;              ,:ccloMMMMMMMMM  \
+$C1                  :......oMMMMMMMMMMMMMMMMMMMMMM  \
+$C1                  :lllMMMMMMMMMMMMMMMMMMMMMMMMMM  "
 
 typedef struct ascii_logo asciiL;
 
