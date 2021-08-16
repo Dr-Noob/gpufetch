@@ -77,7 +77,11 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   fflush(stdout);
 
   int num_gpus = -1;
-  cudaGetDeviceCount(&num_gpus);
+  cudaError_t err = cudaSuccess;
+  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
   printf("\r                                   ");
 
   if(num_gpus <= 0) {
@@ -90,9 +94,11 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
     return NULL;
   }
 
-  cudaSetDevice(gpu_idx);
   cudaDeviceProp deviceProp;
-  cudaGetDeviceProperties(&deviceProp, gpu_idx);
+  if ((err = cudaGetDeviceProperties(&deviceProp, gpu_idx)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
 
   gpu->freq = deviceProp.clockRate * 1e-3f;
   gpu->vendor = GPU_VENDOR_NVIDIA;

@@ -23,7 +23,7 @@ struct nvml_data* nvml_init() {
   return data;
 }
 
-bool nvml_get_pci_info(int dev, struct nvml_data* data) {
+bool nvml_get_pci_info(int gpu_idx, struct nvml_data* data) {
   nvmlReturn_t result;
   nvmlDevice_t device;
 
@@ -32,7 +32,7 @@ bool nvml_get_pci_info(int dev, struct nvml_data* data) {
     return false;
   }
 
-  if ((result = nvmlDeviceGetHandleByIndex(dev, &device)) != NVML_SUCCESS) {
+  if ((result = nvmlDeviceGetHandleByIndex(gpu_idx, &device)) != NVML_SUCCESS) {
     printErr("nvmlDeviceGetHandleByIndex: %s\n", nvmlErrorString(result));
     return false;
   }
