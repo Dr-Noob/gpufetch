@@ -14,7 +14,7 @@
 
 #define COLOR_STR_NVIDIA "nvidia"
 
-#define COLOR_DEFAULT_NVIDIA "118,185,0:0,0,0:255,255,255:118,185,0"
+#define COLOR_DEFAULT_NVIDIA "118,185,0:255,255,255:255,255,255:118,185,0"
 
 struct args_struct {
   bool help_flag;
