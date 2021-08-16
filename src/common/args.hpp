@@ -19,6 +19,7 @@ enum {
 };
 
 enum {
+  ARG_COLOR,
   ARG_GPU,
   ARG_HELP,
   ARG_VERSION

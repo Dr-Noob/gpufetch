@@ -10,7 +10,11 @@
 #define OVERFLOW          -1
 #define UNDERFLOW         -2
 #define INVALID_ARG       -3
-#define NUM_COLORS 4
+#define NUM_COLORS         4
+
+#define COLOR_STR_NVIDIA "nvidia"
+
+#define COLOR_DEFAULT_NVIDIA "118,185,0:0,0,0:255,255,255:118,185,0"
 
 struct args_struct {
   bool help_flag;
@@ -24,12 +28,14 @@ int errn = 0;
 static struct args_struct args;
 
 const char args_chr[] = {
+  /* [ARG_CHAR_COLOR]   = */ 'c',
   /* [ARG_CHAR_GPU]     = */ 'g',
   /* [ARG_CHAR_HELP]    = */ 'h',
   /* [ARG_CHAR_VERSION] = */ 'V',
 };
 
 const char *args_str[] = {
+  /* [ARG_CHAR_COLOR]   = */ "color",
   /* [ARG_CHAR_GPU]     = */ "gpu",
   /* [ARG_CHAR_HELP]    = */ "help",
   /* [ARG_CHAR_VERSION] = */ "version",
@@ -113,10 +119,63 @@ char* build_short_options() {
   char* str = (char *) emalloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c:%c%c", c[ARG_GPU],
-  c[ARG_HELP], c[ARG_VERSION]);
+  sprintf(str, "%c:%c:%c%c", c[ARG_GPU],
+  c[ARG_COLOR], c[ARG_HELP], c[ARG_VERSION]);
 
   return str;
+}
+
+bool parse_color(char* optarg_str, struct color*** cs) {
+  for(int i=0; i < NUM_COLORS; i++) {
+    (*cs)[i] = (struct color *) emalloc(sizeof(struct color));
+  }
+
+  struct color** c = *cs;
+  int32_t ret;
+  char* str_to_parse = NULL;
+  const char* color_to_copy = NULL;
+  bool free_ptr = true;
+
+  if(strcmp(optarg_str, COLOR_STR_NVIDIA) == 0) color_to_copy = COLOR_DEFAULT_NVIDIA;
+  else {
+    str_to_parse = optarg_str;
+    free_ptr = false;
+  }
+
+  if(str_to_parse == NULL) {
+    str_to_parse = (char *) emalloc(sizeof(char) * (strlen(color_to_copy) + 1));
+    strcpy(str_to_parse, color_to_copy);
+  }
+
+  ret = sscanf(str_to_parse, "%d,%d,%d:%d,%d,%d:%d,%d,%d:%d,%d,%d",
+               &c[0]->R, &c[0]->G, &c[0]->B,
+               &c[1]->R, &c[1]->G, &c[1]->B,
+               &c[2]->R, &c[2]->G, &c[2]->B,
+               &c[3]->R, &c[3]->G, &c[3]->B);
+
+  if(ret != 12) {
+    printErr("Expected to read 12 values for color but read %d", ret);
+    return false;
+  }
+
+  for(int i=0; i < NUM_COLORS; i++) {
+    if(c[i]->R < 0 || c[i]->R > 255) {
+      printErr("Red in color %d is invalid: %d; must be in range (0, 255)", i+1, c[i]->R);
+      return false;
+    }
+    if(c[i]->G < 0 || c[i]->G > 255) {
+      printErr("Green in color %d is invalid: %d; must be in range (0, 255)", i+1, c[i]->G);
+      return false;
+    }
+    if(c[i]->B < 0 || c[i]->B > 255) {
+      printErr("Blue in color %d is invalid: %d; must be in range (0, 255)", i+1, c[i]->B);
+      return false;
+    }
+  }
+
+  if(free_ptr) free (str_to_parse);
+
+  return true;
 }
 
 bool parse_args(int argc, char* argv[]) {
@@ -127,8 +186,10 @@ bool parse_args(int argc, char* argv[]) {
   args.version_flag = false;
   args.help_flag = false;
   args.gpu_idx = 0;
+  args.colors = NULL;
 
   const struct option long_options[] = {
+    {args_str[ARG_COLOR],   required_argument, 0, args_chr[ARG_COLOR]   },
     {args_str[ARG_GPU],     required_argument, 0, args_chr[ARG_GPU]     },
     {args_str[ARG_HELP],    no_argument,       0, args_chr[ARG_HELP]    },
     {args_str[ARG_VERSION], no_argument,       0, args_chr[ARG_VERSION] },
@@ -139,7 +200,13 @@ bool parse_args(int argc, char* argv[]) {
   opt = getopt_long(argc, argv, short_options, long_options, &option_index);
 
   while (!args.help_flag && !args.version_flag && opt != -1) {
-    if(opt == args_chr[ARG_GPU]) {
+    if(opt == args_chr[ARG_COLOR]) {
+      args.colors = (struct color **) emalloc(sizeof(struct color *) * NUM_COLORS);
+      if(!parse_color(optarg, &args.colors)) {
+        return false;
+      }
+    }
+    else if(opt == args_chr[ARG_GPU]) {
       args.gpu_idx = getarg_int(optarg);
       if(errn != 0) {
         printErr("Option %s: ", args_str[ARG_GPU]);

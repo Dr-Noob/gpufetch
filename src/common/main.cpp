@@ -7,7 +7,7 @@
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
-static const char* VERSION = "0.05";
+static const char* VERSION = "0.06";
 
 void print_help(char *argv[]) {
   const char **t = args_str;
@@ -18,9 +18,23 @@ void print_help(char *argv[]) {
   printf("Simple yet fancy GPU architecture fetching tool\n\n");
 
   printf("Options: \n");
+  printf("  -%c, --%s %*s Sets the color scheme (by default, gpufetch uses the system color scheme) See COLORS section for a more detailed explanation\n", c[ARG_COLOR], t[ARG_COLOR], (int) (max_len-strlen(t[ARG_COLOR])), "");
   printf("  -%c, --%s %*s Selects the GPU to use (default: 0)\n", c[ARG_GPU], t[ARG_GPU], (int) (max_len-strlen(t[ARG_GPU])), "");
   printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
   printf("  -%c, --%s %*s Prints gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
+
+  printf("\nCOLORS: \n");
+  printf("  Color scheme can be set using a predefined color scheme or a custom one:\n");
+  printf("  1. To use a predefined color scheme, the name of the scheme must be provided. Possible values are:\n");
+  printf("  * \"nvidia\":  Use NVIDIA default color scheme \n");
+  printf("  2. To use a custom color scheme, 4 colors must be given in RGB with the format: R,G,B:R,G,B:...\n");
+  printf("  The first 2 colors are the GPU art color and the following 2 colors are the text colors\n");
+
+  printf("\nEXAMPLES: \n");
+  printf("  Run gpufetch with NVIDIA color scheme:\n");
+  printf("    ./gpufetch --color nvidia\n");
+  printf("  Run gpufetch with a custom color scheme:\n");
+  printf("    ./gpufetch --color 239,90,45:210,200,200:100,200,45:0,200,200\n");
 
   printf("\nBUGS: \n");
   printf("    Report bugs to https://github.com/Dr-Noob/gpufetch/issues\n");
