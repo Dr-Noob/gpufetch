@@ -1,9 +1,9 @@
 CXX ?= g++
+CUDA_PATH ?= /usr/local/cuda/
+PREFIX ?= /usr
 
 CXXFLAGS+=-Wall -Wextra -pedantic -fstack-protector-all -pedantic
 SANITY_FLAGS=-Wfloat-equal -Wshadow -Wpointer-arith
-
-PREFIX ?= /usr
 
 SRC_COMMON=src/common/
 SRC_CUDA=src/cuda/
@@ -13,7 +13,6 @@ COMMON_HDR = $(SRC_COMMON)ascii.hpp $(SRC_COMMON)gpu.hpp $(SRC_COMMON)args.hpp $
 
 CUDA_SRC = $(SRC_CUDA)cuda.cpp $(SRC_CUDA)uarch.cpp $(SRC_CUDA)pci.cpp $(SRC_CUDA)nvmlb.cpp
 CUDA_HDR = $(SRC_CUDA)cuda.hpp $(SRC_CUDA)uarch.hpp $(SRC_CUDA)pci.hpp $(SRC_CUDA)nvmlb.hpp $(SRC_CUDA)chips.hpp
-CUDA_PATH = /usr/local/cuda/
 
 SOURCE += $(COMMON_SRC) $(CUDA_SRC)
 HEADERS += $(COMMON_HDR) $(CUDA_HDR)
