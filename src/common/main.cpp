@@ -52,9 +52,9 @@ int main(int argc, char* argv[]) {
   set_log_level(true);
 
   printWarn("gpufetch is in beta. The provided information may be incomplete or wrong.\n\
-           If you want to help to improve gpufetch, please compare the output of the program\n\
-           with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
-           any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues");
+If you want to help to improve gpufetch, please compare the output of the program\n\
+with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
+any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues");
 
   struct gpu_info* gpu = get_gpu_info();
   if(gpu == NULL)

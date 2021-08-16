@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cerrno>
+#include <cmath>
 
 #include "../common/global.hpp"
 #include "gpu.hpp"
@@ -37,11 +38,11 @@ int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   *str = (char *) emalloc(sizeof(char)* (max_len + 1));
 
   if(value/1024 >= (1 << 20))
-    ret = snprintf(*str, max_len, "%.4g" STRING_GIGABYTES, (double)value/(1<<30));
+    ret = snprintf(*str, max_len, "%.2f " STRING_GIGABYTES, (double)value/(1<<30) - 0.005);
   else if(value/1024 >= (1 << 10))
-    ret = snprintf(*str, max_len, "%.4g" STRING_MEGABYTES, (double)value/(1<<20));
+    ret = snprintf(*str, max_len, "%.2f " STRING_MEGABYTES, (double)value/(1<<20) - 0.005);
   else
-    ret = snprintf(*str, max_len, "%.4g" STRING_KILOBYTES, (double)value/(1<<10));
+    ret = snprintf(*str, max_len, "%.2f " STRING_KILOBYTES, (double)value/(1<<10) - 0.005);
 
   return ret;
 }

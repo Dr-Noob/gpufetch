@@ -74,7 +74,7 @@ struct gpu_info* get_gpu_info() {
   cudaSetDevice(dev);
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, dev);
-  printf("\r");
+  printf("\r                                   ");
 
   gpu->freq = deviceProp.clockRate * 1e-3f;
   gpu->vendor = GPU_VENDOR_NVIDIA;
