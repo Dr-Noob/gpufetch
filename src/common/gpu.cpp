@@ -32,17 +32,23 @@ VENDOR get_gpu_vendor(struct gpu_info* gpu) {
   return gpu->vendor;
 }
 
+double trunc(double val) {
+  int digits = floor (log10 (abs (val))) + 1;
+  int decimals = 4 - digits;
+  return val - (5 * pow(10, -(decimals + 1)));
+}
+
 int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   int32_t ret;
   int max_len = 10; // Max is 8 for digits, 2 for units
   *str = (char *) emalloc(sizeof(char)* (max_len + 1));
 
   if(value/1024 >= (1 << 20))
-    ret = snprintf(*str, max_len, "%.2f " STRING_GIGABYTES, (double)value/(1<<30) - 0.005);
+    ret = snprintf(*str, max_len, "%.4g " STRING_GIGABYTES, trunc((double)value/(1<<30)));
   else if(value/1024 >= (1 << 10))
-    ret = snprintf(*str, max_len, "%.2f " STRING_MEGABYTES, (double)value/(1<<20) - 0.005);
+    ret = snprintf(*str, max_len, "%.4g " STRING_MEGABYTES, trunc((double)value/(1<<20)));
   else
-    ret = snprintf(*str, max_len, "%.2f " STRING_KILOBYTES, (double)value/(1<<10) - 0.005);
+    ret = snprintf(*str, max_len, "%.4g " STRING_KILOBYTES, trunc((double)value/(1<<10)));
 
   return ret;
 }
@@ -51,20 +57,22 @@ char* get_str_gpu_name(struct gpu_info* gpu) {
   return gpu->name;
 }
 
-char* get_str_freq(struct gpu_info* gpu) {
-  // Max 5 digits and 3 for '(M/G)Hz'
-  uint32_t size = (5+1+3+1);
-  assert(strlen(STRING_UNKNOWN)+1 <= size);
+char* get_freq_as_str_mhz(int64_t freq) {
+  // Max 20 digits and 3 for 'MHz'
+  uint32_t size = (20+1+3+1);
+  assert(strlen(STRING_UNKNOWN) + 1 <= size);
   char* string = (char *) ecalloc(size, sizeof(char));
 
-  if(gpu->freq == UNKNOWN_FREQ || gpu->freq < 0)
-    snprintf(string,strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-  else if(gpu->freq >= 1000)
-    snprintf(string,size,"%.3f " STRING_GIGAHERZ, (float)(gpu->freq)/1000);
+  if(freq == UNKNOWN_FREQ || freq < 0)
+    snprintf(string, strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
   else
-    snprintf(string,size,"%.3f " STRING_MEGAHERZ, (float)gpu->freq);
+    snprintf(string, size, "%ld " STRING_MEGAHERZ, freq);
 
   return string;
+}
+
+char* get_str_freq(struct gpu_info* gpu) {
+  return get_freq_as_str_mhz(gpu->freq);
 }
 
 // TODO: Refactor
@@ -97,17 +105,7 @@ char* get_str_bus_width(struct gpu_info* gpu) {
 }
 
 char* get_str_memory_clock(struct gpu_info* gpu) {
-  // Max 10 digits and 3 for 'MHz'
-  uint32_t size = (10+1+3+1);
-  assert(strlen(STRING_UNKNOWN)+1 <= size);
-  char* string = (char *) ecalloc(size, sizeof(char));
-
-  if(gpu->mem->freq == UNKNOWN_FREQ || gpu->mem->freq < 0)
-    snprintf(string,strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-  else
-    snprintf(string,size,"%d " STRING_MEGAHERZ, gpu->mem->freq);
-
-  return string;
+  return get_freq_as_str_mhz(gpu->mem->freq);
 }
 
 char* get_str_l2(struct gpu_info* gpu) {
