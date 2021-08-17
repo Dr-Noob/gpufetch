@@ -29,7 +29,7 @@ struct topology* get_topology_info(cudaDeviceProp prop) {
 
 int32_t guess_clock_multipilier(struct gpu_info* gpu, struct memory* mem) {
   // Guess clock multiplier
-  int32_t clk_mul = -1;
+  int32_t clk_mul = 1;
 
   int32_t clk8 = abs((mem->freq/8) - gpu->freq);
   int32_t clk4 = abs((mem->freq/4) - gpu->freq);
@@ -37,10 +37,10 @@ int32_t guess_clock_multipilier(struct gpu_info* gpu, struct memory* mem) {
   int32_t clk1 = abs((mem->freq/1) - gpu->freq);
 
   int32_t min = mem->freq;
-  if(min > clk8) { clk_mul = 8; min = clk8; }
-  if(min > clk4) { clk_mul = 4; min = clk4; }
-  if(min > clk2) { clk_mul = 2; min = clk2; }
-  if(min > clk1) { clk_mul = 1; min = clk1; }
+  if(clkm_possible_for_uarch(8, gpu->arch) && min > clk8) { clk_mul = 8; min = clk8; }
+  if(clkm_possible_for_uarch(4, gpu->arch) && min > clk4) { clk_mul = 4; min = clk4; }
+  if(clkm_possible_for_uarch(2, gpu->arch) && min > clk2) { clk_mul = 2; min = clk2; }
+  if(clkm_possible_for_uarch(1, gpu->arch) && min > clk1) { clk_mul = 1; min = clk1; }
 
   return clk_mul;
 }

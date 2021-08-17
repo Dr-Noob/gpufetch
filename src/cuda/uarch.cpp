@@ -275,6 +275,20 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
    else if (arch->uarch == arch_ && (clkm_ == CM_ANY || clkm == clkm_)) return memtype;
 #define CHECK_MEMTYPE_END else { printBug("guess_memtype_from_cmul_and_uarch: Found invalid combination: clkm=%d, uarch=%d", clkm, arch->uarch); return MEMTYPE_UNKNOWN; }
 
+bool clkm_possible_for_uarch(int clkm, struct uarch* arch) {
+  switch(arch->uarch) {
+    case UARCH_TESLA:   return false;
+    case UARCH_FERMI:   return clkm == 1 || clkm == 2;
+    case UARCH_KEPLER:  return clkm == 1 || clkm == 2;
+    case UARCH_MAXWELL: return clkm == 1 || clkm == 2;
+    case UARCH_PASCAL:  return clkm == 1 || clkm == 2 || clkm == 4;
+    case UARCH_VOLTA:   return clkm == 1;
+    case UARCH_TURING:  return clkm == 2 || clkm == 4;
+    case UARCH_AMPERE:  return clkm == 1 || clkm == 4 || clkm == 8;
+  }
+  return false;
+}
+
 MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
   /*
    * +---------+------------------+
