@@ -57,4 +57,4 @@ specifying "nvidia", or specifying the colors in RGB format:
 In the case of setting the colors using RGB, 4 colors must be given in with the format: ``[R,G,B:R,G,B:R,G,B:R,G,B]``. These colors correspond to GPU art color (2 colors) and for the text colors (following 2). Thus, you can customize all the colors.
 
 # 4. Bugs or improvements
-See [gpufetch contributing guidelines](https://github.com/Dr-Noob/gpufetch/CONTRIBUTING.md)
+See [gpufetch contributing guidelines](https://github.com/Dr-Noob/gpufetch/blob/master/CONTRIBUTING.md)
