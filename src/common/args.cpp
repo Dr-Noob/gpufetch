@@ -19,6 +19,7 @@
 struct args_struct {
   bool help_flag;
   bool version_flag;
+  bool list_gpus;
   int gpu_idx;
   STYLE style;
   struct color** colors;
@@ -28,17 +29,19 @@ int errn = 0;
 static struct args_struct args;
 
 const char args_chr[] = {
-  /* [ARG_CHAR_COLOR]   = */ 'c',
-  /* [ARG_CHAR_GPU]     = */ 'g',
-  /* [ARG_CHAR_HELP]    = */ 'h',
-  /* [ARG_CHAR_VERSION] = */ 'V',
+  /* [ARG_COLOR]   = */ 'c',
+  /* [ARG_GPU]     = */ 'g',
+  /* [ARG_LIST]    = */ 'l',
+  /* [ARG_HELP]    = */ 'h',
+  /* [ARG_VERSION] = */ 'V',
 };
 
 const char *args_str[] = {
-  /* [ARG_CHAR_COLOR]   = */ "color",
-  /* [ARG_CHAR_GPU]     = */ "gpu",
-  /* [ARG_CHAR_HELP]    = */ "help",
-  /* [ARG_CHAR_VERSION] = */ "version",
+  /* [ARG_COLOR]   = */ "color",
+  /* [ARG_GPU]     = */ "gpu",
+  /* [ARG_LIST]    = */ "list-gpus",
+  /* [ARG_HELP]    = */ "help",
+  /* [ARG_VERSION] = */ "version",
 };
 
 int getarg_int(char* str) {
@@ -100,6 +103,10 @@ bool show_help() {
   return args.help_flag;
 }
 
+bool list_gpus() {
+  return args.list_gpus;
+}
+
 bool show_version() {
   return args.version_flag;
 }
@@ -119,8 +126,9 @@ char* build_short_options() {
   char* str = (char *) emalloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c:%c:%c%c", c[ARG_GPU],
-  c[ARG_COLOR], c[ARG_HELP], c[ARG_VERSION]);
+  sprintf(str, "%c:%c:%c%c%c", c[ARG_GPU],
+  c[ARG_COLOR], c[ARG_HELP], c[ARG_LIST],
+  c[ARG_VERSION]);
 
   return str;
 }
@@ -185,12 +193,14 @@ bool parse_args(int argc, char* argv[]) {
 
   args.version_flag = false;
   args.help_flag = false;
+  args.list_gpus = false;
   args.gpu_idx = 0;
   args.colors = NULL;
 
   const struct option long_options[] = {
     {args_str[ARG_COLOR],   required_argument, 0, args_chr[ARG_COLOR]   },
     {args_str[ARG_GPU],     required_argument, 0, args_chr[ARG_GPU]     },
+    {args_str[ARG_LIST],    no_argument,       0, args_chr[ARG_LIST]    },
     {args_str[ARG_HELP],    no_argument,       0, args_chr[ARG_HELP]    },
     {args_str[ARG_VERSION], no_argument,       0, args_chr[ARG_VERSION] },
     {0, 0, 0, 0}
@@ -199,7 +209,7 @@ bool parse_args(int argc, char* argv[]) {
   char* short_options = build_short_options();
   opt = getopt_long(argc, argv, short_options, long_options, &option_index);
 
-  while (!args.help_flag && !args.version_flag && opt != -1) {
+  while (!args.help_flag && !args.version_flag && !args.list_gpus && opt != -1) {
     if(opt == args_chr[ARG_COLOR]) {
       args.colors = (struct color **) emalloc(sizeof(struct color *) * NUM_COLORS);
       if(!parse_color(optarg, &args.colors)) {
@@ -215,8 +225,11 @@ bool parse_args(int argc, char* argv[]) {
         return false;
       }
     }
+    else if(opt == args_chr[ARG_LIST]) {
+      args.list_gpus = true;
+    }
     else if(opt == args_chr[ARG_HELP]) {
-      args.help_flag  = true;
+      args.help_flag = true;
     }
     else if(opt == args_chr[ARG_VERSION]) {
       args.version_flag = true;

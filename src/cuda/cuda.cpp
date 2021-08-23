@@ -6,6 +6,42 @@
 #include "uarch.hpp"
 #include "../common/global.hpp"
 
+int print_gpus_list() {
+  cudaError_t err = cudaSuccess;
+  int num_gpus = -1;
+
+  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return EXIT_FAILURE;
+  }
+  printf("CUDA GPUs available: %d\n", num_gpus);
+
+  if(num_gpus > 0) {
+    cudaDeviceProp deviceProp;
+    int max_len = 0;
+
+    for(int idx=0; idx < num_gpus; idx++) {
+      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
+        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+        return EXIT_FAILURE;
+      }
+      max_len = max(max_len, (int) strlen(deviceProp.name));
+    }
+
+    for(int i=0; i < max_len + 32; i++) putchar('-');
+    putchar('\n');
+    for(int idx=0; idx < num_gpus; idx++) {
+      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
+        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+        return EXIT_FAILURE;
+      }
+      printf("GPU %d: %s (Compute Capability %d.%d)\n", idx, deviceProp.name, deviceProp.major, deviceProp.minor);
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
 struct cache* get_cache_info(cudaDeviceProp prop) {
   struct cache* cach = (struct cache*) emalloc(sizeof(struct cache));
 

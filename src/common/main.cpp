@@ -18,10 +18,11 @@ void print_help(char *argv[]) {
   printf("Simple yet fancy GPU architecture fetching tool\n\n");
 
   printf("Options: \n");
-  printf("  -%c, --%s %*s Sets the color scheme (by default, gpufetch uses the system color scheme) See COLORS section for a more detailed explanation\n", c[ARG_COLOR], t[ARG_COLOR], (int) (max_len-strlen(t[ARG_COLOR])), "");
-  printf("  -%c, --%s %*s Selects the GPU to use (default: 0)\n", c[ARG_GPU], t[ARG_GPU], (int) (max_len-strlen(t[ARG_GPU])), "");
-  printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
-  printf("  -%c, --%s %*s Prints gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
+  printf("  -%c, --%s %*s Set the color scheme (by default, gpufetch uses the system color scheme) See COLORS section for a more detailed explanation\n", c[ARG_COLOR], t[ARG_COLOR], (int) (max_len-strlen(t[ARG_COLOR])), "");
+  printf("  -%c, --%s %*s List the available GPUs in the system\n", c[ARG_LIST], t[ARG_LIST], (int) (max_len-strlen(t[ARG_LIST])), "");
+  printf("  -%c, --%s %*s Select the GPU to use (default: 0)\n", c[ARG_GPU], t[ARG_GPU], (int) (max_len-strlen(t[ARG_GPU])), "");
+  printf("  -%c, --%s %*s Print this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
+  printf("  -%c, --%s %*s Print gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
 
   printf("\nCOLORS: \n");
   printf("  Color scheme can be set using a predefined color scheme or a custom one:\n");
@@ -62,6 +63,10 @@ int main(int argc, char* argv[]) {
   if(show_version()) {
     print_version();
     return EXIT_SUCCESS;
+  }
+
+  if(list_gpus()) {
+    return print_gpus_list();
   }
 
   set_log_level(true);
