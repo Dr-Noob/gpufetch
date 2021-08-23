@@ -7,7 +7,7 @@
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
-static const char* VERSION = "0.06";
+static const char* VERSION = "0.10";
 
 void print_help(char *argv[]) {
   const char **t = args_str;
