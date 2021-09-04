@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 #include "pci.hpp"
-#include "nvmlb.hpp"
 #include "chips.hpp"
 #include "../common/global.hpp"
+#include "../common/pci.hpp"
 
 #define CHECK_PCI_START if (false) {}
 #define CHECK_PCI(pci, id, chip) \
@@ -15,11 +15,11 @@ struct pci {
   uint16_t device_id;
 };
 
-struct pci* get_pci_from_nvml(struct nvml_data* data) {
+struct pci* get_pci_from_pciutils(struct pci_dev *devices) {
   struct pci* pci = (struct pci*) emalloc(sizeof(struct pci));
 
-  pci->vendor_id = nvml_get_pci_vendor_id(data);
-  pci->device_id = nvml_get_pci_device_id(data);
+  pci->vendor_id = pciutils_get_pci_vendor_id(devices);
+  pci->device_id = pciutils_get_pci_device_id(devices);
 
   return pci;
 }

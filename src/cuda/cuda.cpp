@@ -2,8 +2,8 @@
 #include <cuda_runtime.h>
 
 #include "cuda.hpp"
-#include "nvmlb.hpp"
 #include "uarch.hpp"
+#include "../common/pci.hpp"
 #include "../common/global.hpp"
 
 int print_gpus_list() {
@@ -142,11 +142,8 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(deviceProp.name) + 1));
   strcpy(gpu->name, deviceProp.name);
 
-  gpu->nvmld = nvml_init();
-  if(nvml_get_pci_info(gpu->idx, gpu->nvmld)) {
-    gpu->pci = get_pci_from_nvml(gpu->nvmld);
-  }
-
+  struct pci_dev *devices = get_pci_devices_from_pciutils();
+  gpu->pci = get_pci_from_pciutils(devices);
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);

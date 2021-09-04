@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../cuda/nvmlb.hpp"
 #include "../cuda/pci.hpp"
 
 #define UNKNOWN_FREQ -1
@@ -57,7 +56,6 @@ struct gpu_info {
   char* name;
   int64_t freq;
   struct pci* pci;
-  struct nvml_data* nvmld;
   struct topology* topo;
   struct memory* mem;
   struct cache* cach;
