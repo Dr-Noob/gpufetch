@@ -31,18 +31,28 @@
 gpufetch supports NVIDIA GPUs under Linux only.
 
 # 2. Installation (building from source)
-You will need a C++ compiler (e.g, `g++`), `make` and CUDA to compile `gpufetch`. To do so, just clone the repo and run `make`:
+You will need:
+
+- C++ compiler (e.g, `g++`)
+- `cmake`
+- `make`
+- CUDA (NVIDIA backend)
+- pciutils (optional)
+
+To build gpufetch, just clone the repo and run `./build.sh`:
 
 ```
 git clone https://github.com/Dr-Noob/gpufetch
 cd gpufetch
-make
+./build.sh
 ./gpufetch
 ```
-When building gpufetch, you may encounter an error telling you that it cannot find some CUDA header files. In this case, is very likely that the Makefile is unable to find your CUDA installation. This can be solved by setting `CUDA_PATH` to the correct CUDA installation path. For example:
+
+- NOTE 1: It is recomended to install the `pciutils` development package, which is needed by gpufetch. If it is not installed, it will be downloaded and built automatically just to compile gpufetch.
+- NOTE 2: When building gpufetch, cmake may fail if it is unable to find the CUDA installation. If CUDA is installed but CMake does not find it, you need to pass the CUDA path to cmake. You can do this easily by editing directly the `build.sh` script. For example:
 
 ```
-CUDA_PATH=/opt/cuda make
+cmake -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_CUDA_COMPILER_TOOLKIT_ROOT=/usr/local/cuda/ ..
 ```
 
 # 3. Colors and style
