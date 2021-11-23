@@ -61,6 +61,7 @@ struct gpu_info {
   struct memory* mem;
   struct cache* cach;
   int64_t peak_performance;
+  int64_t peak_performance_t;
   int32_t idx;
 };
 
@@ -73,5 +74,6 @@ char* get_str_bus_width(struct gpu_info* gpu);
 char* get_str_memory_clock(struct gpu_info* gpu);
 char* get_str_l2(struct gpu_info* gpu);
 char* get_str_peak_performance(struct gpu_info* gpu);
+char* get_str_peak_performance_tensor(struct gpu_info* gpu);
 
 #endif

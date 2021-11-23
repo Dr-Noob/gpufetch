@@ -43,7 +43,8 @@ enum {
   ATTRIBUTE_MEMORY,
   ATTRIBUTE_MEMORY_FREQ,
   ATTRIBUTE_BUS_WIDTH,
-  ATTRIBUTE_PEAK
+  ATTRIBUTE_PEAK,
+  ATTRIBUTE_PEAK_TENSOR,
 };
 
 static const char* ATTRIBUTE_FIELDS [] = {
@@ -54,13 +55,14 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "Max Frequency:",
   "SMs:",
   "Cores/SM:",
-  "CUDA cores:",
-  "Tensor cores:",
+  "CUDA Cores:",
+  "Tensor Cores:",
   "L2 Size:",
   "Memory:",
   "Memory frequency:",
   "Bus width:",
   "Peak Performance:",
+  "Peak Performance (TC):",
 };
 
 static const char* ATTRIBUTE_FIELDS_SHORT [] = {
@@ -71,12 +73,14 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Max Freq.:",
   "SMs:",
   "Cores/SM:",
-  "CUDA cores:",
+  "CUDA Cores:",
+  "Tensor Cores:",
   "L2 Size:",
   "Memory:",
   "Memory freq.:",
   "Bus width:",
   "Peak Perf.:",
+  "Peak Perf.(TC):",
 };
 
 struct terminal {
@@ -360,6 +364,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   char* mem_freq = get_str_memory_clock(gpu);
   char* bus_width = get_str_bus_width(gpu);
   char* pp = get_str_peak_performance(gpu);
+  char* pp_tensor = get_str_peak_performance_tensor(gpu);
 
   char* mem = (char *) emalloc(sizeof(char) * (strlen(mem_size) + strlen(mem_type) + 2));
   sprintf(mem, "%s %s", mem_size, mem_type);
@@ -383,6 +388,9 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);
   setAttribute(art, ATTRIBUTE_L2, l2);
   setAttribute(art, ATTRIBUTE_PEAK, pp);
+  if(gpu->topo->tensor_cores >= 0) {
+    setAttribute(art, ATTRIBUTE_PEAK_TENSOR, pp_tensor);
+  }
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);

@@ -116,17 +116,17 @@ char* get_str_l2(struct gpu_info* gpu) {
   return string;
 }
 
-char* get_str_peak_performance(struct gpu_info* gpu) {
+char* get_str_peak_performance_generic(int64_t pp) {
   char* str;
 
-  if(gpu->peak_performance == -1) {
+  if(pp == -1) {
     str = (char *) emalloc(sizeof(char) * (strlen(STRING_UNKNOWN) + 1));
     strncpy(str, STRING_UNKNOWN, strlen(STRING_UNKNOWN) + 1);
     return str;
   }
 
   // 7 for digits (e.g, XXXX.XX), 7 for XFLOP/s
-  double flopsd = (double) gpu->peak_performance;
+  double flopsd = (double) pp;
   uint32_t max_size = 7+1+7+1;
   str = (char *) ecalloc(max_size, sizeof(char));
 
@@ -139,3 +139,12 @@ char* get_str_peak_performance(struct gpu_info* gpu) {
 
   return str;
 }
+
+char* get_str_peak_performance(struct gpu_info* gpu) {
+  return get_str_peak_performance_generic(gpu->peak_performance);
+}
+
+char* get_str_peak_performance_tensor(struct gpu_info* gpu) {
+  return get_str_peak_performance_generic(gpu->peak_performance_t);
+}
+
