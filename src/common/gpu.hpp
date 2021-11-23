@@ -40,6 +40,7 @@ struct topology {
   int32_t streaming_mp;
   int32_t cores_per_mp;
   int32_t cuda_cores;
+  int32_t tensor_cores;
 };
 
 struct memory {

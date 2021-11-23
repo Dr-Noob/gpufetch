@@ -38,6 +38,7 @@ enum {
   ATTRIBUTE_STREAMINGMP,
   ATTRIBUTE_CORESPERMP,
   ATTRIBUTE_CUDA_CORES,
+  ATTRIBUTE_TENSOR_CORES,
   ATTRIBUTE_L2,
   ATTRIBUTE_MEMORY,
   ATTRIBUTE_MEMORY_FREQ,
@@ -54,6 +55,7 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "SMs:",
   "Cores/SM:",
   "CUDA cores:",
+  "Tensor cores:",
   "L2 Size:",
   "Memory:",
   "Memory frequency:",
@@ -350,6 +352,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   char* sms = get_str_sm(gpu);
   char* corespersm = get_str_cores_sm(gpu);
   char* cores = get_str_cuda_cores(gpu);
+  char* tensorc = get_str_tensor_cores(gpu);
   char* max_frequency = get_str_freq(gpu);
   char* l2 = get_str_l2(gpu);
   char* mem_size = get_str_memory_size(gpu);
@@ -372,6 +375,9 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
   setAttribute(art, ATTRIBUTE_CORESPERMP, corespersm);
   setAttribute(art, ATTRIBUTE_CUDA_CORES, cores);
+  if(gpu->topo->tensor_cores >= 0) {
+    setAttribute(art, ATTRIBUTE_TENSOR_CORES, tensorc);
+  }
   setAttribute(art, ATTRIBUTE_MEMORY, mem);
   setAttribute(art, ATTRIBUTE_MEMORY_FREQ, mem_freq);
   setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);

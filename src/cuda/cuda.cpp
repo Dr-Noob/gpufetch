@@ -53,12 +53,19 @@ struct cache* get_cache_info(cudaDeviceProp prop) {
   return cach;
 }
 
+int get_tensor_cores(int sm, int major) {
+  if(major == 7) return sm * 8;
+  else if(major == 8) return sm * 4;
+  else return 0;
+}
+
 struct topology* get_topology_info(cudaDeviceProp prop) {
   struct topology* topo = (struct topology*) emalloc(sizeof(struct topology));
 
   topo->streaming_mp = prop.multiProcessorCount;
   topo->cores_per_mp = _ConvertSMVer2Cores(prop.major, prop.minor);
   topo->cuda_cores = topo->streaming_mp * topo->cores_per_mp;
+  topo->tensor_cores = get_tensor_cores(topo->streaming_mp, prop.major);
 
   return topo;
 }
@@ -171,6 +178,13 @@ char* get_str_cuda_cores(struct gpu_info* gpu) {
   uint32_t max_size = 10;
   char* dummy = (char *) ecalloc(max_size, sizeof(char));
   snprintf(dummy, max_size, "%d", gpu->topo->cuda_cores);
+  return dummy;
+}
+
+char* get_str_tensor_cores(struct gpu_info* gpu) {
+  uint32_t max_size = 10;
+  char* dummy = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(dummy, max_size, "%d", gpu->topo->tensor_cores);
   return dummy;
 }
 

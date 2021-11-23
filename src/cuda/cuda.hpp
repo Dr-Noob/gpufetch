@@ -8,5 +8,6 @@ int print_gpus_list();
 char* get_str_sm(struct gpu_info* gpu);
 char* get_str_cores_sm(struct gpu_info* gpu);
 char* get_str_cuda_cores(struct gpu_info* gpu);
+char* get_str_tensor_cores(struct gpu_info* gpu);
 
 #endif
