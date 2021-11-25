@@ -1,18 +1,27 @@
 <p align="center"><img width=50% src="./pictures/gpufetch.png"></p>
 
 <h4 align="center">Simple yet fancy GPU architecture fetching tool</h4>
-&nbsp;
+
+<p align="center"> </p>
 
 <div align="center">
-
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Dr-Noob/gpufetch?label=gpufetch)
-[![GitHub Repo stars](https://img.shields.io/github/stars/Dr-Noob/gpufetch?color=4CC61F)](https://github.com/Dr-Noob/gpufetch/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/Dr-Noob/gpufetch)](https://github.com/Dr-Noob/gpufetch/issues)
-[![License](https://img.shields.io/github/license/Dr-Noob/gpufetch?color=orange)](https://github.com/Dr-Noob/gpufetch/blob/master/LICENSE)
-
-gpufetch is a command-line tool written in C that displays the GPU information in a clean and beautiful way
-
+  <img height="22px" src="https://img.shields.io/github/v/tag/Dr-Noob/gpufetch?label=gpufetch&style=flat-square">
+  <a href="https://github.com/Dr-Noob/gpufetch/stargazers">
+    <img height="22px" src="https://img.shields.io/github/stars/Dr-Noob/gpufetch?color=4CC61F&style=flat-square">
+  </a>
+  <a href="https://github.com/Dr-Noob/gpufetch/issues">
+    <img height="22px" src="https://img.shields.io/github/issues/Dr-Noob/gpufetch?style=flat-square">
+  </a>
+  <a href="https://github.com/Dr-Noob/gpufetch/blob/master/LICENSE">
+    <img height="22px" src="https://img.shields.io/github/license/Dr-Noob/gpufetch?color=orange&style=flat-square">
+  </a>
 </div>
+
+<p align="center"> </p>
+
+<p align="center">
+gpufetch is a command-line tool written in C that displays the GPU information in a clean and beautiful way
+</p>
 
 <p align="center"><img width=80% src="./pictures/2080ti.png"></p>
 
