@@ -1,5 +1,8 @@
 <p align="center"><img width=50% src="./pictures/gpufetch.png"></p>
 
+<h4 align="center">Simple yet fancy GPU architecture fetching tool</h4>
+&nbsp;
+
 <div align="center">
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Dr-Noob/gpufetch?label=gpufetch)
@@ -7,12 +10,11 @@
 [![GitHub issues](https://img.shields.io/github/issues/Dr-Noob/gpufetch)](https://github.com/Dr-Noob/gpufetch/issues)
 [![License](https://img.shields.io/github/license/Dr-Noob/gpufetch?color=orange)](https://github.com/Dr-Noob/gpufetch/blob/master/LICENSE)
 
-<h4 align="center">Simple yet fancy GPU architecture fetching tool</h4>
-&nbsp;
-
-![gpu_img](pictures/2080ti.png)
+gpufetch is a command-line tool written in C that displays the GPU information in a clean and beautiful way
 
 </div>
+
+<p align="center"><img width=80% src="./pictures/2080ti.png"></p>
 
 # Table of contents
 <!-- UPDATE with: doctoc --notitle README.md -->
