@@ -62,7 +62,7 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "Memory frequency:",
   "Bus width:",
   "Peak Performance:",
-  "Peak Performance (TC):",
+  "Peak Performance (MMA):",
 };
 
 static const char* ATTRIBUTE_FIELDS_SHORT [] = {
@@ -80,7 +80,7 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Memory freq.:",
   "Bus width:",
   "Peak Perf.:",
-  "Peak Perf.(TC):",
+  "Peak Perf.(MMA):",
 };
 
 struct terminal {
@@ -380,7 +380,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
   setAttribute(art, ATTRIBUTE_CORESPERMP, corespersm);
   setAttribute(art, ATTRIBUTE_CUDA_CORES, cores);
-  if(gpu->topo->tensor_cores >= 0) {
+  if(gpu->topo->tensor_cores > 0) {
     setAttribute(art, ATTRIBUTE_TENSOR_CORES, tensorc);
   }
   setAttribute(art, ATTRIBUTE_MEMORY, mem);
@@ -388,7 +388,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
   setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);
   setAttribute(art, ATTRIBUTE_L2, l2);
   setAttribute(art, ATTRIBUTE_PEAK, pp);
-  if(gpu->topo->tensor_cores >= 0) {
+  if(gpu->topo->tensor_cores > 0) {
     setAttribute(art, ATTRIBUTE_PEAK_TENSOR, pp_tensor);
   }
 
