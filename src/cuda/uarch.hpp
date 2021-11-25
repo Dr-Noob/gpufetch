@@ -1,5 +1,5 @@
-#ifndef __UARCH__
-#define __UARCH__
+#ifndef __CUDA_UARCH__
+#define __CUDA_UARCH__
 
 #include "../common/gpu.hpp"
 

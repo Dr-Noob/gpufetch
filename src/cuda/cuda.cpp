@@ -6,7 +6,7 @@
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 
-int print_gpus_list() {
+int print_gpus_list_deprecated() {
   cudaError_t err = cudaSuccess;
   int num_gpus = -1;
 
@@ -113,7 +113,7 @@ int64_t get_peak_performance_t(struct gpu_info* gpu) {
   return gpu->freq * 1000000 * 4 * 4 * 8 * gpu->topo->tensor_cores;
 }
 
-struct gpu_info* get_gpu_info(int gpu_idx) {
+struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
   gpu->idx = gpu_idx;

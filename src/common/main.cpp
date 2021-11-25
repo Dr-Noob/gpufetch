@@ -4,6 +4,7 @@
 
 #include "args.hpp"
 #include "global.hpp"
+#include "master.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -65,8 +66,9 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
   }
 
+  struct gpu_list* list = get_gpu_list();
   if(list_gpus()) {
-    return print_gpus_list();
+    return print_gpus_list(list);
   }
 
   set_log_level(true);
@@ -76,7 +78,7 @@ If you want to help to improve gpufetch, please compare the output of the progra
 with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
 any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues");
 
-  struct gpu_info* gpu = get_gpu_info(get_gpu_idx());
+  struct gpu_info* gpu = get_gpu_info(list, get_gpu_idx());
   if(gpu == NULL)
     return EXIT_FAILURE;
 

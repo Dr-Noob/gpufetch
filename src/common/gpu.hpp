@@ -9,7 +9,8 @@
 #define UNKNOWN_FREQ -1
 
 enum {
-  GPU_VENDOR_NVIDIA
+  GPU_VENDOR_NVIDIA,
+  GPU_VENDOR_INTEL
 };
 
 enum {
