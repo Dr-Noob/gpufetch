@@ -10,20 +10,6 @@
    else if (pci->device_id == id) return chip;
 #define CHECK_PCI_END else { printBug("TODOO"); return CHIP_UNKNOWN; }
 
-struct pci {
-  uint16_t vendor_id;
-  uint16_t device_id;
-};
-
-struct pci* get_pci_from_pciutils(struct pci_dev *devices) {
-  struct pci* pci = (struct pci*) emalloc(sizeof(struct pci));
-
-  pci->vendor_id = pciutils_get_pci_vendor_id(devices);
-  pci->device_id = pciutils_get_pci_device_id(devices);
-
-  return pci;
-}
-
 /*
  * pci ids were retrieved using https://github.com/pciutils/pciids
  * and parsed using a custom script to take only the relevant

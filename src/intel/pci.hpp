@@ -1,5 +1,5 @@
-#ifndef __PCI_CUDA__
-#define __PCI_CUDA__
+#ifndef __PCI_INTEL__
+#define __PCI_INTEL__
 
 #include <stdint.h>
 
@@ -10,7 +10,7 @@
  * doc: https://wiki.osdev.org/PCI#Class_Codes
  *      https://pci-ids.ucw.cz/read/PC
  */
-#define PCI_VENDOR_ID_NVIDIA 0x10de
+#define PCI_VENDOR_ID_INTEL 0x8086
 
 struct pci;
 

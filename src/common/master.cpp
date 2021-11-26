@@ -20,6 +20,8 @@ struct gpu_list* get_gpu_list() {
   list->gpus = (struct gpu_info**) malloc(sizeof(struct info*) * MAX_GPUS);
 
 #ifdef BACKEND_CUDA
+  bool valid = true;
+
   while(valid) {
     list->gpus[idx] = get_gpu_info_cuda(idx);
     if(list->gpus[idx] != NULL) idx++;

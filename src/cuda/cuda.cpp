@@ -133,7 +133,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   strcpy(gpu->name, deviceProp.name);
 
   struct pci_dev *devices = get_pci_devices_from_pciutils();
-  gpu->pci = get_pci_from_pciutils(devices);
+  gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_NVIDIA);
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);

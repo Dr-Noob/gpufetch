@@ -3,11 +3,10 @@
 #include <stdint.h>
 #include <cstddef>
 
+#include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 #include "chips.hpp"
-
-typedef uint32_t MICROARCH;
 
 // Any clock multiplier
 #define CM_ANY               -1
@@ -41,19 +40,6 @@ static const char *uarch_str[] = {
   /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
   /*[ARCH_AMPERE]     = */ "Ampere",
-};
-
-struct uarch {
-  int32_t cc_major;
-  int32_t cc_minor;
-  int32_t compute_capability;
-
-  MICROARCH uarch;
-  GPUCHIP chip;
-
-  int32_t process;
-  char* uarch_str;
-  char* chip_str;
 };
 
 #define CHECK_UARCH_START if (false) {}
