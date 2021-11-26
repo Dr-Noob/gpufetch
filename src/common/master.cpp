@@ -15,7 +15,6 @@ struct gpu_list {
 
 struct gpu_list* get_gpu_list() {
   int idx = 0;
-  bool valid = true;
   struct gpu_list* list = (struct gpu_list*) malloc(sizeof(struct gpu_list));
   list->num_gpus = 0;
   list->gpus = (struct gpu_info**) malloc(sizeof(struct info*) * MAX_GPUS);

@@ -200,23 +200,32 @@ void replace_bgbyfg_color(struct ascii_logo* logo) {
   for(int i=0; i < 2; i++) {
     if(logo->color_ascii[i] == NULL) break;
 
-    if(strcmp(logo->color_ascii[i], COLOR_BG_BLACK) == 0) strcpy(logo->color_ascii[i], COLOR_FG_BLACK);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_RED) == 0) strcpy(logo->color_ascii[i], COLOR_FG_RED);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_GREEN) == 0) strcpy(logo->color_ascii[i], COLOR_FG_GREEN);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_YELLOW) == 0) strcpy(logo->color_ascii[i], COLOR_FG_YELLOW);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_BLUE) == 0) strcpy(logo->color_ascii[i], COLOR_FG_BLUE);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_MAGENTA) == 0) strcpy(logo->color_ascii[i], COLOR_FG_MAGENTA);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_CYAN) == 0) strcpy(logo->color_ascii[i], COLOR_FG_CYAN);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_WHITE) == 0) strcpy(logo->color_ascii[i], COLOR_FG_WHITE);
+    if(strcmp(logo->color_ascii[i], C_BG_BLACK) == 0) strcpy(logo->color_ascii[i], C_FG_BLACK);
+    else if(strcmp(logo->color_ascii[i], C_BG_RED) == 0) strcpy(logo->color_ascii[i], C_FG_RED);
+    else if(strcmp(logo->color_ascii[i], C_BG_GREEN) == 0) strcpy(logo->color_ascii[i], C_FG_GREEN);
+    else if(strcmp(logo->color_ascii[i], C_BG_YELLOW) == 0) strcpy(logo->color_ascii[i], C_FG_YELLOW);
+    else if(strcmp(logo->color_ascii[i], C_BG_BLUE) == 0) strcpy(logo->color_ascii[i], C_FG_BLUE);
+    else if(strcmp(logo->color_ascii[i], C_BG_MAGENTA) == 0) strcpy(logo->color_ascii[i], C_FG_MAGENTA);
+    else if(strcmp(logo->color_ascii[i], C_BG_CYAN) == 0) strcpy(logo->color_ascii[i], C_FG_CYAN);
+    else if(strcmp(logo->color_ascii[i], C_BG_WHITE) == 0) strcpy(logo->color_ascii[i], C_FG_WHITE);
+  }
+}
+
+struct ascii_logo* choose_ascii_art_aux(struct ascii_logo* logo_long, struct ascii_logo* logo_short, struct terminal* term, int lf) {
+  if(ascii_fits_screen(term->w, *logo_long, lf)) {
+    return logo_long;
+  }
+  else {
+    return logo_short;
   }
 }
 
 void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* term, int lf) {
   if(art->vendor == GPU_VENDOR_NVIDIA) {
-    if(term != NULL && ascii_fits_screen(term->w, logo_nvidia_l, lf))
-      art->art = &logo_nvidia_l;
-    else
-      art->art = &logo_nvidia;
+    art->art = choose_ascii_art_aux(&logo_nvidia_l, &logo_nvidia, term, lf);
+  }
+  else if(art->vendor == GPU_VENDOR_INTEL) {
+    art->art = choose_ascii_art_aux(&logo_intel_l, &logo_intel, term, lf);
   }
   else {
     art->art = &logo_unknown;
@@ -228,10 +237,10 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
   switch(art->style) {
     case STYLE_LEGACY:
       logo->replace_blocks = false;
-      strcpy(logo->color_text[0], COLOR_NONE);
-      strcpy(logo->color_text[1], COLOR_NONE);
-      strcpy(logo->color_ascii[0], COLOR_NONE);
-      strcpy(logo->color_ascii[1], COLOR_NONE);
+      strcpy(logo->color_text[0], C_NONE);
+      strcpy(logo->color_text[1], C_NONE);
+      strcpy(logo->color_ascii[0], C_NONE);
+      strcpy(logo->color_ascii[1], C_NONE);
       art->reset[0] = '\0';
       break;
     case STYLE_RETRO:
@@ -245,7 +254,7 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
         strcpy(logo->color_ascii[0], rgb_to_ansi(cs[0], logo->replace_blocks, true));
         strcpy(logo->color_ascii[1], rgb_to_ansi(cs[1], logo->replace_blocks, true));
       }
-      strcpy(art->reset, COLOR_RESET);
+      strcpy(art->reset, C_RESET);
       break;
     case STYLE_INVALID:
     default:
@@ -344,7 +353,29 @@ void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, con
 
 #ifdef BACKEND_INTEL
 bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
-  return false;
+  struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
+
+  if(art == NULL)
+    return false;
+
+  char* gpu_name = get_str_gpu_name(gpu);
+  setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+
+  const char** attribute_fields = ATTRIBUTE_FIELDS;
+  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  uint32_t longest_field = longest_field_length(art, longest_attribute);
+  choose_ascii_art(art, cs, term, longest_field);
+
+  if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
+    // Despite of choosing the smallest logo, the output does not fit
+    // Choose the shorter field names and recalculate the longest attr
+    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
+    longest_attribute = longest_attribute_length(art, attribute_fields);
+  }
+
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+
+  return true;
 }
 #endif
 
