@@ -342,13 +342,13 @@ void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, con
   printf("\n");
 }
 
-#ifdef ENABLE_INTEL_BACKEND
+#ifdef BACKEND_INTEL
 bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
   return false;
 }
 #endif
 
-#ifdef ENABLE_CUDA_BACKEND
+#ifdef BACKEND_CUDA
 bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
   struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
 
@@ -457,13 +457,13 @@ bool print_gpufetch(struct gpu_info* gpu, STYLE s, struct color** cs) {
   struct terminal* term = get_terminal_size();
 
   if(gpu->vendor == GPU_VENDOR_NVIDIA)
-    #ifdef ENABLE_CUDA_BACKEND
+    #ifdef BACKEND_CUDA
       return print_gpufetch_cuda(gpu, s, cs, term);
     #else
       return false;
     #endif
   else {
-    #ifdef ENABLE_INTEL_BACKEND
+    #ifdef BACKEND_INTEL
       return print_gpufetch_intel(gpu, s, cs, term);
     #else
       return false;

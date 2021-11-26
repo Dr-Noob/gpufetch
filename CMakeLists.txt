@@ -9,8 +9,6 @@ set(COMMON_DIR "${SRC_DIR}/common")
 set(CUDA_DIR "${SRC_DIR}/cuda")
 set(INTEL_DIR "${SRC_DIR}/intel")
 
-add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp)
-
 if(NOT DEFINED ENABLE_INTEL_BACKEND)
     set(ENABLE_INTEL_BACKEND true)
 endif()
@@ -47,15 +45,26 @@ else()
   link_libraries(${PCIUTILS_LIBRARIES})
 endif()
 
+add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp)
 set(SANITY_FLAGS "-Wfloat-equal -Wshadow -Wpointer-arith")
 set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-all -pedantic")
 
 if(ENABLE_INTEL_BACKEND)
+  target_compile_definitions(gpufetch PUBLIC BACKEND_INTEL)
+
   add_library(intel_backend STATIC ${INTEL_DIR}/intel.cpp)
+
+  if(NOT ${PCIUTILS_FOUND})
+    add_dependencies(intel_backend pciutils)
+    add_dependencies(gpufetch pciutils)
+  endif()
+
   target_link_libraries(gpufetch intel_backend pci z)
 endif()
 
 if(ENABLE_CUDA_BACKEND)
+  target_compile_definitions(gpufetch PUBLIC BACKEND_CUDA)
+
   # https://en.wikipedia.org/w/index.php?title=CUDA&section=5#GPUs_supported
   # https://raw.githubusercontent.com/PointCloudLibrary/pcl/master/cmake/pcl_find_cuda.cmake
   if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")

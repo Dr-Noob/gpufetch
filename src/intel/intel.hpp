@@ -3,6 +3,7 @@
 
 #include "../common/gpu.hpp"
 
-struct gpu_info* get_gpu_info_intel(int gpu_idx);
+struct gpu_info* get_gpu_info_intel();
+bool print_gpu_intel(struct gpu_info* gpu);
 
 #endif

@@ -42,6 +42,10 @@ int print_gpus_list_deprecated() {
   return EXIT_SUCCESS;
 }
 
+bool print_gpu_cuda(struct gpu_info* gpu) {
+  return false;
+}
+
 struct cache* get_cache_info(cudaDeviceProp prop) {
   struct cache* cach = (struct cache*) emalloc(sizeof(struct cache));
 

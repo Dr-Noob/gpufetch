@@ -1,8 +1,10 @@
 #include <stdbool.h>
-#include <cstddef>
-#include <cstdlib>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "master.hpp"
+#include "../cuda/cuda.hpp"
+#include "../intel/intel.hpp"
 
 #define MAX_GPUS 1000
 
@@ -12,14 +14,13 @@ struct gpu_list {
 };
 
 struct gpu_list* get_gpu_list() {
+  int idx = 0;
   bool valid = true;
   struct gpu_list* list = (struct gpu_list*) malloc(sizeof(struct gpu_list));
   list->num_gpus = 0;
   list->gpus = (struct gpu_info**) malloc(sizeof(struct info*) * MAX_GPUS);
 
-#ifdef ENABLE_CUDA_BACKEND
-  int idx = 0;
-
+#ifdef BACKEND_CUDA
   while(valid) {
     list->gpus[idx] = get_gpu_info_cuda(idx);
     if(list->gpus[idx] != NULL) idx++;
@@ -29,7 +30,7 @@ struct gpu_list* get_gpu_list() {
   list->num_gpus += idx;
 #endif
 
-#ifdef ENABLE_INTEL_BACKEND
+#ifdef BACKEND_INTEL
   list->gpus[idx] = get_gpu_info_intel();
   if(list->gpus[idx] != NULL) list->num_gpus++;
 #endif
@@ -38,7 +39,21 @@ struct gpu_list* get_gpu_list() {
 }
 
 bool print_gpus_list(struct gpu_list* list) {
-  return false;
+  for(int i=0; i < list->num_gpus; i++) {
+    printf("GPU %d: ", i);
+    if(list->gpus[i]->vendor == GPU_VENDOR_NVIDIA) {
+      #ifdef ENABLE_CUDA_BACKEND
+        print_gpu_cuda(list->gpus[i]);
+      #endif
+    }
+    else if(list->gpus[i]->vendor == GPU_VENDOR_INTEL) {
+      #ifdef ENABLE_INTEL_BACKEND
+        print_gpu_intel(list->gpus[i]);
+      #endif
+    }
+  }
+
+  return true;
 }
 
 struct gpu_info* get_gpu_info(struct gpu_list* list, int idx) {
