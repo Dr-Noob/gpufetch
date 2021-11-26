@@ -18,6 +18,8 @@ if(NOT DEFINED ENABLE_CUDA_BACKEND OR ENABLE_CUDA_BACKEND)
   if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
     set(ENABLE_CUDA_BACKEND true)
+    # Must link_directories early so add_executable(gpufetch ...) gets the right directories
+    link_directories(cuda_backend ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/lib)
   else()
     set(ENABLE_CUDA_BACKEND false)
   endif()
@@ -56,10 +58,9 @@ if(ENABLE_INTEL_BACKEND)
 
   if(NOT ${PCIUTILS_FOUND})
     add_dependencies(intel_backend pciutils)
-    add_dependencies(gpufetch pciutils)
   endif()
 
-  target_link_libraries(gpufetch intel_backend pci z)
+  target_link_libraries(gpufetch intel_backend)
 endif()
 
 if(ENABLE_CUDA_BACKEND)
@@ -77,21 +78,19 @@ if(ENABLE_CUDA_BACKEND)
     set(CMAKE_CUDA_ARCHITECTURES 20 21 30 32 35 37 50 52 53 60 61 62)
   endif()
 
-  link_directories(${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/lib)
-
   add_library(cuda_backend STATIC ${CUDA_DIR}/cuda.cpp ${CUDA_DIR}/uarch.cpp ${CUDA_DIR}/pci.cpp)
 
   if(NOT ${PCIUTILS_FOUND})
     add_dependencies(cuda_backend pciutils)
-    add_dependencies(gpufetch pciutils)
   endif()
 
   target_include_directories(cuda_backend PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/include)
 
-  target_link_libraries(cuda_backend cudart)
-  target_link_libraries(gpufetch cuda_backend pci z)
+  target_link_libraries(cuda_backend PRIVATE cudart)
+  target_link_libraries(gpufetch cuda_backend)
 endif()
 
+target_link_libraries(gpufetch pci z)
 install(TARGETS gpufetch DESTINATION bin)
 
 if(NOT WIN32)
