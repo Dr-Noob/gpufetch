@@ -6,44 +6,12 @@
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 
-int print_gpus_list_deprecated() {
-  cudaError_t err = cudaSuccess;
-  int num_gpus = -1;
-
-  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-    return EXIT_FAILURE;
-  }
-  printf("CUDA GPUs available: %d\n", num_gpus);
-
-  if(num_gpus > 0) {
-    cudaDeviceProp deviceProp;
-    int max_len = 0;
-
-    for(int idx=0; idx < num_gpus; idx++) {
-      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
-        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-        return EXIT_FAILURE;
-      }
-      max_len = max(max_len, (int) strlen(deviceProp.name));
-    }
-
-    for(int i=0; i < max_len + 32; i++) putchar('-');
-    putchar('\n');
-    for(int idx=0; idx < num_gpus; idx++) {
-      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
-        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-        return EXIT_FAILURE;
-      }
-      printf("GPU %d: %s (Compute Capability %d.%d)\n", idx, deviceProp.name, deviceProp.major, deviceProp.minor);
-    }
-  }
-
-  return EXIT_SUCCESS;
-}
-
 bool print_gpu_cuda(struct gpu_info* gpu) {
-  return false;
+  char* cc = get_str_cc(gpu->arch);
+  printf("%s (Compute Capability %s)\n", gpu->name, cc);
+  free(cc);
+
+  return true;
 }
 
 struct cache* get_cache_info(cudaDeviceProp prop) {
@@ -127,8 +95,10 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
     return NULL;
   }
 
-  printf("Waiting for CUDA driver to start...");
-  fflush(stdout);
+  if(gpu_idx == 0) {
+    printf("Waiting for CUDA driver to start...");
+    fflush(stdout);
+  }
 
   int num_gpus = -1;
   cudaError_t err = cudaSuccess;
@@ -136,7 +106,10 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
-  printf("\r                                   ");
+
+  if(gpu_idx == 0) {
+    printf("\r");
+  }
 
   if(num_gpus <= 0) {
     printErr("No CUDA capable devices found!");
@@ -144,7 +117,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   }
 
   if(gpu->idx+1 > num_gpus) {
-    printErr("Requested GPU index %d in a system with %d GPUs", gpu->idx, num_gpus);
+    // Master is trying to query an invalid GPU
     return NULL;
   }
 

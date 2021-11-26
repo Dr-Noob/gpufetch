@@ -42,12 +42,12 @@ bool print_gpus_list(struct gpu_list* list) {
   for(int i=0; i < list->num_gpus; i++) {
     printf("GPU %d: ", i);
     if(list->gpus[i]->vendor == GPU_VENDOR_NVIDIA) {
-      #ifdef ENABLE_CUDA_BACKEND
+      #ifdef BACKEND_CUDA
         print_gpu_cuda(list->gpus[i]);
       #endif
     }
     else if(list->gpus[i]->vendor == GPU_VENDOR_INTEL) {
-      #ifdef ENABLE_INTEL_BACKEND
+      #ifdef BACKEND_INTEL
         print_gpu_intel(list->gpus[i]);
       #endif
     }
