@@ -9,8 +9,6 @@
 
 struct gpu_info* get_gpu_info_intel() {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
-  const char* name = "UHD Graphics XXX";
-
   gpu->vendor = GPU_VENDOR_INTEL;
 
   struct pci_dev *devices = get_pci_devices_from_pciutils();
