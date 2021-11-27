@@ -47,7 +47,7 @@ else()
   link_libraries(${PCIUTILS_LIBRARIES})
 endif()
 
-add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp)
+add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp ${COMMON_DIR}/uarch.cpp)
 set(SANITY_FLAGS "-Wfloat-equal -Wshadow -Wpointer-arith")
 set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-all -pedantic")
 

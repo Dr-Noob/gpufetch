@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <cstddef>
 #include <string.h>
+#include <stdio.h>
 
 #include "../common/uarch.hpp"
 #include "../common/global.hpp"
@@ -60,6 +61,10 @@ void map_chip_to_uarch(struct uarch* arch) {
   CHECK_UARCH_END
 }
 
+const char* get_str_uarch(struct uarch* arch) {
+  return uarch_str[arch->uarch];
+}
+
 struct uarch* get_uarch_from_pci(struct pci* pci) {
   struct uarch* arch = (struct uarch*) emalloc(sizeof(struct uarch));
 
@@ -71,5 +76,7 @@ struct uarch* get_uarch_from_pci(struct pci* pci) {
 }
 
 char* get_name_from_uarch(struct uarch* arch) {
-  return arch->chip_str;
+  char* name = (char *) emalloc(sizeof(char) * (strlen(arch->chip_str) + 6 + 1));
+  sprintf(name, "Intel %s", arch->chip_str);
+  return name;
 }

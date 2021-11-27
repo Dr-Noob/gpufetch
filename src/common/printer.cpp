@@ -359,7 +359,12 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
     return false;
 
   char* gpu_name = get_str_gpu_name(gpu);
+  char* uarch = get_str_uarch(gpu->arch);
+  char* manufacturing_process = get_str_process(gpu->arch);
+
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+  setAttribute(art, ATTRIBUTE_UARCH, uarch);
+  setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);

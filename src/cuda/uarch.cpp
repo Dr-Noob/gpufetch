@@ -11,12 +11,6 @@
 // Any clock multiplier
 #define CM_ANY               -1
 
-// Data not available
-#define NA                   -1
-
-// Unknown manufacturing process
-#define UNK                  -1
-
 // MICROARCH values
 enum {
   UARCH_UNKNOWN,
@@ -330,27 +324,6 @@ char* get_str_cc(struct uarch* arch) {
   char* cc = (char *) ecalloc(max_size, sizeof(char));
   snprintf(cc, max_size, "%d.%d", arch->cc_major, arch->cc_minor);
   return cc;
-}
-
-char* get_str_process(struct uarch* arch) {
-  char* str = (char *) emalloc(sizeof(char) * (strlen(STRING_UNKNOWN)+1));
-  int32_t process = arch->process;
-
-  if(process == UNK) {
-    snprintf(str, strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-  }
-  else if(process > 100) {
-    sprintf(str, "%.2fum", (double)process/100);
-  }
-  else if(process > 0){
-    sprintf(str, "%dnm", process);
-  }
-  else {
-    snprintf(str, strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-    printBug("Found invalid process: '%d'", process);
-  }
-
-  return str;
 }
 
 char* get_str_chip(struct uarch* arch) {
