@@ -11,9 +11,14 @@ typedef uint32_t GPUCHIP;
 typedef uint32_t MICROARCH;
 
 struct uarch {
+  // NVIDIA specific
   int32_t cc_major;
   int32_t cc_minor;
   int32_t compute_capability;
+
+  // Intel specific
+  int32_t gt;
+  int32_t eu;
 
   MICROARCH uarch;
   GPUCHIP chip;

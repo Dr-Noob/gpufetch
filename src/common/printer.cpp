@@ -9,6 +9,7 @@
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 
+#include "../intel/uarch.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -34,6 +35,7 @@ enum {
   ATTRIBUTE_CHIP,
   ATTRIBUTE_UARCH,
   ATTRIBUTE_TECHNOLOGY,
+  ATTRIBUTE_GT,
   ATTRIBUTE_FREQUENCY,
   ATTRIBUTE_STREAMINGMP,
   ATTRIBUTE_CORESPERMP,
@@ -52,6 +54,7 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "GPU processor:",
   "Microarchitecture:",
   "Technology:",
+  "Graphics Tier:",
   "Max Frequency:",
   "SMs:",
   "Cores/SM:",
@@ -70,6 +73,7 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Processor:",
   "uArch:",
   "Technology:",
+  "GT:",
   "Max Freq.:",
   "SMs:",
   "Cores/SM:",
@@ -359,12 +363,14 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
     return false;
 
   char* gpu_name = get_str_gpu_name(gpu);
-  char* uarch = get_str_uarch(gpu->arch);
+  char* uarch = get_str_uarch_intel(gpu->arch);
+  char* gt = get_str_gt(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
+  setAttribute(art, ATTRIBUTE_GT, gt);
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
@@ -393,7 +399,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 
   char* gpu_name = get_str_gpu_name(gpu);
   char* gpu_chip = get_str_chip(gpu->arch);
-  char* uarch = get_str_uarch(gpu->arch);
+  char* uarch = get_str_uarch_cuda(gpu->arch);
   char* comp_cap = get_str_cc(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
   char* sms = get_str_sm(gpu);

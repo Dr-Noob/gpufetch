@@ -7,6 +7,7 @@ struct uarch;
 
 struct uarch* get_uarch_from_pci(struct pci* pci);
 char* get_name_from_uarch(struct uarch* arch);
-const char* get_str_uarch(struct uarch* arch);
+char* get_str_gt(struct uarch* arch);
+char* get_str_uarch_intel(struct uarch* arch);
 
 #endif

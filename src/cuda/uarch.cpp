@@ -315,10 +315,6 @@ MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
   CHECK_MEMTYPE_END
 }
 
-const char* get_str_uarch(struct uarch* arch) {
-  return uarch_str[arch->uarch];
-}
-
 char* get_str_cc(struct uarch* arch) {
   uint32_t max_size = 4;
   char* cc = (char *) ecalloc(max_size, sizeof(char));
@@ -328,6 +324,10 @@ char* get_str_cc(struct uarch* arch) {
 
 char* get_str_chip(struct uarch* arch) {
   return arch->chip_str;
+}
+
+const char* get_str_uarch_cuda(struct uarch* arch) {
+  return uarch_str[arch->uarch];
 }
 
 void free_uarch_struct(struct uarch* arch) {
