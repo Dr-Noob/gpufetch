@@ -109,8 +109,12 @@ int64_t get_peak_performance(struct gpu_info* gpu) {
 }
 
 // Compute peak performance when using tensor cores
-int64_t get_peak_performance_t(struct gpu_info* gpu) {
-  return gpu->freq * 1000000 * 4 * 4 * 8 * gpu->topo->tensor_cores;
+int64_t get_peak_performance_t(cudaDeviceProp prop, struct gpu_info* gpu) {
+  // Volta / Turing tensor cores performs 4x4x4 FP16 matrix multiplication
+  // Ampere tensor cores performs 8x4x8 FP16 matrix multiplicacion
+  if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo->tensor_cores;
+  else if(prop.major == 8) return gpu->freq * 1000000 * 8 * 4 * 8 * 2 * gpu->topo->tensor_cores;
+  else return 0;
 }
 
 struct gpu_info* get_gpu_info(int gpu_idx) {
@@ -162,7 +166,7 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   gpu->mem = get_memory_info(gpu, deviceProp);
   gpu->topo = get_topology_info(deviceProp);
   gpu->peak_performance = get_peak_performance(gpu);
-  gpu->peak_performance_t = get_peak_performance_t(gpu);
+  gpu->peak_performance_t = get_peak_performance_t(deviceProp, gpu);
 
   return gpu;
 }
