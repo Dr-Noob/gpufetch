@@ -61,6 +61,17 @@ static const char *gt_str[] = {
    else if (arch->chip == chip_) fill_uarch(arch, str, uarch, gt, process);
 #define CHECK_UARCH_END else { printBug("map_chip_to_uarch: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, GT_UNKNOWN, 0); }
 
+#define CHECK_TOPO_START if (false) {}
+#define CHECK_TOPO(topo, arch, uarch_, gt_, eu_sub, sub, sli) \
+  else if(arch->uarch == uarch_ && arch->gt == gt_) fill_topo(topo, eu_sub, sub, sli);
+#define CHECK_TOPO_END else { printBug("TODOO"); fill_topo(topo, -1, -1, -1); }
+
+void fill_topo(struct topology_i* topo_i, int32_t eu_sub, int32_t sub, int32_t sli) {
+  topo_i->slices = sli;
+  topo_i->subslices = sub;
+  topo_i->eu_subslice = eu_sub;
+}
+
 void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, int32_t gt, uint32_t process) {
   arch->chip_str = (char *) emalloc(sizeof(char) * (strlen(str)+1));
   strcpy(arch->chip_str, str);
@@ -137,4 +148,26 @@ char* get_name_from_uarch(struct uarch* arch) {
   char* name = (char *) emalloc(sizeof(char) * (strlen(arch->chip_str) + 6 + 1));
   sprintf(name, "Intel %s", arch->chip_str);
   return name;
+}
+
+/*
+ * https://en.wikichip.org/wiki/intel/microarchitectures/gen9#Configuration
+ */
+struct topology_i* get_topology_info(struct uarch* arch) {
+  struct topology_i* topo = (struct topology_i*) emalloc(sizeof(struct topology_i));
+
+  // Syntax: (EU per subslice, Subslices, Slices)
+  CHECK_TOPO_START
+  // Gen9
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT1,  6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT2,  8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT3,  8, 6, 2)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT4e, 8, 9, 3)
+  // Gen9.5
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT1,  6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT2,  8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3,  8, 6, 2)
+  CHECK_TOPO_END
+
+  return topo;
 }

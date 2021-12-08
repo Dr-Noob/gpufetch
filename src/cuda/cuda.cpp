@@ -144,14 +144,6 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   return gpu;
 }
 
-char* get_str_generic(int32_t data) {
-  // Largest int is 10, +1 for possible negative, +1 for EOL
-  uint32_t max_size = 12;
-  char* dummy = (char *) ecalloc(max_size, sizeof(char));
-  snprintf(dummy, max_size, "%d", data);
-  return dummy;
-}
-
 char* get_str_sm(struct gpu_info* gpu) {
   return get_str_generic(gpu->topo->streaming_mp);
 }

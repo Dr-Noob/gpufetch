@@ -15,6 +15,7 @@ struct gpu_info* get_gpu_info_intel() {
   gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_INTEL);
   gpu->arch = get_uarch_from_pci(gpu->pci);
   gpu->name = get_name_from_uarch(gpu->arch);
+  gpu->topo_i = get_topology_info(gpu->arch);
 
   return gpu;
 }
@@ -25,4 +26,8 @@ bool print_gpu_intel(struct gpu_info* gpu) {
   printf("Intel %s\n", gpu->name);
 
   return true;
+}
+
+char* get_str_eu(struct gpu_info* gpu) {
+  return get_str_generic(gpu->topo_i->subslices * gpu->topo_i->eu_subslice);
 }

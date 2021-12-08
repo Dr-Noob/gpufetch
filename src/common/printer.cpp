@@ -10,6 +10,7 @@
 #include "../common/gpu.hpp"
 
 #include "../intel/uarch.hpp"
+#include "../intel/intel.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -41,6 +42,7 @@ enum {
   ATTRIBUTE_CORESPERMP,
   ATTRIBUTE_CUDA_CORES,
   ATTRIBUTE_TENSOR_CORES,
+  ATTRIBUTE_EUS,
   ATTRIBUTE_L2,
   ATTRIBUTE_MEMORY,
   ATTRIBUTE_MEMORY_FREQ,
@@ -60,6 +62,7 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "Cores/SM:",
   "CUDA Cores:",
   "Tensor Cores:",
+  "Execution Units:",
   "L2 Size:",
   "Memory:",
   "Memory frequency:",
@@ -79,6 +82,7 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Cores/SM:",
   "CUDA Cores:",
   "Tensor Cores:",
+  "EUs:",
   "L2 Size:",
   "Memory:",
   "Memory freq.:",
@@ -366,11 +370,13 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
   char* uarch = get_str_uarch_intel(gpu->arch);
   char* gt = get_str_gt(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
+  char* eus = get_str_eu(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_GT, gt);
+  setAttribute(art, ATTRIBUTE_EUS, eus);
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
