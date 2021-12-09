@@ -4,6 +4,7 @@
 #include "intel.hpp"
 #include "uarch.hpp"
 #include "chips.hpp"
+#include "udev.hpp"
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 
@@ -16,6 +17,7 @@ struct gpu_info* get_gpu_info_intel() {
   gpu->arch = get_uarch_from_pci(gpu->pci);
   gpu->name = get_name_from_uarch(gpu->arch);
   gpu->topo_i = get_topology_info(gpu->arch);
+  gpu->freq = get_max_freq_from_file(gpu->pci);
 
   return gpu;
 }

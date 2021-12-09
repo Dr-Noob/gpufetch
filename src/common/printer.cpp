@@ -371,10 +371,12 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
   char* gt = get_str_gt(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
   char* eus = get_str_eu(gpu);
+  char* max_frequency = get_str_freq(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
+  setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_GT, gt);
   setAttribute(art, ATTRIBUTE_EUS, eus);
 

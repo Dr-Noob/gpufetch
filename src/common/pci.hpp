@@ -9,6 +9,10 @@ extern "C" {
 struct pci {
   uint16_t vendor_id;
   uint16_t device_id;
+  uint16_t domain;
+  uint16_t bus;
+  uint16_t dev;
+  uint16_t func;
 };
 
 struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id);
