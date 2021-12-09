@@ -372,6 +372,7 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
   char* manufacturing_process = get_str_process(gpu->arch);
   char* eus = get_str_eu(gpu);
   char* max_frequency = get_str_freq(gpu);
+  char* pp = get_str_peak_performance(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
@@ -379,6 +380,7 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_GT, gt);
   setAttribute(art, ATTRIBUTE_EUS, eus);
+  setAttribute(art, ATTRIBUTE_PEAK, pp);
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
