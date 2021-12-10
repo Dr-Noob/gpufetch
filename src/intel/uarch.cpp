@@ -176,29 +176,31 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   // Syntax: (EU per subslice, Subslices, Slices)
   CHECK_TOPO_START
   // Gen6
-  CHECK_TOPO(topo, arch, UARCH_GEN6,   GT1,  6, 1, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN6,   GT2,  6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN6,   GT1,   6, 1, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN6,   GT2,   6, 2, 1)
   // Gen7
-  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT1,  6, 1, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT2,  8, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT3,  6, 1, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT1,   6, 1, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT2,   8, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT3,   6, 1, 1)
   // Gen7.5
-  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT1, 10, 1, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT2, 10, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT3, 10, 4, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT1,  10, 1, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT2,  10, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT3,  10, 4, 1)
   // Gen8
-  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT1,  6, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT2,  8, 3, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT3,  8, 6, 2)
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT1,   6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT2,   8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT3,   8, 6, 2)
   // Gen9
-  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT1,  6, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT2,  8, 3, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT3,  8, 6, 2)
-  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT4e, 8, 9, 3)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT1,   6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT2,   8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT3,   8, 6, 2)
+  CHECK_TOPO(topo, arch, UARCH_GEN9,   GT4e,  8, 9, 3)
   // Gen9.5
-  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT1,  6, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT2,  8, 3, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3,  8, 6, 2)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT1,   6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT1_5, 6, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT2,   8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3,   8, 6, 2)
+  CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3e,  8, 6, 2) // Same as GT3, but has eDRAM cache
   CHECK_TOPO_END
 
   return topo;
