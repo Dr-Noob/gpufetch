@@ -49,7 +49,7 @@ endif()
 
 add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp ${COMMON_DIR}/uarch.cpp)
 set(SANITY_FLAGS "-Wfloat-equal -Wshadow -Wpointer-arith")
-set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-all -pedantic")
+set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-all -pedantic -std=c++11")
 
 if(ENABLE_INTEL_BACKEND)
   target_compile_definitions(gpufetch PUBLIC BACKEND_INTEL)
