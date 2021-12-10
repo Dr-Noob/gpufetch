@@ -151,13 +151,32 @@ char* get_name_from_uarch(struct uarch* arch) {
 }
 
 /*
- * https://en.wikichip.org/wiki/intel/microarchitectures/gen9#Configuration
+ * Refs:
+ * Gen7.5: https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units#Gen7
+           "The Compute Architecture of Intel Processor Graphics Gen7.5, v1.0"
+ * Gen8:   https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units#Gen8
+           "The Compute Architecture of Intel Processor Graphics Gen8, v1.1"
+ * Gen9:   https://en.wikichip.org/wiki/intel/microarchitectures/gen9#Configuration
+           "The Compute Architecture of Intel Processor Graphics Gen9, v1.0"
+ * Gen9.5: https://en.wikichip.org/wiki/intel/microarchitectures/gen9.5#Configuration
  */
 struct topology_i* get_topology_info(struct uarch* arch) {
   struct topology_i* topo = (struct topology_i*) emalloc(sizeof(struct topology_i));
 
   // Syntax: (EU per subslice, Subslices, Slices)
   CHECK_TOPO_START
+  // Gen6
+  // CHECK_TOPO(topo, arch, UARCH_GEN6,   GT1,  6, 1, 1)
+  // Gen7
+  // CHECK_TOPO(topo, arch, UARCH_GEN7,   GT1,  6, 2, 1)
+  // Gen7.5
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT1,  6, 1, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT2,  8, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN7_5, GT3,  6, 1, 1)
+  // Gen8
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT1,  6, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT2,  8, 3, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN8,   GT3,  8, 6, 2)
   // Gen9
   CHECK_TOPO(topo, arch, UARCH_GEN9,   GT1,  6, 2, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN9,   GT2,  8, 3, 1)
