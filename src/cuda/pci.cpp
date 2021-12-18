@@ -8,7 +8,7 @@
 #define CHECK_PCI_START if (false) {}
 #define CHECK_PCI(pci, id, chip) \
    else if (pci->device_id == id) return chip;
-#define CHECK_PCI_END else { printBug("TODOO"); return CHIP_UNKNOWN; }
+#define CHECK_PCI_END else { printBug("Unkown CUDA device id: 0x%.4X", pci->device_id); return CHIP_UNKNOWN_CUDA; }
 
 /*
  * pci ids were retrieved using https://github.com/pciutils/pciids

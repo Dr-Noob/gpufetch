@@ -149,9 +149,13 @@ struct uarch* get_uarch_from_pci(struct pci* pci) {
 
   arch->chip_str = NULL;
   arch->chip = get_chip_from_pci_intel(pci);
-  map_chip_to_uarch_intel(arch);
-
-  return arch;
+  if(arch->chip == CHIP_UNKNOWN_INTEL) {
+    return NULL;
+  }
+  else {
+    map_chip_to_uarch_intel(arch);
+    return arch;
+  }
 }
 
 char* get_name_from_uarch(struct uarch* arch) {
