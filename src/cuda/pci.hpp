@@ -14,7 +14,6 @@
 
 struct pci;
 
-struct pci* get_pci_from_pciutils(struct pci_dev *devices);
-GPUCHIP get_chip_from_pci(struct pci* pci);
+GPUCHIP get_chip_from_pci_cuda(struct pci* pci);
 
 #endif

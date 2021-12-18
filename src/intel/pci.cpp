@@ -13,7 +13,7 @@
 /*
  * https://github.com/mesa3d/mesa/blob/main/include/pci_ids/i965_pci_ids.h
  */
-GPUCHIP get_chip_from_pci(struct pci* pci) {
+GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI_START
   // Gen6
   CHECK_PCI(pci, 0x0102, CHIP_HD_2000)

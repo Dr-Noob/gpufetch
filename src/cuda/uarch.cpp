@@ -39,7 +39,7 @@ static const char *uarch_str[] = {
 #define CHECK_UARCH_START if (false) {}
 #define CHECK_UARCH(arch, chip_, str, uarch, process) \
    else if (arch->chip == chip_) fill_uarch(arch, str, uarch, process);
-#define CHECK_UARCH_END else { printBug("map_chip_to_uarch: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, 0); }
+#define CHECK_UARCH_END else { printBug("map_chip_to_uarch_cuda: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, 0); }
 
 void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, uint32_t process) {
   arch->chip_str = (char *) emalloc(sizeof(char) * (strlen(str)+1));
@@ -54,7 +54,7 @@ void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, uint32_t proce
  * o CHIP_XXXGL: indicates a professional-class (Quadro/Tesla) chip
  * o CHIP_XXXM:  indicates a mobile chip
  */
-void map_chip_to_uarch(struct uarch* arch) {
+void map_chip_to_uarch_cuda(struct uarch* arch) {
   CHECK_UARCH_START
   // TESLA (1.0, 1.1, 1.2, 1.3)                                //
   CHECK_UARCH(arch, CHIP_G80,      "G80",      UARCH_TESLA,   90)
@@ -243,9 +243,8 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
   arch->cc_major = deviceProp.major;
   arch->cc_minor = deviceProp.minor;
   arch->compute_capability = deviceProp.major * 10 + deviceProp.minor;
-  arch->chip = get_chip_from_pci(gpu->pci);
-
-  map_chip_to_uarch(arch);
+  arch->chip = get_chip_from_pci_cuda(gpu->pci);
+  map_chip_to_uarch_cuda(arch);
 
   return arch;
 }

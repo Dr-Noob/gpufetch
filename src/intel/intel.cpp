@@ -8,7 +8,7 @@
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 
-int64_t get_peak_performance(struct gpu_info* gpu) {
+int64_t get_peak_performance_intel(struct gpu_info* gpu) {
   return gpu->freq * 1000000 * gpu->topo_i->eu_subslice * gpu->topo_i->subslices * 8 * 2;
 }
 
@@ -22,7 +22,7 @@ struct gpu_info* get_gpu_info_intel() {
   gpu->name = get_name_from_uarch(gpu->arch);
   gpu->topo_i = get_topology_info(gpu->arch);
   gpu->freq = get_max_freq_from_file(gpu->pci);
-  gpu->peak_performance = get_peak_performance(gpu);
+  gpu->peak_performance = get_peak_performance_intel(gpu);
 
   return gpu;
 }

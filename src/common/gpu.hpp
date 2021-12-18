@@ -69,7 +69,7 @@ struct gpu_info {
   struct memory* mem;
   struct cache* cach;
   int64_t peak_performance;
-  int64_t peak_performance_t;
+  int64_t peak_performance_tcu;
   int32_t idx;
 };
 

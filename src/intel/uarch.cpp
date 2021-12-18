@@ -7,6 +7,7 @@
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 #include "chips.hpp"
+#include "pci.hpp"
 
 // Data not available
 #define NA                   -1
@@ -68,7 +69,7 @@ static const char *gt_str[] = {
 #define CHECK_UARCH_START if (false) {}
 #define CHECK_UARCH(arch, chip_, str, uarch, gt, process) \
    else if (arch->chip == chip_) fill_uarch(arch, str, uarch, gt, process);
-#define CHECK_UARCH_END else { printBug("map_chip_to_uarch: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, GT_UNKNOWN, 0); }
+#define CHECK_UARCH_END else { printBug("map_chip_to_uarch_intel: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, GT_UNKNOWN, 0); }
 
 #define CHECK_TOPO_START if (false) {}
 #define CHECK_TOPO(topo, arch, uarch_, gt_, eu_sub, sub, sli) \
@@ -89,7 +90,7 @@ void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, int32_t gt, ui
   arch->gt = gt;
 }
 
-void map_chip_to_uarch(struct uarch* arch) {
+void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH_START
   // Gen6
   CHECK_UARCH(arch, CHIP_HD_2000,     "HD Graphics 2000",        UARCH_GEN6,   GT1,  32)
@@ -147,8 +148,8 @@ struct uarch* get_uarch_from_pci(struct pci* pci) {
   struct uarch* arch = (struct uarch*) emalloc(sizeof(struct uarch));
 
   arch->chip_str = NULL;
-  arch->chip = get_chip_from_pci(pci);
-  map_chip_to_uarch(arch);
+  arch->chip = get_chip_from_pci_intel(pci);
+  map_chip_to_uarch_intel(arch);
 
   return arch;
 }

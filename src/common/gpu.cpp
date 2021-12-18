@@ -143,7 +143,7 @@ char* get_str_peak_performance(struct gpu_info* gpu) {
 }
 
 char* get_str_peak_performance_tensor(struct gpu_info* gpu) {
-  return get_str_peak_performance_generic(gpu->peak_performance_t);
+  return get_str_peak_performance_generic(gpu->peak_performance_tcu);
 }
 
 char* get_str_generic(int32_t data) {

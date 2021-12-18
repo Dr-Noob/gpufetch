@@ -19,7 +19,7 @@
  * or in pci.ids itself)
  */
 
-GPUCHIP get_chip_from_pci(struct pci* pci) {
+GPUCHIP get_chip_from_pci_cuda(struct pci* pci) {
   CHECK_PCI_START
   CHECK_PCI(pci, 0x25e5, CHIP_GA107BM)
   CHECK_PCI(pci, 0x25e2, CHIP_GA107BM)
