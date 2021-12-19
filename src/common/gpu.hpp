@@ -36,13 +36,15 @@ struct cache {
   struct cach* L2;
 };
 
-struct topology {
+// CUDA topology
+struct topology_c {
   int32_t streaming_mp;
   int32_t cores_per_mp;
   int32_t cuda_cores;
   int32_t tensor_cores;
 };
 
+// Intel topology
 struct topology_i {
   int32_t slices;
   int32_t subslices;
@@ -63,7 +65,7 @@ struct gpu_info {
   char* name;
   int64_t freq;
   struct pci* pci;
-  struct topology* topo;
+  struct topology_c* topo_c;
   struct topology_i* topo_i;
   struct memory* mem;
   struct cache* cach;

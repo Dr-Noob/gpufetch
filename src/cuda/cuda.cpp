@@ -31,8 +31,8 @@ int get_tensor_cores(int sm, int major) {
   else return 0;
 }
 
-struct topology* get_topology_info(cudaDeviceProp prop) {
-  struct topology* topo = (struct topology*) emalloc(sizeof(struct topology));
+struct topology_c* get_topology_info(cudaDeviceProp prop) {
+  struct topology_c* topo = (struct topology_c*) emalloc(sizeof(struct topology_c));
 
   topo->streaming_mp = prop.multiProcessorCount;
   topo->cores_per_mp = _ConvertSMVer2Cores(prop.major, prop.minor);
@@ -77,15 +77,15 @@ struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {
 
 // Compute peak performance when using CUDA cores
 int64_t get_peak_performance_cuda(struct gpu_info* gpu) {
-  return gpu->freq * 1000000 * gpu->topo->cuda_cores * 2;
+  return gpu->freq * 1000000 * gpu->topo_c->cuda_cores * 2;
 }
 
 // Compute peak performance when using tensor cores
 int64_t get_peak_performance_tcu(cudaDeviceProp prop, struct gpu_info* gpu) {
   // Volta / Turing tensor cores performs 4x4x4 FP16 matrix multiplication
   // Ampere tensor cores performs 8x4x8 FP16 matrix multiplicacion
-  if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo->tensor_cores;
-  else if(prop.major == 8) return gpu->freq * 1000000 * 8 * 4 * 8 * 2 * gpu->topo->tensor_cores;
+  if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo_c->tensor_cores;
+  else if(prop.major == 8) return gpu->freq * 1000000 * 8 * 4 * 8 * 2 * gpu->topo_c->tensor_cores;
   else return 0;
 }
 
@@ -141,7 +141,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);
-  gpu->topo = get_topology_info(deviceProp);
+  gpu->topo_c = get_topology_info(deviceProp);
   gpu->peak_performance = get_peak_performance_cuda(gpu);
   gpu->peak_performance_tcu = get_peak_performance_tcu(deviceProp, gpu);
 
@@ -149,18 +149,18 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
 }
 
 char* get_str_sm(struct gpu_info* gpu) {
-  return get_str_generic(gpu->topo->streaming_mp);
+  return get_str_generic(gpu->topo_c->streaming_mp);
 }
 
 char* get_str_cores_sm(struct gpu_info* gpu) {
-  return get_str_generic(gpu->topo->cores_per_mp);
+  return get_str_generic(gpu->topo_c->cores_per_mp);
 }
 
 char* get_str_cuda_cores(struct gpu_info* gpu) {
-  return get_str_generic(gpu->topo->cuda_cores);
+  return get_str_generic(gpu->topo_c->cuda_cores);
 }
 
 char* get_str_tensor_cores(struct gpu_info* gpu) {
-  return get_str_generic(gpu->topo->tensor_cores);
+  return get_str_generic(gpu->topo_c->tensor_cores);
 }
 
