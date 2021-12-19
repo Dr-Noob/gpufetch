@@ -1,7 +1,6 @@
 #ifndef __GLOBAL__
 #define __GLOBAL__
 
-#include <stdbool.h>
 #include <cstddef>
 
 #define STRING_UNKNOWN "Unknown"

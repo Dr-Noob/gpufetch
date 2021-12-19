@@ -1,7 +1,7 @@
 #ifndef __PCI_INTEL__
 #define __PCI_INTEL__
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "../common/pci.hpp"
 #include "chips.hpp"

@@ -1,8 +1,7 @@
 #ifndef __GPU__
 #define __GPU__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include <cstdint>
 
 #include "../cuda/pci.hpp"
 

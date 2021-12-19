@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 
 #include "pci.hpp"
 #include "chips.hpp"

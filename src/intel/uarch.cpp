@@ -1,7 +1,7 @@
-#include <stdint.h>
+#include <cstdint>
 #include <cstddef>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 #include "../common/uarch.hpp"
 #include "../common/global.hpp"

@@ -1,8 +1,6 @@
 #ifndef __ARGS__
 #define __ARGS__
 
-#include <stdbool.h>
-
 struct color {
   int32_t R;
   int32_t G;

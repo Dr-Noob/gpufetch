@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
-#include <stdint.h>
+#include <cstdint>
 #include <cstddef>
 
 #include "../common/uarch.hpp"

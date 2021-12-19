@@ -1,6 +1,5 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #include "master.hpp"
 #include "../cuda/cuda.hpp"

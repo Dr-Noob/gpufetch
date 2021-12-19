@@ -1,7 +1,7 @@
 #ifndef __INTEL_GPUCHIPS__
 #define __INTEL_GPUCHIPS__
 
-#include <stdint.h>
+#include <cstdint>
 
 typedef uint32_t GPUCHIP;
 

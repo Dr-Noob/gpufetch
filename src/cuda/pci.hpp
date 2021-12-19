@@ -1,7 +1,7 @@
 #ifndef __PCI_CUDA__
 #define __PCI_CUDA__
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "../common/pci.hpp"
 #include "chips.hpp"
