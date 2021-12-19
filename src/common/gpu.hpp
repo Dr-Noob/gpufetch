@@ -9,7 +9,8 @@
 #define UNKNOWN_FREQ -1
 
 enum {
-  GPU_VENDOR_NVIDIA
+  GPU_VENDOR_NVIDIA,
+  GPU_VENDOR_INTEL
 };
 
 enum {
@@ -43,6 +44,12 @@ struct topology {
   int32_t tensor_cores;
 };
 
+struct topology_i {
+  int32_t slices;
+  int32_t subslices;
+  int32_t eu_subslice;
+};
+
 struct memory {
   int64_t size_bytes;
   MEMTYPE type;
@@ -58,10 +65,11 @@ struct gpu_info {
   int64_t freq;
   struct pci* pci;
   struct topology* topo;
+  struct topology_i* topo_i;
   struct memory* mem;
   struct cache* cach;
   int64_t peak_performance;
-  int64_t peak_performance_t;
+  int64_t peak_performance_tcu;
   int32_t idx;
 };
 
@@ -75,5 +83,6 @@ char* get_str_memory_clock(struct gpu_info* gpu);
 char* get_str_l2(struct gpu_info* gpu);
 char* get_str_peak_performance(struct gpu_info* gpu);
 char* get_str_peak_performance_tensor(struct gpu_info* gpu);
+char* get_str_generic(int32_t data);
 
 #endif

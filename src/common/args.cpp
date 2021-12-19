@@ -13,8 +13,13 @@
 #define NUM_COLORS         4
 
 #define COLOR_STR_NVIDIA "nvidia"
+#define COLOR_STR_INTEL  "intel"
 
-#define COLOR_DEFAULT_NVIDIA "118,185,0:255,255,255:255,255,255:118,185,0"
+//                              +-----------------------+-----------------------+
+//                              | Color logo            | Color text            |
+//                              | Color 1   | Color 2   | Color 1   | Color 2   |
+#define COLOR_DEFAULT_NVIDIA    "118,185,000:255,255,255:255,255,255:118,185,000"
+#define COLOR_DEFAULT_INTEL     "015,125,194:230,230,230:040,150,220:230,230,230"
 
 struct args_struct {
   bool help_flag;
@@ -145,6 +150,7 @@ bool parse_color(char* optarg_str, struct color*** cs) {
   bool free_ptr = true;
 
   if(strcmp(optarg_str, COLOR_STR_NVIDIA) == 0) color_to_copy = COLOR_DEFAULT_NVIDIA;
+  else if(strcmp(optarg_str, COLOR_STR_INTEL) == 0) color_to_copy = COLOR_DEFAULT_INTEL;
   else {
     str_to_parse = optarg_str;
     free_ptr = false;

@@ -9,6 +9,8 @@
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 
+#include "../intel/uarch.hpp"
+#include "../intel/intel.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -34,11 +36,13 @@ enum {
   ATTRIBUTE_CHIP,
   ATTRIBUTE_UARCH,
   ATTRIBUTE_TECHNOLOGY,
+  ATTRIBUTE_GT,
   ATTRIBUTE_FREQUENCY,
   ATTRIBUTE_STREAMINGMP,
   ATTRIBUTE_CORESPERMP,
   ATTRIBUTE_CUDA_CORES,
   ATTRIBUTE_TENSOR_CORES,
+  ATTRIBUTE_EUS,
   ATTRIBUTE_L2,
   ATTRIBUTE_MEMORY,
   ATTRIBUTE_MEMORY_FREQ,
@@ -52,11 +56,13 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "GPU processor:",
   "Microarchitecture:",
   "Technology:",
+  "Graphics Tier:",
   "Max Frequency:",
   "SMs:",
   "Cores/SM:",
   "CUDA Cores:",
   "Tensor Cores:",
+  "Execution Units:",
   "L2 Size:",
   "Memory:",
   "Memory frequency:",
@@ -70,11 +76,13 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Processor:",
   "uArch:",
   "Technology:",
+  "GT:",
   "Max Freq.:",
   "SMs:",
   "Cores/SM:",
   "CUDA Cores:",
   "Tensor Cores:",
+  "EUs:",
   "L2 Size:",
   "Memory:",
   "Memory freq.:",
@@ -200,23 +208,32 @@ void replace_bgbyfg_color(struct ascii_logo* logo) {
   for(int i=0; i < 2; i++) {
     if(logo->color_ascii[i] == NULL) break;
 
-    if(strcmp(logo->color_ascii[i], COLOR_BG_BLACK) == 0) strcpy(logo->color_ascii[i], COLOR_FG_BLACK);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_RED) == 0) strcpy(logo->color_ascii[i], COLOR_FG_RED);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_GREEN) == 0) strcpy(logo->color_ascii[i], COLOR_FG_GREEN);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_YELLOW) == 0) strcpy(logo->color_ascii[i], COLOR_FG_YELLOW);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_BLUE) == 0) strcpy(logo->color_ascii[i], COLOR_FG_BLUE);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_MAGENTA) == 0) strcpy(logo->color_ascii[i], COLOR_FG_MAGENTA);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_CYAN) == 0) strcpy(logo->color_ascii[i], COLOR_FG_CYAN);
-    else if(strcmp(logo->color_ascii[i], COLOR_BG_WHITE) == 0) strcpy(logo->color_ascii[i], COLOR_FG_WHITE);
+    if(strcmp(logo->color_ascii[i], C_BG_BLACK) == 0) strcpy(logo->color_ascii[i], C_FG_BLACK);
+    else if(strcmp(logo->color_ascii[i], C_BG_RED) == 0) strcpy(logo->color_ascii[i], C_FG_RED);
+    else if(strcmp(logo->color_ascii[i], C_BG_GREEN) == 0) strcpy(logo->color_ascii[i], C_FG_GREEN);
+    else if(strcmp(logo->color_ascii[i], C_BG_YELLOW) == 0) strcpy(logo->color_ascii[i], C_FG_YELLOW);
+    else if(strcmp(logo->color_ascii[i], C_BG_BLUE) == 0) strcpy(logo->color_ascii[i], C_FG_BLUE);
+    else if(strcmp(logo->color_ascii[i], C_BG_MAGENTA) == 0) strcpy(logo->color_ascii[i], C_FG_MAGENTA);
+    else if(strcmp(logo->color_ascii[i], C_BG_CYAN) == 0) strcpy(logo->color_ascii[i], C_FG_CYAN);
+    else if(strcmp(logo->color_ascii[i], C_BG_WHITE) == 0) strcpy(logo->color_ascii[i], C_FG_WHITE);
+  }
+}
+
+struct ascii_logo* choose_ascii_art_aux(struct ascii_logo* logo_long, struct ascii_logo* logo_short, struct terminal* term, int lf) {
+  if(ascii_fits_screen(term->w, *logo_long, lf)) {
+    return logo_long;
+  }
+  else {
+    return logo_short;
   }
 }
 
 void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* term, int lf) {
   if(art->vendor == GPU_VENDOR_NVIDIA) {
-    if(term != NULL && ascii_fits_screen(term->w, logo_nvidia_l, lf))
-      art->art = &logo_nvidia_l;
-    else
-      art->art = &logo_nvidia;
+    art->art = choose_ascii_art_aux(&logo_nvidia_l, &logo_nvidia, term, lf);
+  }
+  else if(art->vendor == GPU_VENDOR_INTEL) {
+    art->art = choose_ascii_art_aux(&logo_intel_l, &logo_intel, term, lf);
   }
   else {
     art->art = &logo_unknown;
@@ -228,10 +245,10 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
   switch(art->style) {
     case STYLE_LEGACY:
       logo->replace_blocks = false;
-      strcpy(logo->color_text[0], COLOR_NONE);
-      strcpy(logo->color_text[1], COLOR_NONE);
-      strcpy(logo->color_ascii[0], COLOR_NONE);
-      strcpy(logo->color_ascii[1], COLOR_NONE);
+      strcpy(logo->color_text[0], C_NONE);
+      strcpy(logo->color_text[1], C_NONE);
+      strcpy(logo->color_ascii[0], C_NONE);
+      strcpy(logo->color_ascii[1], C_NONE);
       art->reset[0] = '\0';
       break;
     case STYLE_RETRO:
@@ -245,7 +262,7 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
         strcpy(logo->color_ascii[0], rgb_to_ansi(cs[0], logo->replace_blocks, true));
         strcpy(logo->color_ascii[1], rgb_to_ansi(cs[1], logo->replace_blocks, true));
       }
-      strcpy(art->reset, COLOR_RESET);
+      strcpy(art->reset, C_RESET);
       break;
     case STYLE_INVALID:
     default:
@@ -342,6 +359,48 @@ void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, con
   printf("\n");
 }
 
+#ifdef BACKEND_INTEL
+bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
+  struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
+
+  if(art == NULL)
+    return false;
+
+  char* gpu_name = get_str_gpu_name(gpu);
+  char* uarch = get_str_uarch_intel(gpu->arch);
+  char* gt = get_str_gt(gpu->arch);
+  char* manufacturing_process = get_str_process(gpu->arch);
+  char* eus = get_str_eu(gpu);
+  char* max_frequency = get_str_freq(gpu);
+  char* pp = get_str_peak_performance(gpu);
+
+  setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+  setAttribute(art, ATTRIBUTE_UARCH, uarch);
+  setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
+  setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
+  setAttribute(art, ATTRIBUTE_GT, gt);
+  setAttribute(art, ATTRIBUTE_EUS, eus);
+  setAttribute(art, ATTRIBUTE_PEAK, pp);
+
+  const char** attribute_fields = ATTRIBUTE_FIELDS;
+  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  uint32_t longest_field = longest_field_length(art, longest_attribute);
+  choose_ascii_art(art, cs, term, longest_field);
+
+  if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
+    // Despite of choosing the smallest logo, the output does not fit
+    // Choose the shorter field names and recalculate the longest attr
+    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
+    longest_attribute = longest_attribute_length(art, attribute_fields);
+  }
+
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+
+  return true;
+}
+#endif
+
+#ifdef BACKEND_CUDA
 bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
   struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
 
@@ -350,7 +409,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 
   char* gpu_name = get_str_gpu_name(gpu);
   char* gpu_chip = get_str_chip(gpu->arch);
-  char* uarch = get_str_uarch(gpu->arch);
+  char* uarch = get_str_uarch_cuda(gpu->arch);
   char* comp_cap = get_str_cc(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
   char* sms = get_str_sm(gpu);
@@ -416,6 +475,7 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 
   return true;
 }
+#endif
 
 struct terminal* get_terminal_size() {
   struct terminal* term = (struct terminal*) emalloc(sizeof(struct terminal));
@@ -448,5 +508,17 @@ struct terminal* get_terminal_size() {
 bool print_gpufetch(struct gpu_info* gpu, STYLE s, struct color** cs) {
   struct terminal* term = get_terminal_size();
 
-  return print_gpufetch_cuda(gpu, s, cs, term);
+  if(gpu->vendor == GPU_VENDOR_NVIDIA)
+    #ifdef BACKEND_CUDA
+      return print_gpufetch_cuda(gpu, s, cs, term);
+    #else
+      return false;
+    #endif
+  else {
+    #ifdef BACKEND_INTEL
+      return print_gpufetch_intel(gpu, s, cs, term);
+    #else
+      return false;
+    #endif
+  }
 }

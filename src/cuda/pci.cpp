@@ -8,21 +8,7 @@
 #define CHECK_PCI_START if (false) {}
 #define CHECK_PCI(pci, id, chip) \
    else if (pci->device_id == id) return chip;
-#define CHECK_PCI_END else { printBug("TODOO"); return CHIP_UNKNOWN; }
-
-struct pci {
-  uint16_t vendor_id;
-  uint16_t device_id;
-};
-
-struct pci* get_pci_from_pciutils(struct pci_dev *devices) {
-  struct pci* pci = (struct pci*) emalloc(sizeof(struct pci));
-
-  pci->vendor_id = pciutils_get_pci_vendor_id(devices);
-  pci->device_id = pciutils_get_pci_device_id(devices);
-
-  return pci;
-}
+#define CHECK_PCI_END else { printBug("Unkown CUDA device id: 0x%.4X", pci->device_id); return CHIP_UNKNOWN_CUDA; }
 
 /*
  * pci ids were retrieved using https://github.com/pciutils/pciids
@@ -33,7 +19,7 @@ struct pci* get_pci_from_pciutils(struct pci_dev *devices) {
  * or in pci.ids itself)
  */
 
-GPUCHIP get_chip_from_pci(struct pci* pci) {
+GPUCHIP get_chip_from_pci_cuda(struct pci* pci) {
   CHECK_PCI_START
   CHECK_PCI(pci, 0x25e5, CHIP_GA107BM)
   CHECK_PCI(pci, 0x25e2, CHIP_GA107BM)

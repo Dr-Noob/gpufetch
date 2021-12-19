@@ -3,20 +3,13 @@
 #include <stdint.h>
 #include <cstddef>
 
+#include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 #include "chips.hpp"
 
-typedef uint32_t MICROARCH;
-
 // Any clock multiplier
 #define CM_ANY               -1
-
-// Data not available
-#define NA                   -1
-
-// Unknown manufacturing process
-#define UNK                  -1
 
 // MICROARCH values
 enum {
@@ -43,23 +36,10 @@ static const char *uarch_str[] = {
   /*[ARCH_AMPERE]     = */ "Ampere",
 };
 
-struct uarch {
-  int32_t cc_major;
-  int32_t cc_minor;
-  int32_t compute_capability;
-
-  MICROARCH uarch;
-  GPUCHIP chip;
-
-  int32_t process;
-  char* uarch_str;
-  char* chip_str;
-};
-
 #define CHECK_UARCH_START if (false) {}
 #define CHECK_UARCH(arch, chip_, str, uarch, process) \
    else if (arch->chip == chip_) fill_uarch(arch, str, uarch, process);
-#define CHECK_UARCH_END else { printBug("map_chip_to_uarch: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, 0); }
+#define CHECK_UARCH_END else { if(arch->chip != CHIP_UNKNOWN_CUDA) printBug("map_chip_to_uarch_cuda: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, 0); }
 
 void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, uint32_t process) {
   arch->chip_str = (char *) emalloc(sizeof(char) * (strlen(str)+1));
@@ -74,7 +54,7 @@ void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, uint32_t proce
  * o CHIP_XXXGL: indicates a professional-class (Quadro/Tesla) chip
  * o CHIP_XXXM:  indicates a mobile chip
  */
-void map_chip_to_uarch(struct uarch* arch) {
+void map_chip_to_uarch_cuda(struct uarch* arch) {
   CHECK_UARCH_START
   // TESLA (1.0, 1.1, 1.2, 1.3)                                //
   CHECK_UARCH(arch, CHIP_G80,      "G80",      UARCH_TESLA,   90)
@@ -263,9 +243,8 @@ struct uarch* get_uarch_from_cuda(struct gpu_info* gpu) {
   arch->cc_major = deviceProp.major;
   arch->cc_minor = deviceProp.minor;
   arch->compute_capability = deviceProp.major * 10 + deviceProp.minor;
-  arch->chip = get_chip_from_pci(gpu->pci);
-
-  map_chip_to_uarch(arch);
+  arch->chip = get_chip_from_pci_cuda(gpu->pci);
+  map_chip_to_uarch_cuda(arch);
 
   return arch;
 }
@@ -335,10 +314,6 @@ MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
   CHECK_MEMTYPE_END
 }
 
-const char* get_str_uarch(struct uarch* arch) {
-  return uarch_str[arch->uarch];
-}
-
 char* get_str_cc(struct uarch* arch) {
   uint32_t max_size = 4;
   char* cc = (char *) ecalloc(max_size, sizeof(char));
@@ -346,29 +321,12 @@ char* get_str_cc(struct uarch* arch) {
   return cc;
 }
 
-char* get_str_process(struct uarch* arch) {
-  char* str = (char *) emalloc(sizeof(char) * (strlen(STRING_UNKNOWN)+1));
-  int32_t process = arch->process;
-
-  if(process == UNK) {
-    snprintf(str, strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-  }
-  else if(process > 100) {
-    sprintf(str, "%.2fum", (double)process/100);
-  }
-  else if(process > 0){
-    sprintf(str, "%dnm", process);
-  }
-  else {
-    snprintf(str, strlen(STRING_UNKNOWN)+1, STRING_UNKNOWN);
-    printBug("Found invalid process: '%d'", process);
-  }
-
-  return str;
-}
-
 char* get_str_chip(struct uarch* arch) {
   return arch->chip_str;
+}
+
+const char* get_str_uarch_cuda(struct uarch* arch) {
+  return uarch_str[arch->uarch];
 }
 
 void free_uarch_struct(struct uarch* arch) {

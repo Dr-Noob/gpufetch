@@ -32,8 +32,6 @@ VENDOR get_gpu_vendor(struct gpu_info* gpu) {
   return gpu->vendor;
 }
 
-double trunc(double val) { return ((int)(100 * val)) / 100.0; }
-
 int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   int32_t ret;
   int max_len = 10; // Max is 8 for digits, 2 for units
@@ -145,6 +143,13 @@ char* get_str_peak_performance(struct gpu_info* gpu) {
 }
 
 char* get_str_peak_performance_tensor(struct gpu_info* gpu) {
-  return get_str_peak_performance_generic(gpu->peak_performance_t);
+  return get_str_peak_performance_generic(gpu->peak_performance_tcu);
 }
 
+char* get_str_generic(int32_t data) {
+  // Largest int is 10, +1 for possible negative, +1 for EOL
+  uint32_t max_size = 12;
+  char* dummy = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(dummy, max_size, "%d", data);
+  return dummy;
+}

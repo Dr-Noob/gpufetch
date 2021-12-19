@@ -1,10 +1,10 @@
-#ifndef __GPUCHIPS__
-#define __GPUCHIPS__
+#ifndef __CUDA_GPUCHIPS__
+#define __CUDA_GPUCHIPS__
 
 typedef uint32_t GPUCHIP;
 
 enum {
-  CHIP_UNKNOWN,
+  CHIP_UNKNOWN_CUDA,
   CHIP_G80,
   CHIP_G80GL,
   CHIP_G84,

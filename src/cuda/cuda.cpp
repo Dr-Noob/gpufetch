@@ -6,40 +6,12 @@
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 
-int print_gpus_list() {
-  cudaError_t err = cudaSuccess;
-  int num_gpus = -1;
+bool print_gpu_cuda(struct gpu_info* gpu) {
+  char* cc = get_str_cc(gpu->arch);
+  printf("%s (Compute Capability %s)\n", gpu->name, cc);
+  free(cc);
 
-  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-    return EXIT_FAILURE;
-  }
-  printf("CUDA GPUs available: %d\n", num_gpus);
-
-  if(num_gpus > 0) {
-    cudaDeviceProp deviceProp;
-    int max_len = 0;
-
-    for(int idx=0; idx < num_gpus; idx++) {
-      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
-        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-        return EXIT_FAILURE;
-      }
-      max_len = max(max_len, (int) strlen(deviceProp.name));
-    }
-
-    for(int i=0; i < max_len + 32; i++) putchar('-');
-    putchar('\n');
-    for(int idx=0; idx < num_gpus; idx++) {
-      if ((err = cudaGetDeviceProperties(&deviceProp, idx)) != cudaSuccess) {
-        printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-        return EXIT_FAILURE;
-      }
-      printf("GPU %d: %s (Compute Capability %d.%d)\n", idx, deviceProp.name, deviceProp.major, deviceProp.minor);
-    }
-  }
-
-  return EXIT_SUCCESS;
+  return true;
 }
 
 struct cache* get_cache_info(cudaDeviceProp prop) {
@@ -104,12 +76,12 @@ struct memory* get_memory_info(struct gpu_info* gpu, cudaDeviceProp prop) {
 }
 
 // Compute peak performance when using CUDA cores
-int64_t get_peak_performance(struct gpu_info* gpu) {
+int64_t get_peak_performance_cuda(struct gpu_info* gpu) {
   return gpu->freq * 1000000 * gpu->topo->cuda_cores * 2;
 }
 
 // Compute peak performance when using tensor cores
-int64_t get_peak_performance_t(cudaDeviceProp prop, struct gpu_info* gpu) {
+int64_t get_peak_performance_tcu(cudaDeviceProp prop, struct gpu_info* gpu) {
   // Volta / Turing tensor cores performs 4x4x4 FP16 matrix multiplication
   // Ampere tensor cores performs 8x4x8 FP16 matrix multiplicacion
   if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo->tensor_cores;
@@ -117,7 +89,7 @@ int64_t get_peak_performance_t(cudaDeviceProp prop, struct gpu_info* gpu) {
   else return 0;
 }
 
-struct gpu_info* get_gpu_info(int gpu_idx) {
+struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
   gpu->idx = gpu_idx;
@@ -127,8 +99,10 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
     return NULL;
   }
 
-  printf("Waiting for CUDA driver to start...");
-  fflush(stdout);
+  if(gpu_idx == 0) {
+    printf("Waiting for CUDA driver to start...");
+    fflush(stdout);
+  }
 
   int num_gpus = -1;
   cudaError_t err = cudaSuccess;
@@ -136,7 +110,10 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
-  printf("\r                                   ");
+
+  if(gpu_idx == 0) {
+    printf("\r");
+  }
 
   if(num_gpus <= 0) {
     printErr("No CUDA capable devices found!");
@@ -144,7 +121,7 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   }
 
   if(gpu->idx+1 > num_gpus) {
-    printErr("Requested GPU index %d in a system with %d GPUs", gpu->idx, num_gpus);
+    // Master is trying to query an invalid GPU
     return NULL;
   }
 
@@ -160,23 +137,20 @@ struct gpu_info* get_gpu_info(int gpu_idx) {
   strcpy(gpu->name, deviceProp.name);
 
   struct pci_dev *devices = get_pci_devices_from_pciutils();
-  gpu->pci = get_pci_from_pciutils(devices);
+  gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_NVIDIA);
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);
   gpu->topo = get_topology_info(deviceProp);
+<<<<<<< HEAD
   gpu->peak_performance = get_peak_performance(gpu);
   gpu->peak_performance_t = get_peak_performance_t(deviceProp, gpu);
+=======
+  gpu->peak_performance = get_peak_performance_cuda(gpu);
+  gpu->peak_performance_tcu = get_peak_performance_tcu(gpu);
+>>>>>>> origin/intel
 
   return gpu;
-}
-
-char* get_str_generic(int32_t data) {
-  // Largest int is 10, +1 for possible negative, +1 for EOL
-  uint32_t max_size = 12;
-  char* dummy = (char *) ecalloc(max_size, sizeof(char));
-  snprintf(dummy, max_size, "%d", data);
-  return dummy;
 }
 
 char* get_str_sm(struct gpu_info* gpu) {
