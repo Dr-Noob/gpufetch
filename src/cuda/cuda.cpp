@@ -142,13 +142,8 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);
   gpu->topo = get_topology_info(deviceProp);
-<<<<<<< HEAD
-  gpu->peak_performance = get_peak_performance(gpu);
-  gpu->peak_performance_t = get_peak_performance_t(deviceProp, gpu);
-=======
   gpu->peak_performance = get_peak_performance_cuda(gpu);
-  gpu->peak_performance_tcu = get_peak_performance_tcu(gpu);
->>>>>>> origin/intel
+  gpu->peak_performance_tcu = get_peak_performance_tcu(deviceProp, gpu);
 
   return gpu;
 }
