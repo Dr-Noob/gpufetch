@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include "global.hpp"
 #include "colors.hpp"
 #include "master.hpp"
 #include "../cuda/cuda.hpp"
@@ -78,6 +79,10 @@ int get_num_gpus_available(struct gpu_list* list) {
 }
 
 struct gpu_info* get_gpu_info(struct gpu_list* list, int idx) {
+  if(idx >= list->num_gpus || idx < 0) {
+    printErr("Specified GPU index is out of range: %d", idx);
+    return NULL;
+  }
   return list->gpus[idx];
 }
 

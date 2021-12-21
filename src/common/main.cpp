@@ -82,14 +82,14 @@ int main(int argc, char* argv[]) {
 
   set_log_level(true);
 
+  struct gpu_info* gpu = get_gpu_info(list, get_gpu_idx());
+  if(gpu == NULL)
+    return EXIT_FAILURE;
+
   printf("[WARNING]: gpufetch is in beta. The provided information may be incomplete or wrong.\n\
 If you want to help to improve gpufetch, please compare the output of the program\n\
 with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
 any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues\n");
-
-  struct gpu_info* gpu = get_gpu_info(list, get_gpu_idx());
-  if(gpu == NULL)
-    return EXIT_FAILURE;
 
   if(print_gpufetch(gpu, get_style(), get_colors()))
     return EXIT_SUCCESS;
