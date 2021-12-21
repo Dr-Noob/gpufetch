@@ -25,6 +25,12 @@ struct gpu_info* get_gpu_info_intel() {
   }
 
   gpu->arch = get_uarch_from_pci(gpu->pci);
+
+  if(gpu->arch == NULL) {
+    // No Intel iGPU found in arch LUT, which means it is not supported
+    return NULL;
+  }
+
   gpu->name = get_name_from_uarch(gpu->arch);
   gpu->topo_i = get_topology_info(gpu->arch);
   gpu->freq = get_max_freq_from_file(gpu->pci);
