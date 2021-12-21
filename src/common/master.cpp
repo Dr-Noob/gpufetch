@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include "colors.hpp"
 #include "master.hpp"
 #include "../cuda/cuda.hpp"
 #include "../intel/intel.hpp"
@@ -56,6 +57,27 @@ bool print_gpus_list(struct gpu_list* list) {
   return true;
 }
 
+void print_enabled_backends() {
+  printf("- CUDA backend:  ");
+#ifdef BACKEND_CUDA
+  printf("%sON%s\n", C_FG_GREEN, C_RESET);
+#else
+  printf("%sOFF%s\n", C_FG_RED, C_RESET);
+#endif
+
+  printf("- Intel backend: ");
+#ifdef BACKEND_INTEL
+  printf("%sON%s\n", C_FG_GREEN, C_RESET);
+#else
+  printf("%sOFF%s\n", C_FG_RED, C_RESET);
+#endif
+}
+
+int get_num_gpus_available(struct gpu_list* list) {
+  return list->num_gpus;
+}
+
 struct gpu_info* get_gpu_info(struct gpu_list* list, int idx) {
   return list->gpus[idx];
 }
+

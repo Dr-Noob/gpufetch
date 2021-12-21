@@ -71,6 +71,15 @@ int main(int argc, char* argv[]) {
     return print_gpus_list(list);
   }
 
+  if(get_num_gpus_available(list) == 0) {
+    printErr("No GPU was detected, or the detected GPU is not supported by gpufetch");
+    printf("Please, make sure that the appropiate backend is enabled:\n");
+    print_enabled_backends();
+    printf("Visit https://github.com/Dr-Noob/gpufetch#2-backends for more information\n");
+
+    return EXIT_FAILURE;
+  }
+
   set_log_level(true);
 
   printf("[WARNING]: gpufetch is in beta. The provided information may be incomplete or wrong.\n\
