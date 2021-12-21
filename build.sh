@@ -7,6 +7,13 @@ rm -rf build/ gpufetch
 mkdir build/
 cd build/
 
+if [ "$1" == "debug" ]
+then
+  BUILD_TYPE="Debug"
+else
+  BUILD_TYPE="Release"
+fi
+
 # In case you have CUDA installed but it is not detected,
 # - set CMAKE_CUDA_COMPILER to your nvcc binary:
 # - set CMAKE_CUDA_COMPILER_TOOLKIT_ROOT to the CUDA root dir
@@ -19,7 +26,7 @@ cd build/
 # Disable Intel backend:
 # cmake -DENABLE_INTEL_BACKEND=OFF ..
 
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 make -j$(nproc)
 cd -
 ln -s build/gpufetch .
