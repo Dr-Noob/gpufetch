@@ -11,7 +11,7 @@ bool pciutils_is_vendor_id_present(struct pci_dev *devices, int id) {
     }
   }
 
-  printWarn("Unable to find a valid device for id %d using pciutils", id);
+  printWarn("Unable to find a valid device for vendor id 0x%.4X using pciutils", id);
   return false;
 }
 
@@ -22,7 +22,7 @@ uint16_t pciutils_get_pci_device_id(struct pci_dev *devices, int id) {
     }
   }
 
-  printErr("Unable to find a valid device for id %d using pciutils", id);
+  printErr("Unable to find a valid device for device id 0x%.4X using pciutils", id);
   return 0;
 }
 
@@ -39,7 +39,7 @@ void pciutils_set_pci_bus(struct pci* pci, struct pci_dev *devices, int id) {
     }
   }
 
-  if(!found) printErr("Unable to find a valid device for id %d using pciutils", id);
+  if(!found) printErr("Unable to find a valid device for id 0x%.4X using pciutils", id);
 }
 
 struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id) {
