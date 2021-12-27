@@ -10,26 +10,45 @@
    else if (pci->device_id == id) return chip;
 #define CHECK_PCI_END else { printBug("Unkown Intel device id: 0x%.4X", pci->device_id); return CHIP_UNKNOWN_INTEL; }
 
+// TODO: Review wikipedia link to improve the LUT
 /*
+ * https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
  * https://github.com/mesa3d/mesa/blob/main/include/pci_ids/i965_pci_ids.h
  */
 GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI_START
   // Gen6
+  CHECK_PCI(pci, 0x010A, CHIP_HD_SANDY)
   CHECK_PCI(pci, 0x0102, CHIP_HD_2000)
   CHECK_PCI(pci, 0x0106, CHIP_HD_2000)
-  CHECK_PCI(pci, 0x010A, CHIP_HD_2000)
   CHECK_PCI(pci, 0x0112, CHIP_HD_3000)
   CHECK_PCI(pci, 0x0122, CHIP_HD_3000)
   CHECK_PCI(pci, 0x0116, CHIP_HD_3000)
   CHECK_PCI(pci, 0x0126, CHIP_HD_3000)
   // Gen7
+  CHECK_PCI(pci, 0x015A, CHIP_HD_IVY)
+  CHECK_PCI(pci, 0x0F30, CHIP_HD_SILVER)
+  CHECK_PCI(pci, 0x0F31, CHIP_HD_SILVER)
+  CHECK_PCI(pci, 0x0F32, CHIP_HD_SILVER)
+  CHECK_PCI(pci, 0x0F33, CHIP_HD_SILVER)
+  CHECK_PCI(pci, 0x0155, CHIP_HD_SILVER)
+  CHECK_PCI(pci, 0x0157, CHIP_HD_SILVER)
   CHECK_PCI(pci, 0x0152, CHIP_HD_2500)
   CHECK_PCI(pci, 0x0156, CHIP_HD_2500)
   CHECK_PCI(pci, 0x0162, CHIP_HD_4000)
   CHECK_PCI(pci, 0x0166, CHIP_HD_4000)
   CHECK_PCI(pci, 0x016a, CHIP_HD_P4000)
   // Gen7.5
+  CHECK_PCI(pci, 0x0402, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0406, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x040A, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x040B, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x040E, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0A02, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0A06, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0A0A, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0A0B, CHIP_HD_HASWELL)
+  CHECK_PCI(pci, 0x0A0E, CHIP_HD_HASWELL)
   CHECK_PCI(pci, 0x0A1E, CHIP_HD_4200)
   CHECK_PCI(pci, 0x041E, CHIP_HD_4400)
   CHECK_PCI(pci, 0x0A16, CHIP_HD_4400)
@@ -41,6 +60,7 @@ GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI(pci, 0x0D22, CHIP_IRISP_5200)
   CHECK_PCI(pci, 0x0D26, CHIP_IRISP_P5200)
   // Gen8
+  CHECK_PCI(pci, 0x1606, CHIP_HD_BROADWELL)
   CHECK_PCI(pci, 0x161E, CHIP_HD_5300)
   CHECK_PCI(pci, 0x1616, CHIP_HD_5500)
   CHECK_PCI(pci, 0x1612, CHIP_HD_5600)

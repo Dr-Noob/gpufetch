@@ -49,6 +49,7 @@ static const char *uarch_str[] = {
 enum {
   GT_UNKNOWN,
   GT1,
+  GT1_4, // GT1 with 4 EUs
   GT1_5,
   GT2,
   GT3,
@@ -93,46 +94,51 @@ void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, int32_t gt, ui
 void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH_START
   // Gen6
-  CHECK_UARCH(arch, CHIP_HD_2000,     "HD Graphics 2000",        UARCH_GEN6,   GT1,  32)
-  CHECK_UARCH(arch, CHIP_HD_3000,     "HD Graphics 3000",        UARCH_GEN6,   GT2,  32)
+  CHECK_UARCH(arch, CHIP_HD_SANDY,     "HD Graphics (Sandy Bridge)", UARCH_GEN6,   GT1,   32)
+  CHECK_UARCH(arch, CHIP_HD_2000,      "HD Graphics 2000",           UARCH_GEN6,   GT1,   32)
+  CHECK_UARCH(arch, CHIP_HD_3000,      "HD Graphics 3000",           UARCH_GEN6,   GT2,   32)
   // Gen7
-  CHECK_UARCH(arch, CHIP_HD_2500,     "HD Graphics 2500",        UARCH_GEN7,   GT1,  22)
-  CHECK_UARCH(arch, CHIP_HD_4000,     "HD Graphics 4000",        UARCH_GEN7,   GT2,  22)
-  CHECK_UARCH(arch, CHIP_HD_P4000,    "HD Graphics P4000",       UARCH_GEN7,   GT2,  22)
+  CHECK_UARCH(arch, CHIP_HD_IVY,       "HD Graphics (Ivy Bridge)",   UARCH_GEN7,   GT1,   22)
+  CHECK_UARCH(arch, CHIP_HD_SILVER,    "HD Graphics (Silvermont)",   UARCH_GEN7,   GT1_4, 22)
+  CHECK_UARCH(arch, CHIP_HD_2500,      "HD Graphics 2500",           UARCH_GEN7,   GT1,   22)
+  CHECK_UARCH(arch, CHIP_HD_4000,      "HD Graphics 4000",           UARCH_GEN7,   GT2,   22)
+  CHECK_UARCH(arch, CHIP_HD_P4000,     "HD Graphics P4000",          UARCH_GEN7,   GT2,   22)
   // Gen7.5
-  CHECK_UARCH(arch, CHIP_HD_4200,     "HD Graphics 4200",        UARCH_GEN7_5, GT2,  22)
-  CHECK_UARCH(arch, CHIP_HD_4400,     "HD Graphics 4400",        UARCH_GEN7_5, GT2,  22)
-  CHECK_UARCH(arch, CHIP_HD_4600,     "HD Graphics 4600",        UARCH_GEN7_5, GT2,  22)
-  CHECK_UARCH(arch, CHIP_HD_P4600,    "HD Graphics P4600",       UARCH_GEN7_5, GT2,  22)
-  CHECK_UARCH(arch, CHIP_IRIS_5100,   "HD Iris 5100",            UARCH_GEN7_5, GT3,  22)
-  CHECK_UARCH(arch, CHIP_IRISP_5200,  "HD Iris Pro 5200",        UARCH_GEN7_5, GT3,  22)
-  CHECK_UARCH(arch, CHIP_IRISP_P5200, "HD Iris Pro P5200",       UARCH_GEN7_5, GT3,  22)
+  CHECK_UARCH(arch, CHIP_HD_HASWELL,   "HD Graphics (Haswell)",      UARCH_GEN7_5, GT1,   22)
+  CHECK_UARCH(arch, CHIP_HD_4200,      "HD Graphics 4200",           UARCH_GEN7_5, GT2,   22)
+  CHECK_UARCH(arch, CHIP_HD_4400,      "HD Graphics 4400",           UARCH_GEN7_5, GT2,   22)
+  CHECK_UARCH(arch, CHIP_HD_4600,      "HD Graphics 4600",           UARCH_GEN7_5, GT2,   22)
+  CHECK_UARCH(arch, CHIP_HD_P4600,     "HD Graphics P4600",          UARCH_GEN7_5, GT2,   22)
+  CHECK_UARCH(arch, CHIP_IRIS_5100,    "HD Iris 5100",               UARCH_GEN7_5, GT3,   22)
+  CHECK_UARCH(arch, CHIP_IRISP_5200,   "HD Iris Pro 5200",           UARCH_GEN7_5, GT3,   22)
+  CHECK_UARCH(arch, CHIP_IRISP_P5200,  "HD Iris Pro P5200",          UARCH_GEN7_5, GT3,   22)
   // Gen8
-  CHECK_UARCH(arch, CHIP_HD_5300,     "HD Graphics 5300",        UARCH_GEN8,   GT2,  14)
-  CHECK_UARCH(arch, CHIP_HD_5500,     "HD Graphics 5500",        UARCH_GEN8,   GT2,  14)
-  CHECK_UARCH(arch, CHIP_HD_5600,     "HD Graphics 5600",        UARCH_GEN8,   GT2,  14)
-  CHECK_UARCH(arch, CHIP_HD_P5700,    "HD Graphics P5700",       UARCH_GEN8,   GT2,  14)
-  CHECK_UARCH(arch, CHIP_HD_6000,     "HD Graphics 6000",        UARCH_GEN8,   GT3,  14)
-  CHECK_UARCH(arch, CHIP_IRIS_6100,   "Iris Graphics 6100",      UARCH_GEN8,   GT3,  14)
-  CHECK_UARCH(arch, CHIP_IRISP_6200,  "Iris Pro Graphics 6200",  UARCH_GEN8,   GT3,  14)
-  CHECK_UARCH(arch, CHIP_IRISP_P6300, "Iris Pro Graphics P6300", UARCH_GEN8,   GT3,  14)
+  CHECK_UARCH(arch, CHIP_HD_BROADWELL, "HD Graphics (Broadwell)",    UARCH_GEN8,   GT1,   14)
+  CHECK_UARCH(arch, CHIP_HD_5300,      "HD Graphics 5300",           UARCH_GEN8,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_5500,      "HD Graphics 5500",           UARCH_GEN8,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_5600,      "HD Graphics 5600",           UARCH_GEN8,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_P5700,     "HD Graphics P5700",          UARCH_GEN8,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_6000,      "HD Graphics 6000",           UARCH_GEN8,   GT3,   14)
+  CHECK_UARCH(arch, CHIP_IRIS_6100,    "Iris Graphics 6100",         UARCH_GEN8,   GT3,   14)
+  CHECK_UARCH(arch, CHIP_IRISP_6200,   "Iris Pro Graphics 6200",     UARCH_GEN8,   GT3,   14)
+  CHECK_UARCH(arch, CHIP_IRISP_P6300,  "Iris Pro Graphics P6300",    UARCH_GEN8,   GT3,   14)
   // Gen9
-  CHECK_UARCH(arch, CHIP_HD_510,      "HD Graphics 510",         UARCH_GEN9,   GT1,   14)
-  CHECK_UARCH(arch, CHIP_HD_515,      "HD Graphics 515",         UARCH_GEN9,   GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_520,      "HD Graphics 520",         UARCH_GEN9,   GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_530,      "HD Graphics 530",         UARCH_GEN9,   GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_P530,     "HD Graphics P530",        UARCH_GEN9,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_510,       "HD Graphics 510",            UARCH_GEN9,   GT1,   14)
+  CHECK_UARCH(arch, CHIP_HD_515,       "HD Graphics 515",            UARCH_GEN9,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_520,       "HD Graphics 520",            UARCH_GEN9,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_530,       "HD Graphics 530",            UARCH_GEN9,   GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_P530,      "HD Graphics P530",           UARCH_GEN9,   GT2,   14)
   // Gen9.5
-  CHECK_UARCH(arch, CHIP_UHD_600,     "UHD Graphics 600",        UARCH_GEN9_5, GT1,   14)
-  CHECK_UARCH(arch, CHIP_UHD_605,     "UHD Graphics 605",        UARCH_GEN9_5, GT1_5, 14)
-  CHECK_UARCH(arch, CHIP_UHD_620,     "UHD Graphics 620",        UARCH_GEN9_5, GT2,   14)
-  CHECK_UARCH(arch, CHIP_UHD_630,     "UHD Graphics 630",        UARCH_GEN9_5, GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_610,      "HD Graphics 610",         UARCH_GEN9_5, GT1,   14)
-  CHECK_UARCH(arch, CHIP_HD_615,      "HD Graphics 615",         UARCH_GEN9_5, GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_630,      "HD Graphics 630",         UARCH_GEN9_5, GT2,   14)
-  CHECK_UARCH(arch, CHIP_HD_P630,     "HD Graphics P630",        UARCH_GEN9_5, GT2,   14)
-  CHECK_UARCH(arch, CHIP_IRISP_640,   "Iris Plus Graphics 640",  UARCH_GEN9_5, GT3e,  14)
-  CHECK_UARCH(arch, CHIP_IRISP_640,   "Iris Plus Graphics 650",  UARCH_GEN9_5, GT3e,  14)
+  CHECK_UARCH(arch, CHIP_UHD_600,      "UHD Graphics 600",           UARCH_GEN9_5, GT1,   14)
+  CHECK_UARCH(arch, CHIP_UHD_605,      "UHD Graphics 605",           UARCH_GEN9_5, GT1_5, 14)
+  CHECK_UARCH(arch, CHIP_UHD_620,      "UHD Graphics 620",           UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_UHD_630,      "UHD Graphics 630",           UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_610,       "HD Graphics 610",            UARCH_GEN9_5, GT1,   14)
+  CHECK_UARCH(arch, CHIP_HD_615,       "HD Graphics 615",            UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_630,       "HD Graphics 630",            UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_HD_P630,      "HD Graphics P630",           UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_IRISP_640,    "Iris Plus Graphics 640",     UARCH_GEN9_5, GT3e,  14)
+  CHECK_UARCH(arch, CHIP_IRISP_640,    "Iris Plus Graphics 650",     UARCH_GEN9_5, GT3e,  14)
   CHECK_UARCH_END
 }
 
@@ -184,6 +190,7 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   CHECK_TOPO(topo, arch, UARCH_GEN6,   GT1,   6, 1, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN6,   GT2,   6, 2, 1)
   // Gen7
+  CHECK_TOPO(topo, arch, UARCH_GEN7,   GT1_4, 4, 1, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN7,   GT1,   6, 1, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN7,   GT2,   8, 2, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN7,   GT3,   6, 1, 1)
