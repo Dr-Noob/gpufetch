@@ -2,6 +2,7 @@
 #define __CUDA_GPU__
 
 #include "../common/gpu.hpp"
+#define CUDA_DRIVER_START_WARNING "Waiting for CUDA driver to start..."
 
 struct gpu_info* get_gpu_info_cuda(int gpu_idx);
 bool print_gpu_cuda(struct gpu_info* gpu);

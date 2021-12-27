@@ -26,6 +26,7 @@ enum {
 };
 
 int LOG_LEVEL;
+bool clean;
 
 void printWarn(const char *fmt, ...) {
   if(LOG_LEVEL == LOG_LEVEL_VERBOSE) {
@@ -37,6 +38,7 @@ void printWarn(const char *fmt, ...) {
     va_end(args);
     fprintf(stderr, BOLD "[WARNING]: " RESET "%s\n",buffer);
     delete [] buffer;
+    clean = false;
   }
 }
 
@@ -49,6 +51,7 @@ void printErr(const char *fmt, ...) {
   va_end(args);
   fprintf(stderr, RED "[ERROR]: " RESET "%s\n",buffer);
   delete [] buffer;
+  clean = false;
 }
 
 void printBug(const char *fmt, ...) {
@@ -61,11 +64,17 @@ void printBug(const char *fmt, ...) {
   fprintf(stderr, RED "[ERROR]: " RESET "%s\n",buffer);
   fprintf(stderr,"Please, create a new issue with this error message on https://github.com/Dr-Noob/gpufetch/issues\n");
   delete [] buffer;
+  clean = false;
 }
 
 void set_log_level(bool verbose) {
   if(verbose) LOG_LEVEL = LOG_LEVEL_VERBOSE;
   else LOG_LEVEL = LOG_LEVEL_NORMAL;
+  clean = true;
+}
+
+bool clean_output() {
+  return clean;
 }
 
 int max(int a, int b) {

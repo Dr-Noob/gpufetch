@@ -507,12 +507,14 @@ struct terminal* get_terminal_size() {
 bool print_gpufetch(struct gpu_info* gpu, STYLE s, struct color** cs) {
   struct terminal* term = get_terminal_size();
 
-  if(gpu->vendor == GPU_VENDOR_NVIDIA)
+  if(gpu->vendor == GPU_VENDOR_NVIDIA) {
     #ifdef BACKEND_CUDA
+      if(clean_output()) printf("%*s", (int) strlen(CUDA_DRIVER_START_WARNING), " ");
       return print_gpufetch_cuda(gpu, s, cs, term);
     #else
       return false;
     #endif
+  }
   else {
     #ifdef BACKEND_INTEL
       return print_gpufetch_intel(gpu, s, cs, term);

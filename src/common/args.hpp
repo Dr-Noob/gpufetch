@@ -21,6 +21,7 @@ enum {
   ARG_GPU,
   ARG_LIST,
   ARG_HELP,
+  ARG_VERBOSE,
   ARG_VERSION
 };
 
@@ -34,6 +35,7 @@ bool parse_args(int argc, char* argv[]);
 bool show_help();
 bool list_gpus();
 bool show_version();
+bool verbose_enabled();
 void free_colors_struct(struct color** cs);
 int get_gpu_idx();
 struct color** get_colors();

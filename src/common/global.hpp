@@ -9,6 +9,7 @@ void set_log_level(bool verbose);
 void printWarn(const char *fmt, ...);
 void printErr(const char *fmt, ...);
 void printBug(const char *fmt, ...);
+bool clean_output();
 int max(int a, int b);
 int min(int a, int b);
 void* emalloc(size_t size);

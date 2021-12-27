@@ -100,7 +100,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   }
 
   if(gpu_idx == 0) {
-    printf("Waiting for CUDA driver to start...");
+    printf("%s", CUDA_DRIVER_START_WARNING);
     fflush(stdout);
   }
 
@@ -113,6 +113,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
 
   if(gpu_idx == 0) {
     printf("\r");
+    fflush(stdout);
   }
 
   if(num_gpus <= 0) {

@@ -22,6 +22,7 @@ void print_help(char *argv[]) {
   printf("  -%c, --%s %*s Set the color scheme (by default, gpufetch uses the system color scheme) See COLORS section for a more detailed explanation\n", c[ARG_COLOR], t[ARG_COLOR], (int) (max_len-strlen(t[ARG_COLOR])), "");
   printf("  -%c, --%s %*s List the available GPUs in the system\n", c[ARG_LIST], t[ARG_LIST], (int) (max_len-strlen(t[ARG_LIST])), "");
   printf("  -%c, --%s %*s Select the GPU to use (default: 0)\n", c[ARG_GPU], t[ARG_GPU], (int) (max_len-strlen(t[ARG_GPU])), "");
+  printf("  -%c, --%s %*s Enable verbose output\n", c[ARG_VERBOSE], t[ARG_VERBOSE], (int) (max_len-strlen(t[ARG_VERBOSE])), "");
   printf("  -%c, --%s %*s Print this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
   printf("  -%c, --%s %*s Print gpufetch version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
 
@@ -66,6 +67,8 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
   }
 
+  set_log_level(verbose_enabled());
+
   struct gpu_list* list = get_gpu_list();
   if(list_gpus()) {
     return print_gpus_list(list);
@@ -80,13 +83,11 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  set_log_level(true);
-
   struct gpu_info* gpu = get_gpu_info(list, get_gpu_idx());
   if(gpu == NULL)
     return EXIT_FAILURE;
 
-  printf("[WARNING]: gpufetch is in beta. The provided information may be incomplete or wrong.\n\
+  printf("[NOTE]: gpufetch is in beta. The provided information may be incomplete or wrong.\n\
 If you want to help to improve gpufetch, please compare the output of the program\n\
 with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
 any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues\n");
