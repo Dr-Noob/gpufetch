@@ -78,20 +78,16 @@ int getarg_int(char* str) {
   return -1;
 }
 
-void print_getarg_error() {
+const char* getarg_error() {
   switch (errn) {
     case OVERFLOW:
-      printf("overflow detected while parsing the arguments\n");
-      break;
+      return "overflow detected";
     case UNDERFLOW:
-      printf("underflow detected while parsing the arguments\n");
-      break;
+      return "underflow detected";
     case INVALID_ARG:
-      printf("invalid argument\n");
-      break;
+      return "invalid argument";
     default:
-      printf("invalid error: %d\n", errn);
-      break;
+      return "invalid error";
   }
 }
 
@@ -233,8 +229,7 @@ bool parse_args(int argc, char* argv[]) {
     else if(opt == args_chr[ARG_GPU]) {
       args.gpu_idx = getarg_int(optarg);
       if(errn != 0) {
-        printErr("Option %s: ", args_str[ARG_GPU]);
-        print_getarg_error();
+        printErr("Option %s: %s", args_str[ARG_GPU], getarg_error());
         args.help_flag  = true;
         return false;
       }
