@@ -75,7 +75,7 @@ static const char *gt_str[] = {
 #define CHECK_TOPO_START if (false) {}
 #define CHECK_TOPO(topo, arch, uarch_, gt_, eu_sub, sub, sli) \
   else if(arch->uarch == uarch_ && arch->gt == gt_) fill_topo(topo, eu_sub, sub, sli);
-#define CHECK_TOPO_END else { printBug("TODOO"); fill_topo(topo, -1, -1, -1); }
+#define CHECK_TOPO_END else { printBug("get_topology_info: Invalid uarch and gt combination: '%s' and '%s'", arch->chip_str, get_str_gt(arch)); fill_topo(topo, UNK, UNK, UNK); }
 
 void fill_topo(struct topology_i* topo_i, int32_t eu_sub, int32_t sub, int32_t sli) {
   topo_i->slices = sli;

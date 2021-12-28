@@ -9,6 +9,7 @@
 #include "../common/global.hpp"
 
 int64_t get_peak_performance_intel(struct gpu_info* gpu) {
+  if(gpu->topo_i->eu_subslice < 0 || gpu->topo_i->subslices < 0) return -1;
   return gpu->freq * 1000000 * gpu->topo_i->eu_subslice * gpu->topo_i->subslices * 8 * 2;
 }
 
@@ -48,5 +49,7 @@ bool print_gpu_intel(struct gpu_info* gpu) {
 }
 
 char* get_str_eu(struct gpu_info* gpu) {
+  if(gpu->topo_i->subslices < 0 || gpu->topo_i->eu_subslice < 0)
+    return get_str_generic(-1);
   return get_str_generic(gpu->topo_i->subslices * gpu->topo_i->eu_subslice);
 }

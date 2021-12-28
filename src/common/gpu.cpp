@@ -147,9 +147,17 @@ char* get_str_peak_performance_tensor(struct gpu_info* gpu) {
 }
 
 char* get_str_generic(int32_t data) {
+  char* str;
+
+  if(data < 0) {
+    str = (char *) emalloc(sizeof(char) * (strlen(STRING_UNKNOWN) + 1));
+    strncpy(str, STRING_UNKNOWN, strlen(STRING_UNKNOWN) + 1);
+    return str;
+  }
+
   // Largest int is 10, +1 for possible negative, +1 for EOL
   uint32_t max_size = 12;
-  char* dummy = (char *) ecalloc(max_size, sizeof(char));
-  snprintf(dummy, max_size, "%d", data);
-  return dummy;
+  str = (char *) ecalloc(max_size, sizeof(char));
+  snprintf(str, max_size, "%d", data);
+  return str;
 }
