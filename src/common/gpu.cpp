@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cassert>
 #include <cerrno>
-#include <cmath>
 
 #include "../common/global.hpp"
 #include "gpu.hpp"
@@ -16,6 +15,9 @@
 #define STRING_KILOBYTES  "KB"
 #define STRING_MEGABYTES  "MB"
 #define STRING_GIGABYTES  "GB"
+#define STRING_KIBIBYTES  "KiB"
+#define STRING_MEBIBYTES  "MiB"
+#define STRING_GIBIBYTES  "GiB"
 
 static const char *memtype_str[] = {
   /*[MEMTYPE_UNKNOWN] = */ STRING_UNKNOWN,
@@ -37,12 +39,10 @@ int32_t get_value_as_smallest_unit(char ** str, uint64_t value) {
   int max_len = 10; // Max is 8 for digits, 2 for units
   *str = (char *) emalloc(sizeof(char)* (max_len + 1));
 
-  if(value/1024 >= (1 << 20))
-    ret = snprintf(*str, max_len, "%.4g " STRING_GIGABYTES, trunc((double)value/(1<<30)));
-  else if(value/1024 >= (1 << 10))
-    ret = snprintf(*str, max_len, "%.4g " STRING_MEGABYTES, trunc((double)value/(1<<20)));
+  if(value/1024 >= (1 << 10))
+    ret = snprintf(*str, max_len, "%.0f " STRING_MEBIBYTES, (double)value/(1<<20));
   else
-    ret = snprintf(*str, max_len, "%.4g " STRING_KILOBYTES, trunc((double)value/(1<<10)));
+    ret = snprintf(*str, max_len, "%.0f " STRING_KIBIBYTES, (double)value/(1<<10));
 
   return ret;
 }
