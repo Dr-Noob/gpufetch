@@ -75,7 +75,8 @@ int main(int argc, char* argv[]) {
   }
 
   if(get_num_gpus_available(list) == 0) {
-    printErr("No GPU was detected, or the detected GPU is not supported by gpufetch");
+    printErr("No GPU was detected! Available GPUs are:");
+    print_gpus_list_pci();
     printf("Please, make sure that the appropiate backend is enabled:\n");
     print_enabled_backends();
     printf("Visit https://github.com/Dr-Noob/gpufetch#2-backends for more information\n");
