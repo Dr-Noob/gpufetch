@@ -60,18 +60,20 @@ struct memory {
 };
 
 struct gpu_info {
+  int32_t idx;
   VENDOR vendor;
   struct uarch* arch;
   char* name;
   int64_t freq;
   struct pci* pci;
-  struct topology_c* topo_c;
-  struct topology_i* topo_i;
+  int64_t peak_performance;
+  // CUDA specific
+  int64_t peak_performance_tcu;
   struct memory* mem;
   struct cache* cach;
-  int64_t peak_performance;
-  int64_t peak_performance_tcu;
-  int32_t idx;
+  struct topology_c* topo_c;
+  // Intel specific
+  struct topology_i* topo_i;
 };
 
 VENDOR get_gpu_vendor(struct gpu_info* gpu);

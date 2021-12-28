@@ -166,7 +166,7 @@ struct uarch* get_uarch_from_pci(struct pci* pci) {
 
 char* get_name_from_uarch(struct uarch* arch) {
   char* name = (char *) emalloc(sizeof(char) * (strlen(arch->chip_str) + 6 + 1));
-  sprintf(name, "Intel %s", arch->chip_str);
+  sprintf(name, "%s", arch->chip_str);
   return name;
 }
 
