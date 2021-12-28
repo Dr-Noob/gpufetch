@@ -13,7 +13,7 @@
 // TODO: Review wikipedia link to improve the LUT
 /*
  * https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
- * https://github.com/mesa3d/mesa/blob/main/include/pci_ids/i965_pci_ids.h
+ * https://github.com/mesa3d/mesa/blob/main/include/pci_ids/iris_pci_ids.h
  */
 GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI_START
@@ -104,5 +104,19 @@ GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI(pci, 0x591D, CHIP_HD_P630)
   CHECK_PCI(pci, 0x5926, CHIP_IRISP_640)
   CHECK_PCI(pci, 0x5927, CHIP_IRISP_650)
+  // Gen11
+  CHECK_PCI(pci, 0x8A58, CHIP_UHD_G1)
+  CHECK_PCI(pci, 0x8A56, CHIP_UHD_G1)
+  CHECK_PCI(pci, 0x8A5C, CHIP_IRISP_G4)
+  CHECK_PCI(pci, 0x8A5A, CHIP_IRISP_G4)
+  CHECK_PCI(pci, 0x8A51, CHIP_IRISP_G7)
+  CHECK_PCI(pci, 0x8A52, CHIP_IRISP_G7)
+  CHECK_PCI(pci, 0x8A53, CHIP_IRISP_G7)
+  // Gen12
+  CHECK_PCI(pci, 0x4C8B, CHIP_UHD_730)
+  CHECK_PCI(pci, 0x4C8B, CHIP_UHD_750)
+  CHECK_PCI(pci, 0x9A78, CHIP_XE_G4)
+  CHECK_PCI(pci, 0x9A40, CHIP_XE_G7) // G7 may have 80 or 96 EUs
+  CHECK_PCI(pci, 0x9A49, CHIP_XE_G7) // Same for this G7
   CHECK_PCI_END
 }

@@ -49,7 +49,7 @@ gpufetch is a command-line tool written in C that displays the GPU information i
 gpufetch supports the following GPUs:
 
 - **NVIDIA** GPUs (Compute Capability >= 2.0)
-- **Intel** iGPUs (between Gen6 and Gen9.5)
+- **Intel** iGPUs (Generation >= Gen6)
 
 Only compilation under **Linux** is supported.
 

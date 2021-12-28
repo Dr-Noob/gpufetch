@@ -18,12 +18,14 @@
 /*
  * Mapping between iGPU and CPU uarchs
  * -----------------------------------
- * Gen6:   Sandy Bridge (2th Gen)
- * Gen7:   Ivy Brdige   (3th Gen)
- * Gen7.5: Haswell      (4th Gen)
- * Gen8:   Broadwell    (5th Gen)
- * Gen9:   Skylake      (6th Gen)
+ * Gen6:   Sandy Bridge      (2th Gen)
+ * Gen7:   Ivy Brdige        (3th Gen)
+ * Gen7.5: Haswell           (4th Gen)
+ * Gen8:   Broadwell         (5th Gen)
+ * Gen9:   Skylake           (6th Gen)
  * Gen9.5: Kaby Lake
+ * Gen11:  Ice Lake          (10th Gen)
+ * Gen12:  Rocket/Tiger Lake (11th Gen)
  */
 enum {
   UARCH_UNKNOWN,
@@ -33,6 +35,9 @@ enum {
   UARCH_GEN8,
   UARCH_GEN9,
   UARCH_GEN9_5,
+  UARCH_GEN11,
+  UARCH_GEN12_RKL,
+  UARCH_GEN12_TGL,
 };
 
 static const char *uarch_str[] = {
@@ -43,6 +48,9 @@ static const char *uarch_str[] = {
   /*[ARCH_GEN8]      = */ "Gen8",
   /*[ARCH_GEN9]      = */ "Gen9",
   /*[ARCH_GEN9_5]    = */ "Gen9.5",
+  /*[ARCH_GEN11]     = */ "Gen11",
+  /*[ARCH_GEN12_RKL] = */ "Gen12"
+  /*[ARCH_GEN12_TGL] = */ "Gen12"
 };
 
 // Graphic Tiers (GT)
@@ -60,6 +68,7 @@ enum {
 static const char *gt_str[] = {
   /*[GT_UNKNOWN] = */ STRING_UNKNOWN,
   /*[GT1]        = */ "GT1",
+  /*[GT1_4]      = */ "GT1",
   /*[GT1_5]      = */ "GT1.5",
   /*[GT2]        = */ "GT2",
   /*[GT3]        = */ "GT3",
@@ -139,6 +148,15 @@ void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_HD_P630,      "HD Graphics P630",           UARCH_GEN9_5, GT2,   14)
   CHECK_UARCH(arch, CHIP_IRISP_640,    "Iris Plus Graphics 640",     UARCH_GEN9_5, GT3e,  14)
   CHECK_UARCH(arch, CHIP_IRISP_640,    "Iris Plus Graphics 650",     UARCH_GEN9_5, GT3e,  14)
+  // Gen11
+  CHECK_UARCH(arch, CHIP_UHD_G1,       "UHD Graphics G1",            UARCH_GEN11,  GT1,   10)
+  CHECK_UARCH(arch, CHIP_IRISP_G4,     "Iris Plus Graphics G4",      UARCH_GEN11,  GT1_5, 10)
+  CHECK_UARCH(arch, CHIP_IRISP_G7,     "Iris Plus Graphics G7",      UARCH_GEN11,  GT2,   10)
+  // Gen12
+  CHECK_UARCH(arch, CHIP_UHD_730,      "UHD Graphics 730",           UARCH_GEN12_RKL, GT1,   14)
+  CHECK_UARCH(arch, CHIP_UHD_750,      "UHD Graphics 750",           UARCH_GEN12_RKL, GT1,   14)
+  CHECK_UARCH(arch, CHIP_XE_G4,        "Iris Xe G4",                 UARCH_GEN12_TGL, GT2,   10)
+  CHECK_UARCH(arch, CHIP_XE_G7,        "Iris Xe G7",                 UARCH_GEN12_TGL, GT2,   10)
   CHECK_UARCH_END
 }
 
@@ -180,6 +198,8 @@ char* get_name_from_uarch(struct uarch* arch) {
  * Gen9:     https://en.wikichip.org/wiki/intel/microarchitectures/gen9#Configuration
              "The Compute Architecture of Intel Processor Graphics Gen9, v1.0"
  * Gen9.5:   https://en.wikichip.org/wiki/intel/microarchitectures/gen9.5#Configuration
+
+ * Also:     https://www.techpowerup.com/gpu-specs/intel-rocket-lake-gt1.g993
  */
 struct topology_i* get_topology_info(struct uarch* arch) {
   struct topology_i* topo = (struct topology_i*) emalloc(sizeof(struct topology_i));
@@ -213,7 +233,13 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT2,   8, 3, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3,   8, 6, 2)
   CHECK_TOPO(topo, arch, UARCH_GEN9_5, GT3e,  8, 6, 2) // Same as GT3, but has eDRAM cache
+  // Gen11
+  CHECK_TOPO(topo, arch, UARCH_GEN11,  GT1,   8, 4, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN11,  GT1_5, 8, 6, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN11,  GT2,   8, 8, 1)
+  // Gen12
+  CHECK_TOPO(topo, arch, UARCH_GEN12_RKL, GT1, 16, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN12_TGL, GT2, 16, 6, 1) // TODO: Check if is i5/i7 do know if has 80 or 96 EUs
   CHECK_TOPO_END
-
   return topo;
 }

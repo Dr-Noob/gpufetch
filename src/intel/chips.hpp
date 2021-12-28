@@ -59,6 +59,15 @@ enum {
   CHIP_HD_P630,
   CHIP_IRISP_640,
   CHIP_IRISP_650,
+  // Gen11
+  CHIP_UHD_G1,
+  CHIP_IRISP_G4,
+  CHIP_IRISP_G7,
+  // Gen12
+  CHIP_UHD_730,
+  CHIP_UHD_750,
+  CHIP_XE_G4,
+  CHIP_XE_G7
 };
 
 #endif
