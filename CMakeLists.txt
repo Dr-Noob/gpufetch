@@ -54,7 +54,7 @@ set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-a
 if(ENABLE_INTEL_BACKEND)
   target_compile_definitions(gpufetch PUBLIC BACKEND_INTEL)
 
-  add_library(intel_backend STATIC ${INTEL_DIR}/intel.cpp ${INTEL_DIR}/pci.cpp ${INTEL_DIR}/uarch.cpp ${INTEL_DIR}/udev.cpp)
+  add_library(intel_backend STATIC ${INTEL_DIR}/intel.cpp ${INTEL_DIR}/pci.cpp ${INTEL_DIR}/uarch.cpp ${INTEL_DIR}/udev.cpp ${INTEL_DIR}/cpuid.cpp)
 
   if(NOT ${PCIUTILS_FOUND})
     add_dependencies(intel_backend pciutils)

@@ -8,6 +8,7 @@
 #include "../common/gpu.hpp"
 #include "chips.hpp"
 #include "pci.hpp"
+#include "cpuid.hpp"
 
 // Data not available
 #define NA                   -1
@@ -239,7 +240,15 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT2,   8, 8, 1)
   // Gen12
   CHECK_TOPO(topo, arch, UARCH_GEN12_RKL, GT1, 16, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN12_TGL, GT2, 16, 6, 1) // TODO: Check if is i5/i7 do know if has 80 or 96 EUs
+  else if(arch->uarch == UARCH_GEN12_TGL && arch->gt == GT2) {
+    // Special case: TigerLake GT2 needs to check if is i5/i7 to know the exact topology
+    if(is_corei5()) {
+      fill_topo(topo, 10, 8, 1); // Should be 80 EUs, but not sure about the organization
+    }
+    else {
+      fill_topo(topo, 16, 6, 1);
+    }
+  }
   CHECK_TOPO_END
   return topo;
 }
