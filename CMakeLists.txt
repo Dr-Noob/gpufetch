@@ -90,7 +90,7 @@ if(ENABLE_CUDA_BACKEND)
   target_link_libraries(gpufetch cuda_backend)
 endif()
 
-target_link_libraries(gpufetch pci z)
+target_link_libraries(gpufetch pci z udev)
 install(TARGETS gpufetch DESTINATION bin)
 
 if(NOT WIN32)
