@@ -35,7 +35,7 @@ if(NOT ${PCIUTILS_FOUND})
   ExternalProject_Add(pciutils
     GIT_REPOSITORY https://github.com/pciutils/pciutils
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND make SHARED=no
+    BUILD_COMMAND make SHARED=no HWDB=no
     BUILD_IN_SOURCE true
     INSTALL_COMMAND make PREFIX=${PCIUTILS_INSTALL_LOCATION} install-lib
   )
@@ -90,7 +90,7 @@ if(ENABLE_CUDA_BACKEND)
   target_link_libraries(gpufetch cuda_backend)
 endif()
 
-target_link_libraries(gpufetch pci z udev)
+target_link_libraries(gpufetch pci z)
 install(TARGETS gpufetch DESTINATION bin)
 
 if(NOT WIN32)
