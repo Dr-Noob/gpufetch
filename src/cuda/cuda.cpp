@@ -5,6 +5,7 @@
 #include "uarch.hpp"
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
+#include "../common/uarch.hpp"
 
 bool print_gpu_cuda(struct gpu_info* gpu) {
   char* cc = get_str_cc(gpu->arch);
@@ -84,7 +85,15 @@ int64_t get_peak_performance_cuda(struct gpu_info* gpu) {
 int64_t get_peak_performance_tcu(cudaDeviceProp prop, struct gpu_info* gpu) {
   // Volta / Turing tensor cores performs 4x4x4 FP16 matrix multiplication
   // Ampere tensor cores performs 8x4x8 FP16 matrix multiplicacion
-  if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo_c->tensor_cores;
+  if(prop.major == 7) {
+    // TU116 does not have tensor cores!
+    // https://www.anandtech.com/show/13973/nvidia-gtx-1660-ti-review-feat-evga-xc-gaming/2
+    if(gpu->arch->chip == CHIP_TU116   || gpu->arch->chip == CHIP_TU116BM ||
+       gpu->arch->chip == CHIP_TU116GL || gpu->arch->chip == CHIP_TU116M) {
+      return 0;
+    }
+    return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo_c->tensor_cores;
+  }
   else if(prop.major == 8) return gpu->freq * 1000000 * 8 * 4 * 8 * 2 * gpu->topo_c->tensor_cores;
   else return 0;
 }
