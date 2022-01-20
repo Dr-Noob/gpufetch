@@ -26,19 +26,27 @@ struct cache* get_cache_info(cudaDeviceProp prop) {
   return cach;
 }
 
-int get_tensor_cores(int sm, int major) {
-  if(major == 7) return sm * 8;
+int get_tensor_cores(struct uarch* arch, int sm, int major) {
+  if(major == 7) {
+    // TU116 does not have tensor cores!
+    // https://www.anandtech.com/show/13973/nvidia-gtx-1660-ti-review-feat-evga-xc-gaming/2
+    if(arch->chip == CHIP_TU116   || arch->chip == CHIP_TU116BM ||
+       arch->chip == CHIP_TU116GL || arch->chip == CHIP_TU116M) {
+      return 0;
+    }
+    return sm * 8;
+  }
   else if(major == 8) return sm * 4;
   else return 0;
 }
 
-struct topology_c* get_topology_info(cudaDeviceProp prop) {
+struct topology_c* get_topology_info(struct uarch* arch, cudaDeviceProp prop) {
   struct topology_c* topo = (struct topology_c*) emalloc(sizeof(struct topology_c));
 
   topo->streaming_mp = prop.multiProcessorCount;
   topo->cores_per_mp = _ConvertSMVer2Cores(prop.major, prop.minor);
   topo->cuda_cores = topo->streaming_mp * topo->cores_per_mp;
-  topo->tensor_cores = get_tensor_cores(topo->streaming_mp, prop.major);
+  topo->tensor_cores = get_tensor_cores(arch, topo->streaming_mp, prop.major);
 
   return topo;
 }
@@ -85,15 +93,7 @@ int64_t get_peak_performance_cuda(struct gpu_info* gpu) {
 int64_t get_peak_performance_tcu(cudaDeviceProp prop, struct gpu_info* gpu) {
   // Volta / Turing tensor cores performs 4x4x4 FP16 matrix multiplication
   // Ampere tensor cores performs 8x4x8 FP16 matrix multiplicacion
-  if(prop.major == 7) {
-    // TU116 does not have tensor cores!
-    // https://www.anandtech.com/show/13973/nvidia-gtx-1660-ti-review-feat-evga-xc-gaming/2
-    if(gpu->arch->chip == CHIP_TU116   || gpu->arch->chip == CHIP_TU116BM ||
-       gpu->arch->chip == CHIP_TU116GL || gpu->arch->chip == CHIP_TU116M) {
-      return 0;
-    }
-    return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo_c->tensor_cores;
-  }
+  if(prop.major == 7) return gpu->freq * 1000000 * 4 * 4 * 4  * 2 * gpu->topo_c->tensor_cores;
   else if(prop.major == 8) return gpu->freq * 1000000 * 8 * 4 * 8 * 2 * gpu->topo_c->tensor_cores;
   else return 0;
 }
@@ -151,7 +151,7 @@ struct gpu_info* get_gpu_info_cuda(int gpu_idx) {
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);
-  gpu->topo_c = get_topology_info(deviceProp);
+  gpu->topo_c = get_topology_info(gpu->arch, deviceProp);
   gpu->peak_performance = get_peak_performance_cuda(gpu);
   gpu->peak_performance_tcu = get_peak_performance_tcu(deviceProp, gpu);
 
