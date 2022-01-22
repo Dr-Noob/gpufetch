@@ -15,7 +15,7 @@ struct pci {
   uint16_t func;
 };
 
-struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id);
+struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id, int idx);
 struct pci_dev *get_pci_devices_from_pciutils();
 void print_gpus_list_pci();
 

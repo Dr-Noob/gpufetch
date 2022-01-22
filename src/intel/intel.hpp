@@ -3,7 +3,7 @@
 
 #include "../common/gpu.hpp"
 
-struct gpu_info* get_gpu_info_intel();
+struct gpu_info* get_gpu_info_intel(struct pci_dev *devices);
 bool print_gpu_intel(struct gpu_info* gpu);
 char* get_str_eu(struct gpu_info* gpu);
 

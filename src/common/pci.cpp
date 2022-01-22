@@ -1,3 +1,4 @@
+#include "sort.hpp"
 #include "global.hpp"
 #include "pci.hpp"
 #include "../cuda/pci.hpp"
@@ -10,6 +11,14 @@
 #define PCI_VENDOR_ID_AMD    0x1002
 #define CLASS_VGA_CONTROLLER 0x0300
 
+void debug_devices(struct pci_dev *devices) {
+  int idx = 0;
+  for(struct pci_dev *dev=devices; idx < 5 && dev != NULL; dev=dev->next) {
+    printf("%04x:%02x:%02x.%d\n", dev->domain, dev->bus, dev->dev, dev->func);
+    idx++;
+  }
+}
+
 bool pciutils_is_vendor_id_present(struct pci_dev *devices, int id) {
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
     if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
@@ -21,14 +30,19 @@ bool pciutils_is_vendor_id_present(struct pci_dev *devices, int id) {
   return false;
 }
 
-uint16_t pciutils_get_pci_device_id(struct pci_dev *devices, int id) {
+uint16_t pciutils_get_pci_device_id(struct pci_dev *devices, int id, int idx) {
+  int curr = 0;
+
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-   if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
-      return dev->device_id;
+    if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
+      if(curr == idx) {
+        return dev->device_id;
+      }
+      curr++;
     }
   }
 
-  printErr("Unable to find a valid device for device id 0x%.4X using pciutils", id);
+  printErr("Unable to find a valid device for device id 0x%.4X with idx %d using pciutils", id, idx);
   return 0;
 }
 
@@ -48,13 +62,13 @@ void pciutils_set_pci_bus(struct pci* pci, struct pci_dev *devices, int id) {
   if(!found) printErr("Unable to find a valid device for id 0x%.4X using pciutils", id);
 }
 
-struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id) {
+struct pci* get_pci_from_pciutils(struct pci_dev *devices, int id, int idx) {
   struct pci* pci = (struct pci*) emalloc(sizeof(struct pci));
 
   // TODO: Refactor this; instead of 2xGet + 1xSet, do it better
   if(pciutils_is_vendor_id_present(devices, id)) {
     pci->vendor_id = id;
-    pci->device_id = pciutils_get_pci_device_id(devices, id);
+    pci->device_id = pciutils_get_pci_device_id(devices, id, idx);
     pciutils_set_pci_bus(pci, devices, id);
     return pci;
   }
@@ -74,6 +88,8 @@ struct pci_dev *get_pci_devices_from_pciutils() {
   for (dev=pacc->devices; dev; dev=dev->next) {
     pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_BASES | PCI_FILL_CLASS);
   }
+
+  sort_pci_devices(&pacc->devices);
 
   return pacc->devices;
 }

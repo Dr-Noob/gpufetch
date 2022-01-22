@@ -13,12 +13,10 @@ int64_t get_peak_performance_intel(struct gpu_info* gpu) {
   return gpu->freq * 1000000 * gpu->topo_i->eu_subslice * gpu->topo_i->subslices * 8 * 2;
 }
 
-struct gpu_info* get_gpu_info_intel() {
+struct gpu_info* get_gpu_info_intel(struct pci_dev *devices) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->vendor = GPU_VENDOR_INTEL;
-
-  struct pci_dev *devices = get_pci_devices_from_pciutils();
-  gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_INTEL);
+  gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_INTEL, 0);
 
   if(gpu->pci == NULL) {
     // No Intel iGPU found in PCI, which means it is not present

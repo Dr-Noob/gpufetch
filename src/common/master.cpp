@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include "pci.hpp"
 #include "global.hpp"
 #include "colors.hpp"
 #include "master.hpp"
@@ -16,6 +17,7 @@ struct gpu_list {
 
 struct gpu_list* get_gpu_list() {
   int idx = 0;
+  struct pci_dev *devices = get_pci_devices_from_pciutils();
   struct gpu_list* list = (struct gpu_list*) malloc(sizeof(struct gpu_list));
   list->num_gpus = 0;
   list->gpus = (struct gpu_info**) malloc(sizeof(struct info*) * MAX_GPUS);
@@ -24,7 +26,7 @@ struct gpu_list* get_gpu_list() {
   bool valid = true;
 
   while(valid) {
-    list->gpus[idx] = get_gpu_info_cuda(idx);
+    list->gpus[idx] = get_gpu_info_cuda(devices, idx);
     if(list->gpus[idx] != NULL) idx++;
     else valid = false;
   }
@@ -33,7 +35,7 @@ struct gpu_list* get_gpu_list() {
 #endif
 
 #ifdef BACKEND_INTEL
-  list->gpus[idx] = get_gpu_info_intel();
+  list->gpus[idx] = get_gpu_info_intel(devices);
   if(list->gpus[idx] != NULL) list->num_gpus++;
 #endif
 
