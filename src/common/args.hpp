@@ -20,6 +20,8 @@ enum {
   ARG_COLOR,
   ARG_GPU,
   ARG_LIST,
+  ARG_LOGO_LONG,
+  ARG_LOGO_SHORT,
   ARG_HELP,
   ARG_VERBOSE,
   ARG_VERSION
@@ -34,6 +36,8 @@ int max_arg_str_length();
 bool parse_args(int argc, char* argv[]);
 bool show_help();
 bool list_gpus();
+bool show_logo_long();
+bool show_logo_short();
 bool show_version();
 bool verbose_enabled();
 void free_colors_struct(struct color** cs);

@@ -219,6 +219,8 @@ void replace_bgbyfg_color(struct ascii_logo* logo) {
 }
 
 struct ascii_logo* choose_ascii_art_aux(struct ascii_logo* logo_long, struct ascii_logo* logo_short, struct terminal* term, int lf) {
+  if(show_logo_long()) return logo_long;
+  if(show_logo_short()) return logo_short;
   if(ascii_fits_screen(term->w, *logo_long, lf)) {
     return logo_long;
   }
