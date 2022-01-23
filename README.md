@@ -20,7 +20,7 @@
 <p align="center"> </p>
 
 <p align="center">
-gpufetch is a command-line tool written in C that displays the GPU information in a clean and beautiful way
+gpufetch is a command-line tool written in C++ that displays the GPU information in a clean and beautiful way
 </p>
 
 <p align="center">
