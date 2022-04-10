@@ -1,6 +1,8 @@
 #ifndef __ARGS__
 #define __ARGS__
 
+#include <cstdint>
+
 struct color {
   int32_t R;
   int32_t G;

@@ -45,6 +45,8 @@ if(NOT ${PCIUTILS_FOUND})
 else()
   include_directories(${PCIUTILS_INCLUDE_DIR})
   link_libraries(${PCIUTILS_LIBRARIES})
+  # Needed for linking libpci in FreeBSD
+  link_directories(/usr/local/lib/)
 endif()
 
 add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/sort.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp ${COMMON_DIR}/uarch.cpp)

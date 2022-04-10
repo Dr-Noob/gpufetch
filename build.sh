@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # gpufetch build script
 set -e
@@ -27,6 +27,13 @@ fi
 # cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_INTEL_BACKEND=OFF ..
 
 cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
-make -j$(nproc)
+
+os=$(uname)
+if [ "$os" == 'Linux' ]; then
+  make -j$(nproc)
+elif [ "$os" == 'FreeBSD' ]; then
+  gmake -j4
+fi
+
 cd -
 ln -s build/gpufetch .
