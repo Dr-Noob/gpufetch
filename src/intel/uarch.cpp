@@ -50,7 +50,7 @@ static const char *uarch_str[] = {
   /*[ARCH_GEN9]      = */ "Gen9",
   /*[ARCH_GEN9_5]    = */ "Gen9.5",
   /*[ARCH_GEN11]     = */ "Gen11",
-  /*[ARCH_GEN12_RKL] = */ "Gen12"
+  /*[ARCH_GEN12_RKL] = */ "Gen12",
   /*[ARCH_GEN12_TGL] = */ "Gen12"
 };
 
