@@ -83,7 +83,13 @@ if(ENABLE_CUDA_BACKEND)
   # https://docs.nvidia.com/cuda/cuda-samples/index.html#new-features-in-cuda-toolkit-11-6
   # Not sure about this. Why the heck did they change this?
   if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.6")
-    set(CUDA_SAMPLES_PATH ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common)
+    include(FetchContent)
+    FetchContent_Declare(
+      cudasamples
+      GIT_REPOSITORY https://github.com/NVIDIA/cuda-samples
+    )
+    FetchContent_MakeAvailable(cudasamples)
+    set(CUDA_SAMPLES_PATH ${cudasamples_SOURCE_DIR}/Common)
   else()
     set(CUDA_SAMPLES_PATH ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
   endif()
