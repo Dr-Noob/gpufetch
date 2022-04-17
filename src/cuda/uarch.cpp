@@ -1,7 +1,9 @@
 #include <cuda_runtime.h>
-#include <helper_cuda.h>
+#include <cstdlib>
 #include <cstdint>
 #include <cstddef>
+#include <cstdio>
+#include <cstring>
 
 #include "../common/uarch.hpp"
 #include "../common/global.hpp"
@@ -329,6 +331,7 @@ char* get_str_chip(struct uarch* arch) {
   return arch->chip_str;
 }
 
+// TODO: What about _ConvertSMVer2ArchName?
 const char* get_str_uarch_cuda(struct uarch* arch) {
   return uarch_str[arch->uarch];
 }

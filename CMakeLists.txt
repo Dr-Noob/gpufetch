@@ -80,21 +80,13 @@ if(ENABLE_CUDA_BACKEND)
     set(CMAKE_CUDA_ARCHITECTURES 20 21 30 32 35 37 50 52 53 60 61 62)
   endif()
 
-  # https://docs.nvidia.com/cuda/cuda-samples/index.html#new-features-in-cuda-toolkit-11-6
-  # Not sure about this. Why the heck did they change this?
-  if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.6")
-    set(CUDA_SAMPLES_PATH ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common)
-  else()
-    set(CUDA_SAMPLES_PATH ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
-  endif()
-
   add_library(cuda_backend STATIC ${CUDA_DIR}/cuda.cpp ${CUDA_DIR}/uarch.cpp ${CUDA_DIR}/pci.cpp)
 
   if(NOT ${PCIUTILS_FOUND})
     add_dependencies(cuda_backend pciutils)
   endif()
 
-  target_include_directories(cuda_backend PUBLIC ${CUDA_SAMPLES_PATH} ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/include)
+  target_include_directories(cuda_backend PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/include)
 
   target_link_libraries(cuda_backend PRIVATE cudart)
   target_link_libraries(gpufetch cuda_backend)

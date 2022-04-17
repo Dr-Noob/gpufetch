@@ -1,8 +1,11 @@
-#include <helper_cuda.h>
 #include <cuda_runtime.h>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
 
 #include "cuda.hpp"
 #include "uarch.hpp"
+#include "gpufetch_helper_cuda.hpp"
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 #include "../common/uarch.hpp"
