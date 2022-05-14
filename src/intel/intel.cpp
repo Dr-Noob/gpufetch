@@ -9,7 +9,13 @@
 #include "../common/global.hpp"
 
 int64_t get_peak_performance_intel(struct gpu_info* gpu) {
-  if(gpu->topo_i->eu_subslice < 0 || gpu->topo_i->subslices < 0) return -1;
+  // Check that we have valid data
+  if(gpu->topo_i->eu_subslice < 0 ||
+     gpu->topo_i->subslices < 0   ||
+     gpu->freq <= 0)
+  {
+    return -1;
+  }
   return gpu->freq * 1000000 * gpu->topo_i->eu_subslice * gpu->topo_i->subslices * 8 * 2;
 }
 
