@@ -27,6 +27,7 @@
  * Gen9.5: Kaby Lake
  * Gen11:  Ice Lake          (10th Gen)
  * Gen12:  Rocket/Tiger Lake (11th Gen)
+ * Gen12:  Alder Lake        (12th Gen)
  */
 enum {
   UARCH_UNKNOWN,
@@ -39,6 +40,7 @@ enum {
   UARCH_GEN11,
   UARCH_GEN12_RKL,
   UARCH_GEN12_TGL,
+  UARCH_GEN12_ALD,
 };
 
 static const char *uarch_str[] = {
@@ -50,13 +52,15 @@ static const char *uarch_str[] = {
   /*[ARCH_GEN9]      = */ "Gen9",
   /*[ARCH_GEN9_5]    = */ "Gen9.5",
   /*[ARCH_GEN11]     = */ "Gen11",
-  /*[ARCH_GEN12_RKL] = */ "Gen12",
-  /*[ARCH_GEN12_TGL] = */ "Gen12"
+  /*[ARCH_GEN12_RKL] = */ "Xe",
+  /*[ARCH_GEN12_TGL] = */ "Xe",
+  /*[ARCH_GEN12_ALD] = */ "Xe",
 };
 
 // Graphic Tiers (GT)
 enum {
   GT_UNKNOWN,
+  GT0_5, // Saw that 0.5 thing in iris_pci_ids.h
   GT1,
   GT1_4, // GT1 with 4 EUs
   GT1_5,
@@ -68,6 +72,7 @@ enum {
 
 static const char *gt_str[] = {
   /*[GT_UNKNOWN] = */ STRING_UNKNOWN,
+  /*[GT0_5]      = */ "GT0.5",
   /*[GT1]        = */ "GT1",
   /*[GT1_4]      = */ "GT1",
   /*[GT1_5]      = */ "GT1.5",
@@ -153,9 +158,12 @@ void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_UHD_G1,       "UHD Graphics G1",            UARCH_GEN11,  GT1,   10)
   CHECK_UARCH(arch, CHIP_IRISP_G4,     "Iris Plus Graphics G4",      UARCH_GEN11,  GT1_5, 10)
   CHECK_UARCH(arch, CHIP_IRISP_G7,     "Iris Plus Graphics G7",      UARCH_GEN11,  GT2,   10)
-  // Gen12
-  CHECK_UARCH(arch, CHIP_UHD_730,      "UHD Graphics 730",           UARCH_GEN12_RKL, GT1,   14)
+  // Xe (Gen12)
+  CHECK_UARCH(arch, CHIP_UHD_710,      "UHD Graphics 710",           UARCH_GEN12_ALD, GT0_5, 10)
+  CHECK_UARCH(arch, CHIP_UHD_730_ALD,  "UHD Graphics 730",           UARCH_GEN12_ALD, GT1,   10)
+  CHECK_UARCH(arch, CHIP_UHD_730_RKL,  "UHD Graphics 730",           UARCH_GEN12_RKL, GT1,   14)
   CHECK_UARCH(arch, CHIP_UHD_750,      "UHD Graphics 750",           UARCH_GEN12_RKL, GT1,   14)
+  CHECK_UARCH(arch, CHIP_UHD_770,      "UHD Graphics 770",           UARCH_GEN12_ALD, GT2,   10)
   CHECK_UARCH(arch, CHIP_XE_G4,        "Iris Xe G4",                 UARCH_GEN12_TGL, GT2,   10)
   CHECK_UARCH(arch, CHIP_XE_G7,        "Iris Xe G7",                 UARCH_GEN12_TGL, GT2,   10)
   CHECK_UARCH_END
@@ -201,6 +209,7 @@ char* get_name_from_uarch(struct uarch* arch) {
  * Gen9.5:   https://en.wikichip.org/wiki/intel/microarchitectures/gen9.5#Configuration
 
  * Also:     https://www.techpowerup.com/gpu-specs/intel-rocket-lake-gt1.g993
+             https://www.techpowerup.com/gpu-specs/?architecture=Generation%2012.1
  */
 struct topology_i* get_topology_info(struct uarch* arch) {
   struct topology_i* topo = (struct topology_i*) emalloc(sizeof(struct topology_i));
@@ -239,7 +248,11 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT1_5, 8, 6, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT2,   8, 8, 1)
   // Gen12
-  CHECK_TOPO(topo, arch, UARCH_GEN12_RKL, GT1, 16, 2, 1)
+  // TODO: This is a mess, I need to check this values
+  CHECK_TOPO(topo, arch, UARCH_GEN12_RKL, GT1,   16, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT0_5, 16, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT1,   16, 2, 1)
+  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT2,   16, 2, 1) // ALD GT2 probably needs to check for i5/i7 as below...
   else if(arch->uarch == UARCH_GEN12_TGL && arch->gt == GT2) {
     // Special case: TigerLake GT2 needs to check if is i5/i7 to know the exact topology
     if(is_corei5()) {

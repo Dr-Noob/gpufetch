@@ -112,11 +112,16 @@ GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI(pci, 0x8A51, CHIP_IRISP_G7)
   CHECK_PCI(pci, 0x8A52, CHIP_IRISP_G7)
   CHECK_PCI(pci, 0x8A53, CHIP_IRISP_G7)
-  // Gen12
-  CHECK_PCI(pci, 0x4C8B, CHIP_UHD_730)
-  CHECK_PCI(pci, 0x4C8B, CHIP_UHD_750)
+  // Xe (Gen12)
+  CHECK_PCI(pci, 0x4693, CHIP_UHD_710)
+  CHECK_PCI(pci, 0x4692, CHIP_UHD_730_ALD)
+  CHECK_PCI(pci, 0x4C8B, CHIP_UHD_730_RKL)
+  CHECK_PCI(pci, 0x4C8A, CHIP_UHD_750)
+  CHECK_PCI(pci, 0x4690, CHIP_UHD_770)
+  CHECK_PCI(pci, 0x4680, CHIP_UHD_770)
   CHECK_PCI(pci, 0x9A78, CHIP_XE_G4)
   CHECK_PCI(pci, 0x9A40, CHIP_XE_G7) // G7 may have 80 or 96 EUs
   CHECK_PCI(pci, 0x9A49, CHIP_XE_G7) // Same for this G7
+  // TODO: Add generic generic UHD Graphics and Iris Xe Graphics from Mobile
   CHECK_PCI_END
 }
