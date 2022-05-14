@@ -5,6 +5,7 @@
 #include "global.hpp"
 #include "colors.hpp"
 #include "master.hpp"
+#include "args.hpp"
 #include "../cuda/cuda.hpp"
 #include "../intel/intel.hpp"
 
@@ -80,9 +81,19 @@ int get_num_gpus_available(struct gpu_list* list) {
   return list->num_gpus;
 }
 
+bool gpu_idx_valid(int idx) {
+  if(idx < 0) {
+    printErr("Specified GPU index is out of range: %d. ", idx);
+    printf("Run gpufetch with the --%s option to check out valid GPU indexes\n", args_str[ARG_LIST]);
+    return false;
+  }
+  return true;
+}
+
 struct gpu_info* get_gpu_info(struct gpu_list* list, int idx) {
   if(idx >= list->num_gpus || idx < 0) {
     printErr("Specified GPU index is out of range: %d", idx);
+    printf("Run gpufetch with the --%s option to check out valid GPU indexes\n", args_str[ARG_LIST]);
     return NULL;
   }
   return list->gpus[idx];

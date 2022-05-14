@@ -71,6 +71,11 @@ int main(int argc, char* argv[]) {
 
   set_log_level(verbose_enabled());
 
+  int idx = get_gpu_idx();
+  if(!gpu_idx_valid(idx)) {
+    return EXIT_FAILURE;
+  }
+
   struct gpu_list* list = get_gpu_list();
   if(list_gpus()) {
     return print_gpus_list(list);
@@ -86,7 +91,7 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  struct gpu_info* gpu = get_gpu_info(list, get_gpu_idx());
+  struct gpu_info* gpu = get_gpu_info(list, idx);
   if(gpu == NULL)
     return EXIT_FAILURE;
 

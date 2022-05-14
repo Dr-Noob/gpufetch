@@ -99,18 +99,23 @@ void print_gpus_list_pci() {
   struct pci_dev *devices = get_pci_devices_from_pciutils();
 
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-   if(dev->device_class == CLASS_VGA_CONTROLLER) {
-      printf("- GPU %d: ", i);
+    if(dev->device_class == CLASS_VGA_CONTROLLER) {
+      printf("- GPU %d:\n", i);
+      printf("  * Vendor: ");
       if(dev->vendor_id == PCI_VENDOR_ID_NVIDIA) {
-        printf("NVIDIA ");
+        printf("NVIDIA");
       }
       else if(dev->vendor_id == PCI_VENDOR_ID_INTEL) {
-        printf("Intel ");
+        printf("Intel");
       }
       else if(dev->vendor_id == PCI_VENDOR_ID_AMD) {
-        printf("AMD ");
+        printf("AMD");
       }
-      printf("%.4x:%.4x\n", dev->vendor_id, dev->device_id);
+      else {
+        printf("Unknown");
+      }
+      printf("\n  * PCI id: %.4x:%.4x\n", dev->vendor_id, dev->device_id);
+      i++;
     }
   }
 }
