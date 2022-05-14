@@ -90,6 +90,8 @@ static const char *gt_str[] = {
 #define CHECK_TOPO_START if (false) {}
 #define CHECK_TOPO(topo, arch, uarch_, gt_, eu_sub, sub, sli) \
   else if(arch->uarch == uarch_ && arch->gt == gt_) fill_topo(topo, eu_sub, sub, sli);
+#define CHECK_TOPO_CHIP(topo, arch, uarch_, chip_, eu_sub, sub, sli) \
+  else if(arch->uarch == uarch_ && arch->chip == chip_) fill_topo(topo, eu_sub, sub, sli);
 #define CHECK_TOPO_END else { printBug("get_topology_info: Invalid uarch and gt combination: '%s' and '%s'", arch->chip_str, get_str_gt(arch)); fill_topo(topo, UNK, UNK, UNK); }
 
 void fill_topo(struct topology_i* topo_i, int32_t eu_sub, int32_t sub, int32_t sli) {
@@ -159,11 +161,11 @@ void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_IRISP_G4,     "Iris Plus Graphics G4",      UARCH_GEN11,  GT1_5, 10)
   CHECK_UARCH(arch, CHIP_IRISP_G7,     "Iris Plus Graphics G7",      UARCH_GEN11,  GT2,   10)
   // Xe (Gen12)
-  CHECK_UARCH(arch, CHIP_UHD_710,      "UHD Graphics 710",           UARCH_GEN12_ALD, GT0_5, 10)
+  CHECK_UARCH(arch, CHIP_UHD_710,      "UHD Graphics 710",           UARCH_GEN12_ALD, GT1,   10)
   CHECK_UARCH(arch, CHIP_UHD_730_ALD,  "UHD Graphics 730",           UARCH_GEN12_ALD, GT1,   10)
+  CHECK_UARCH(arch, CHIP_UHD_770,      "UHD Graphics 770",           UARCH_GEN12_ALD, GT1,   10)
   CHECK_UARCH(arch, CHIP_UHD_730_RKL,  "UHD Graphics 730",           UARCH_GEN12_RKL, GT1,   14)
   CHECK_UARCH(arch, CHIP_UHD_750,      "UHD Graphics 750",           UARCH_GEN12_RKL, GT1,   14)
-  CHECK_UARCH(arch, CHIP_UHD_770,      "UHD Graphics 770",           UARCH_GEN12_ALD, GT2,   10)
   CHECK_UARCH(arch, CHIP_XE_G4,        "Iris Xe G4",                 UARCH_GEN12_TGL, GT2,   10)
   CHECK_UARCH(arch, CHIP_XE_G7,        "Iris Xe G7",                 UARCH_GEN12_TGL, GT2,   10)
   CHECK_UARCH_END
@@ -210,6 +212,7 @@ char* get_name_from_uarch(struct uarch* arch) {
 
  * Also:     https://www.techpowerup.com/gpu-specs/intel-rocket-lake-gt1.g993
              https://www.techpowerup.com/gpu-specs/?architecture=Generation%2012.1
+             https://elixir.bootlin.com/linux/latest/source/include/drm/i915_pciids.h
  */
 struct topology_i* get_topology_info(struct uarch* arch) {
   struct topology_i* topo = (struct topology_i*) emalloc(sizeof(struct topology_i));
@@ -247,13 +250,13 @@ struct topology_i* get_topology_info(struct uarch* arch) {
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT1,   8, 4, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT1_5, 8, 6, 1)
   CHECK_TOPO(topo, arch, UARCH_GEN11,  GT2,   8, 8, 1)
-  // Gen12
-  // TODO: This is a mess, I need to check this values
-  CHECK_TOPO(topo, arch, UARCH_GEN12_RKL, GT1,   16, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT0_5, 16, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT1,   16, 2, 1)
-  CHECK_TOPO(topo, arch, UARCH_GEN12_ALD, GT2,   16, 2, 1) // ALD GT2 probably needs to check for i5/i7 as below...
-  else if(arch->uarch == UARCH_GEN12_TGL && arch->gt == GT2) {
+  // Xe (Gen12)
+  // NOTE: Instead of checking for uarch + graphics tier,
+  // we have to check for uarch + exact chip
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_RKL, CHIP_UHD_730_RKL, 8, 3, 1)
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_RKL, CHIP_UHD_750,     8, 4, 1)
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_TGL, CHIP_XE_G4,       8, 6, 1)
+  else if(arch->uarch == UARCH_GEN12_TGL && arch->chip == CHIP_XE_G7) {
     // Special case: TigerLake GT2 needs to check if is i5/i7 to know the exact topology
     if(is_corei5()) {
       fill_topo(topo, 10, 8, 1); // Should be 80 EUs, but not sure about the organization
@@ -262,6 +265,10 @@ struct topology_i* get_topology_info(struct uarch* arch) {
       fill_topo(topo, 16, 6, 1);
     }
   }
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_ALD, CHIP_UHD_710,     8, 2, 1)
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_ALD, CHIP_UHD_730_ALD, 8, 3, 1)
+  CHECK_TOPO_CHIP(topo, arch, UARCH_GEN12_ALD, CHIP_UHD_770,     8, 4, 1)
+  // TODO: Add ALD UHD Graphics/Xe Graphics
   CHECK_TOPO_END
   return topo;
 }
