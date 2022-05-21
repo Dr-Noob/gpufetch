@@ -118,14 +118,16 @@ struct gpu_info* get_gpu_info_cuda(struct pci_dev *devices, int gpu_idx) {
 
   int num_gpus = -1;
   cudaError_t err = cudaSuccess;
-  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
-    return NULL;
-  }
+  err = cudaGetDeviceCount(&num_gpus);
 
   if(gpu_idx == 0) {
-    printf("\r");
+    printf("\r%*c\r", (int) strlen(CUDA_DRIVER_START_WARNING), ' ');
     fflush(stdout);
+  }
+
+  if(err != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
   }
 
   if(num_gpus <= 0) {
