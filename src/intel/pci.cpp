@@ -8,7 +8,7 @@
 #define CHECK_PCI_START if (false) {}
 #define CHECK_PCI(pci, id, chip) \
    else if (pci->device_id == id) return chip;
-#define CHECK_PCI_END else { printBug("Unkown Intel device id: 0x%.4X", pci->device_id); return CHIP_UNKNOWN_INTEL; }
+#define CHECK_PCI_END else { printBug("Unknown Intel device id: 0x%.4X", pci->device_id); return CHIP_UNKNOWN_INTEL; }
 
 // TODO: Review wikipedia link to improve the LUT
 /*
