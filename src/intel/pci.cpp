@@ -14,6 +14,7 @@
 /*
  * https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
  * https://github.com/mesa3d/mesa/blob/main/include/pci_ids/iris_pci_ids.h
+ * https://raw.githubusercontent.com/smxi/inxi/master/inxi
  */
 GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI_START

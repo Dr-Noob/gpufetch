@@ -150,6 +150,8 @@ void map_chip_to_uarch_intel(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_UHD_605,      "UHD Graphics 605",           UARCH_GEN9_5, GT1_5, 14)
   CHECK_UARCH(arch, CHIP_UHD_620,      "UHD Graphics 620",           UARCH_GEN9_5, GT2,   14)
   CHECK_UARCH(arch, CHIP_UHD_630,      "UHD Graphics 630",           UARCH_GEN9_5, GT2,   14)
+  CHECK_UARCH(arch, CHIP_UHD_KBL_GT1,  "UHD Graphics",               UARCH_GEN9_5, GT1,   14)
+  CHECK_UARCH(arch, CHIP_UHD_KBL_GT2,  "UHD Graphics",               UARCH_GEN9_5, GT2,   14)
   CHECK_UARCH(arch, CHIP_HD_610,       "HD Graphics 610",            UARCH_GEN9_5, GT1,   14)
   CHECK_UARCH(arch, CHIP_HD_615,       "HD Graphics 615",            UARCH_GEN9_5, GT2,   14)
   CHECK_UARCH(arch, CHIP_HD_630,       "HD Graphics 630",            UARCH_GEN9_5, GT2,   14)
