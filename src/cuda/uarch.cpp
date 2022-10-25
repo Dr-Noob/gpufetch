@@ -24,6 +24,8 @@ enum {
   UARCH_VOLTA,
   UARCH_TURING,
   UARCH_AMPERE,
+  UARCH_ADA,
+  UARCH_HOPPER
 };
 
 static const char *uarch_str[] = {
@@ -36,6 +38,8 @@ static const char *uarch_str[] = {
   /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
   /*[ARCH_AMPERE]     = */ "Ampere",
+  /*[ARCH_ADA]        = */ "Ada Lovelace",
+  /*[ARCH_HOPPER]     = */ "Hopper"
 };
 
 #define CHECK_UARCH_START if (false) {}
@@ -218,6 +222,9 @@ void map_chip_to_uarch_cuda(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_GA100GL,  "GA100",    UARCH_AMPERE,   7)
   CHECK_UARCH(arch, CHIP_GA102,    "GA102",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA102GL,  "GA102",    UARCH_AMPERE,   8)
+  CHECK_UARCH(arch, CHIP_GA103,    "GA103",    UARCH_AMPERE,   8)
+  CHECK_UARCH(arch, CHIP_GA103GLM, "GA103",    UARCH_AMPERE,   8)
+  CHECK_UARCH(arch, CHIP_GA103M,   "GA103",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA104,    "GA104",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA104GL,  "GA104",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA104GLM, "GA104",    UARCH_AMPERE,   8)
@@ -228,6 +235,13 @@ void map_chip_to_uarch_cuda(struct uarch* arch) {
   CHECK_UARCH(arch, CHIP_GA107BM,  "GA107",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA107GLM, "GA107",    UARCH_AMPERE,   8)
   CHECK_UARCH(arch, CHIP_GA107M,   "GA107",    UARCH_AMPERE,   8)
+  // ADA LOVELACE (8.9)
+  CHECK_UARCH(arch, CHIP_AD102,    "AD102",    UARCH_ADA,      4)
+  CHECK_UARCH(arch, CHIP_AD102GL,  "AD102",    UARCH_ADA,      4)
+  CHECK_UARCH(arch, CHIP_AD104,    "AD104",    UARCH_ADA,      4)
+  CHECK_UARCH(arch, CHIP_AD104GL,  "AD104",    UARCH_ADA,      4)
+  // HOPPER (9.0)
+  CHECK_UARCH(arch, CHIP_GH100,    "GH100",    UARCH_HOPPER,   4)
   CHECK_UARCH_END
 }
 
@@ -266,6 +280,8 @@ bool clkm_possible_for_uarch(int clkm, struct uarch* arch) {
     case UARCH_VOLTA:   return clkm == 1;
     case UARCH_TURING:  return clkm == 2 || clkm == 4;
     case UARCH_AMPERE:  return clkm == 1 || clkm == 4 || clkm == 8;
+    case UARCH_ADA:     return clkm == 8;
+    case UARCH_HOPPER:  return clkm == 1;
   }
   return false;
 }
@@ -317,6 +333,10 @@ MEMTYPE guess_memtype_from_cmul_and_uarch(int clkm, struct uarch* arch) {
   CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     1, MEMTYPE_HBM2)
   CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     4, MEMTYPE_GDDR6)
   CHECK_MEMTYPE(arch, clkm, UARCH_AMPERE,     8, MEMTYPE_GDDR6X)
+  // ADA
+  CHECK_MEMTYPE(arch, clkm, UARCH_ADA,        8, MEMTYPE_GDDR6X)
+  // HOPPER
+  CHECK_MEMTYPE(arch, clkm, UARCH_HOPPER,     1, MEMTYPE_HBM2)
   CHECK_MEMTYPE_END
 }
 
