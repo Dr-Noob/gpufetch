@@ -7,7 +7,7 @@ rm -rf build/ gpufetch
 mkdir build/
 cd build/
 
-if [ "$1" == "debug" ]
+if [ "$1" = "debug" ]
 then
   BUILD_TYPE="Debug"
 else
@@ -29,9 +29,9 @@ fi
 cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 
 os=$(uname)
-if [ "$os" == 'Linux' ]; then
+if [ "$os" = 'Linux' ]; then
   make -j$(nproc)
-elif [ "$os" == 'FreeBSD' ]; then
+elif [ "$os" = 'FreeBSD' ]; then
   gmake -j4
 fi
 
