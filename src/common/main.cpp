@@ -98,23 +98,17 @@ int main(int argc, char* argv[]) {
     last_idx = idx+1;
   }
 
-  bool print_failed = false;
   struct gpu_info* gpu = NULL;
-  for(int gpu_idx = first_idx; !print_failed && gpu_idx < last_idx; gpu_idx++) {
+  for(int gpu_idx = first_idx; gpu_idx < last_idx; gpu_idx++) {
     gpu = get_gpu_info(list, gpu_idx);
-    if(gpu == NULL)
+    if(gpu == NULL) {
       return EXIT_FAILURE;
-
-    printf("[NOTE]: gpufetch is in beta. The provided information may be incomplete or wrong.\n\
-If you want to help to improve gpufetch, please compare the output of the program\n\
-with a reliable source which you know is right (e.g, techpowerup.com) and report\n\
-any inconsistencies to https://github.com/Dr-Noob/gpufetch/issues\n");
+    }
 
     if(!print_gpufetch(gpu, get_style(), get_colors())) {
-      print_failed = true;
+      return EXIT_FAILURE;
     }
   }
 
-  if(print_failed) return EXIT_SUCCESS;
-  else return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
