@@ -8,7 +8,7 @@
 // compilation issues.
 //
 // URL: https://github.com/NVIDIA/cuda-samples
-// Commit: 2e41896
+// Commit: 8199209
 
 inline int _ConvertSMVer2Cores(int major, int minor) {
   // Defines for GPU Architecture types (using the SM version to determine
@@ -36,6 +36,9 @@ inline int _ConvertSMVer2Cores(int major, int minor) {
       {0x80,  64},
       {0x86, 128},
       {0x87, 128},
+      // I added this one because it was missing in original cuda-samples...
+      {0x89, 128},
+      {0x90, 128},
       {-1, -1}};
 
   int index = 0;
