@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # gpufetch build script
 set -e

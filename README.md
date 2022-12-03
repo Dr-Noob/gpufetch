@@ -85,6 +85,7 @@ If there is a NVIDIA GPU or Intel iGPU in the system and the appropiate backend 
 You will need (mandatory):
 
 - C++ compiler (e.g, `g++`)
+- `zlib`
 - `cmake`
 - `make`
 
