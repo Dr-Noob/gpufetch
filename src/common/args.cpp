@@ -246,11 +246,22 @@ bool parse_args(int argc, char* argv[]) {
       }
     }
     else if(opt == args_chr[ARG_GPU]) {
-      args.gpu_idx = getarg_int(optarg);
-      if(errn != 0) {
-        printErr("Option %s: %s", args_str[ARG_GPU], getarg_error());
-        args.help_flag  = true;
-        return false;
+      // Check for "a" option
+      if(strcmp(optarg, "a") == 0) {
+        args.gpu_idx = -1;
+      }
+      else {
+        args.gpu_idx = getarg_int(optarg);
+        if(errn != 0) {
+          printErr("Option %s: %s", args_str[ARG_GPU], getarg_error());
+          args.help_flag  = true;
+          return false;
+        }
+        if(args.gpu_idx < 0) {
+          printErr("Specified GPU index is out of range: %d. ", args.gpu_idx);
+          printf("Run gpufetch with the --%s option to check out valid GPU indexes\n", args_str[ARG_LIST]);
+          return false;
+        }
       }
     }
     else if(opt == args_chr[ARG_LIST]) {
