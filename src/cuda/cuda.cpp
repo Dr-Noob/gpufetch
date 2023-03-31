@@ -152,6 +152,7 @@ struct gpu_info* get_gpu_info_cuda(struct pci_dev *devices, int gpu_idx) {
   strcpy(gpu->name, deviceProp.name);
 
   if((gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_NVIDIA, gpu_idx)) == NULL) {
+    printErr("Unable to find a valid device for vendor id 0x%.4X using pciutils", PCI_VENDOR_ID_NVIDIA);
     return NULL;
   }
   gpu->arch = get_uarch_from_cuda(gpu);

@@ -26,6 +26,7 @@ struct gpu_info* get_gpu_info_intel(struct pci_dev *devices) {
 
   if(gpu->pci == NULL) {
     // No Intel iGPU found in PCI, which means it is not present
+    printWarn("Unable to find a valid device for vendor id 0x%.4X using pciutils", PCI_VENDOR_ID_INTEL);
     return NULL;
   }
 
