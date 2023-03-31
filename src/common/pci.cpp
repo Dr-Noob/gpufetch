@@ -7,9 +7,11 @@
 #include <cstdio>
 #include <cstddef>
 
+// https://pci-ids.ucw.cz/read/PD
 // TODO: Move AMD PCI id when possible
 #define PCI_VENDOR_ID_AMD    0x1002
 #define CLASS_VGA_CONTROLLER 0x0300
+#define CLASS_3D_CONTROLLER  0x0302
 
 void debug_devices(struct pci_dev *devices) {
   int idx = 0;
@@ -34,7 +36,7 @@ uint16_t pciutils_get_pci_device_id(struct pci_dev *devices, int id, int idx) {
   int curr = 0;
 
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-    if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
+    if(dev->vendor_id == id && (dev->device_class == CLASS_VGA_CONTROLLER || dev->device_class == CLASS_3D_CONTROLLER)) {
       if(curr == idx) {
         return dev->device_id;
       }
@@ -50,7 +52,7 @@ void pciutils_set_pci_bus(struct pci* pci, struct pci_dev *devices, int id) {
   bool found = false;
 
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-   if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
+   if(dev->vendor_id == id && (dev->device_class == CLASS_VGA_CONTROLLER || dev->device_class == CLASS_3D_CONTROLLER)) {
       pci->domain = dev->domain;
       pci->bus = dev->bus;
       pci->dev = dev->dev;
@@ -99,7 +101,7 @@ void print_gpus_list_pci() {
   struct pci_dev *devices = get_pci_devices_from_pciutils();
 
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-    if(dev->device_class == CLASS_VGA_CONTROLLER) {
+    if(dev->device_class == CLASS_VGA_CONTROLLER || dev->device_class == CLASS_3D_CONTROLLER) {
       printf("- GPU %d:\n", i);
       printf("  * Vendor: ");
       if(dev->vendor_id == PCI_VENDOR_ID_NVIDIA) {
