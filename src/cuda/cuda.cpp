@@ -151,7 +151,9 @@ struct gpu_info* get_gpu_info_cuda(struct pci_dev *devices, int gpu_idx) {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(deviceProp.name) + 1));
   strcpy(gpu->name, deviceProp.name);
 
-  gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_NVIDIA, gpu_idx);
+  if((gpu->pci = get_pci_from_pciutils(devices, PCI_VENDOR_ID_NVIDIA, gpu_idx)) == NULL) {
+    return NULL;
+  }
   gpu->arch = get_uarch_from_cuda(gpu);
   gpu->cach = get_cache_info(deviceProp);
   gpu->mem = get_memory_info(gpu, deviceProp);

@@ -26,7 +26,7 @@ bool pciutils_is_vendor_id_present(struct pci_dev *devices, int id) {
     }
   }
 
-  printWarn("Unable to find a valid device for vendor id 0x%.4X using pciutils", id);
+  printErr("Unable to find a valid device for vendor id 0x%.4X using pciutils", id);
   return false;
 }
 
