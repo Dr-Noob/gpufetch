@@ -23,7 +23,7 @@ void debug_devices(struct pci_dev *devices) {
 
 bool pciutils_is_vendor_id_present(struct pci_dev *devices, int id) {
   for(struct pci_dev *dev=devices; dev != NULL; dev=dev->next) {
-    if(dev->vendor_id == id && dev->device_class == CLASS_VGA_CONTROLLER) {
+    if(dev->vendor_id == id && (dev->device_class == CLASS_VGA_CONTROLLER || dev->device_class == CLASS_3D_CONTROLLER)) {
       return true;
     }
   }
