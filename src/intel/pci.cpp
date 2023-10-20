@@ -89,6 +89,7 @@ GPUCHIP get_chip_from_pci_intel(struct pci* pci) {
   CHECK_PCI(pci, 0x3185, CHIP_UHD_600)
   CHECK_PCI(pci, 0x3184, CHIP_UHD_605)
   CHECK_PCI(pci, 0x5917, CHIP_UHD_620)
+  CHECK_PCI(pci, 0x3EA0, CHIP_UHD_620)
   CHECK_PCI(pci, 0x3E91, CHIP_UHD_630)
   CHECK_PCI(pci, 0x3E92, CHIP_UHD_630)
   CHECK_PCI(pci, 0x3E98, CHIP_UHD_630)
