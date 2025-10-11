@@ -233,6 +233,9 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
   if(art->vendor == GPU_VENDOR_NVIDIA) {
     art->art = choose_ascii_art_aux(&logo_nvidia_l, &logo_nvidia, term, lf);
   }
+  else if(art->vendor == GPU_VENDOR_AMD) {
+    art->art = choose_ascii_art_aux(&logo_amd_l, &logo_amd, term, lf);
+  }
   else if(art->vendor == GPU_VENDOR_INTEL) {
     art->art = choose_ascii_art_aux(&logo_intel_l, &logo_intel, term, lf);
   }
@@ -478,6 +481,13 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 }
 #endif
 
+#ifdef BACKEND_HSA
+bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
+  printErr("AMD TODO");
+  return true;
+}
+#endif
+
 struct terminal* get_terminal_size() {
   struct terminal* term = (struct terminal*) emalloc(sizeof(struct terminal));
 
@@ -517,11 +527,22 @@ bool print_gpufetch(struct gpu_info* gpu, STYLE s, struct color** cs) {
       return false;
     #endif
   }
-  else {
+  else if(gpu->vendor == GPU_VENDOR_AMD) {
+    #ifdef BACKEND_HSA
+      return print_gpufetch_amd(gpu, s, cs, term);
+    #else
+      return false;
+    #endif
+  }
+  else if(gpu->vendor == GPU_VENDOR_INTEL) {
     #ifdef BACKEND_INTEL
       return print_gpufetch_intel(gpu, s, cs, term);
     #else
       return false;
     #endif
+  }
+  else {
+    printErr("Invalid GPU vendor: %d", gpu->vendor);
+    return false;
   }
 }

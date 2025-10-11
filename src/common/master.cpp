@@ -64,6 +64,11 @@ bool print_gpus_list(struct gpu_list* list) {
         print_gpu_cuda(list->gpus[i]);
       #endif
     }
+    else if(list->gpus[i]->vendor == GPU_VENDOR_AMD) {
+      #ifdef BACKEND_AMD
+        print_gpu_hsa(list->gpus[i]);
+      #endif
+    }
     else if(list->gpus[i]->vendor == GPU_VENDOR_INTEL) {
       #ifdef BACKEND_INTEL
         print_gpu_intel(list->gpus[i]);

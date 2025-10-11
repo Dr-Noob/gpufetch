@@ -9,6 +9,7 @@
 
 enum {
   GPU_VENDOR_NVIDIA,
+  GPU_VENDOR_AMD,
   GPU_VENDOR_INTEL
 };
 

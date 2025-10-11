@@ -34,6 +34,23 @@ $C2##   ##  ##   ##  ##  ##   ##  ##   #: :#    \
 $C2##   ##   ## ##   ##  ##   ##  ##  #######   \
 $C2##   ##    ###    ##  ######   ## ##     ##  "
 
+#define ASCII_AMD \
+"$C2          '###############             \
+$C2             ,#############            \
+$C2                      .####            \
+$C2              #.      .####            \
+$C2            :##.      .####            \
+$C2           :###.      .####            \
+$C2           #########.   :##            \
+$C2           #######.       ;            \
+$C1                                       \
+$C1    ###     ###      ###   #######     \
+$C1   ## ##    #####  #####   ##     ##   \
+$C1  ##   ##   ### #### ###   ##      ##  \
+$C1 #########  ###  ##  ###   ##      ##  \
+$C1##       ## ###      ###   ##     ##   \
+$C1##       ## ###      ###   #######     "
+
 #define ASCII_INTEL \
 "$C1                   .#################.          \
 $C1              .####                   ####.     \
@@ -68,6 +85,27 @@ $C1            olcc::;              ,:ccloMMMMMMMMM  \
 $C1                  :......oMMMMMMMMMMMMMMMMMMMMMM  \
 $C1                  :lllMMMMMMMMMMMMMMMMMMMMMMMMMM  "
 
+#define ASCII_AMD_L \
+"$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1     @@@@      @@@       @@@   @@@@@@@@      $C2  ############   \
+$C1    @@@@@@     @@@@@   @@@@@   @@@    @@@    $C2    ##########   \
+$C1   @@@  @@@    @@@@@@@@@@@@@   @@@      @@   $C2   #     #####   \
+$C1  @@@    @@@   @@@  @@@  @@@   @@@      @@   $C2 ###     #####   \
+$C1 @@@@@@@@@@@@  @@@       @@@   @@@    @@@    $C2#########  ###   \
+$C1 @@@      @@@  @@@       @@@   @@@@@@@@@     $C2########    ##   \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              \
+$C1                                                              "
+
 #define ASCII_INTEL_L \
 "$C1                               ###############@               \
 $C1                       ######@                ######@         \
@@ -95,9 +133,11 @@ typedef struct ascii_logo asciiL;
 //                      | LOGO            | W | H | REPLACE | COLORS LOGO           | COLORS TEXT                |
 //                      ------------------------------------------------------------------------------------------
 asciiL logo_nvidia    = { ASCII_NVIDIA,    45, 19, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN} };
+asciiL logo_amd       = { ASCII_AMD,       39, 15, false, {C_FG_WHITE, C_FG_GREEN}, {C_FG_WHITE, C_FG_GREEN} };
 asciiL logo_intel     = { ASCII_INTEL,     48, 14, false, {C_FG_CYAN},              {C_FG_CYAN,  C_FG_WHITE} };
 // Long variants        | ---------------------------------------------------------------------------------------|
 asciiL logo_nvidia_l  = { ASCII_NVIDIA_L,  50, 15, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN} };
+asciiL logo_amd_l     = { ASCII_AMD_L,     62, 19, true,  {C_BG_WHITE, C_BG_GREEN}, {C_FG_WHITE, C_FG_GREEN} };
 asciiL logo_intel_l   = { ASCII_INTEL_L,   62, 19, true,  {C_BG_CYAN, C_BG_WHITE},  {C_FG_CYAN,  C_FG_WHITE} };
 asciiL logo_unknown   = { NULL,            0,  0,  false, {C_NONE},                 {C_NONE,     C_NONE}     };
 
