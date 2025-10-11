@@ -7,6 +7,7 @@
 #include "master.hpp"
 #include "args.hpp"
 #include "../cuda/cuda.hpp"
+#include "../hsa/hsa.hpp"
 #include "../intel/intel.hpp"
 
 #define MAX_GPUS 1000
@@ -28,6 +29,18 @@ struct gpu_list* get_gpu_list() {
 
   while(valid) {
     list->gpus[idx] = get_gpu_info_cuda(devices, idx);
+    if(list->gpus[idx] != NULL) idx++;
+    else valid = false;
+  }
+
+  list->num_gpus += idx;
+#endif
+
+#ifdef BACKEND_HSA
+  bool valid = true;
+
+  while(valid) {
+    list->gpus[idx] = get_gpu_info_hsa(devices, idx);
     if(list->gpus[idx] != NULL) idx++;
     else valid = false;
   }
@@ -64,6 +77,13 @@ bool print_gpus_list(struct gpu_list* list) {
 void print_enabled_backends() {
   printf("- CUDA backend:  ");
 #ifdef BACKEND_CUDA
+  printf("%sON%s\n", C_FG_GREEN, C_RESET);
+#else
+  printf("%sOFF%s\n", C_FG_RED, C_RESET);
+#endif
+
+  printf("- HSA backend:   ");
+#ifdef BACKEND_HSA
   printf("%sON%s\n", C_FG_GREEN, C_RESET);
 #else
   printf("%sOFF%s\n", C_FG_RED, C_RESET);

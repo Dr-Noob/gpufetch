@@ -7,21 +7,49 @@ project(gpufetch CXX)
 set(SRC_DIR "src")
 set(COMMON_DIR "${SRC_DIR}/common")
 set(CUDA_DIR "${SRC_DIR}/cuda")
+set(HSA_DIR "${SRC_DIR}/hsa")
 set(INTEL_DIR "${SRC_DIR}/intel")
 
+# Enable Intel backend by default
 if(NOT DEFINED ENABLE_INTEL_BACKEND)
     set(ENABLE_INTEL_BACKEND true)
 endif()
 
-if(NOT DEFINED ENABLE_CUDA_BACKEND OR ENABLE_CUDA_BACKEND)
+if(ENABLE_CUDA_BACKEND)
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
-    set(ENABLE_CUDA_BACKEND true)
     # Must link_directories early so add_executable(gpufetch ...) gets the right directories
     link_directories(cuda_backend ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/targets/x86_64-linux/lib)
   else()
     set(ENABLE_CUDA_BACKEND false)
+  endif()
+endif()
+
+if(ENABLE_HSA_BACKEND)
+  # TODO: Needs rocm-cmake, what if its not insalled?
+  find_package(ROCmCMakeBuildTools)
+  if (ROCmCMakeBuildTools_FOUND)
+    find_package(hsa-runtime64 1.0 REQUIRED)    
+    link_directories(hsa_backend hsa-runtime64::hsa-runtime64)
+
+    # Find HSA headers (ROCm does not seem to provide this, which is extremely frustrating)
+    find_path(HSA_INCLUDE_DIR
+      NAMES hsa/hsa.h
+      HINTS
+          $ENV{ROCM_PATH}/include     # allow users override via env variable
+          /opt/rocm/include           # common default path
+          /usr/include
+          /usr/local/include
+    )
+
+    if(NOT HSA_INCLUDE_DIR)
+      message(STATUS "${BoldYellow}HSA not found, disabling HSA backend${ColorReset}")
+      set(ENABLE_HSA_BACKEND false)
+    endif()
+  else()
+    set(ENABLE_HSA_BACKEND false)
+    message(STATUS "${BoldYellow}ROCm not found${ColorReset}")
   endif()
 endif()
 
@@ -50,8 +78,9 @@ else()
 endif()
 
 add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/sort.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp ${COMMON_DIR}/uarch.cpp)
-set(SANITY_FLAGS "-Wfloat-equal -Wshadow -Wpointer-arith")
-set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -Wall -Wextra -pedantic -fstack-protector-all -pedantic -std=c++11")
+set(SANITY_FLAGS -Wfloat-equal -Wshadow -Wpointer-arith -Wall -Wextra -pedantic -fstack-protector-all -pedantic)
+target_compile_features(gpufetch PRIVATE cxx_std_11)
+target_compile_options(gpufetch PRIVATE ${SANITY_FLAGS})
 
 if(ENABLE_INTEL_BACKEND)
   target_compile_definitions(gpufetch PUBLIC BACKEND_INTEL)
@@ -94,6 +123,22 @@ if(ENABLE_CUDA_BACKEND)
   target_link_libraries(gpufetch cuda_backend)
 endif()
 
+if(ENABLE_HSA_BACKEND)
+  target_compile_definitions(gpufetch PUBLIC BACKEND_HSA)
+
+  add_library(hsa_backend STATIC ${HSA_DIR}/hsa.cpp)
+
+  if(NOT ${PCIUTILS_FOUND})
+    add_dependencies(hsa_backend pciutils)
+  endif()
+
+  target_include_directories(hsa_backend PRIVATE "${HSA_INCLUDE_DIR}")
+  message(STATUS "HSA_INCLUDE_DIR = ${ROCM_PATH}")
+
+  target_link_libraries(hsa_backend PRIVATE hsa-runtime64::hsa-runtime64)
+  target_link_libraries(gpufetch hsa_backend)
+endif()
+
 target_link_libraries(gpufetch pci z)
 install(TARGETS gpufetch DESTINATION bin)
 
@@ -114,6 +159,11 @@ if(ENABLE_CUDA_BACKEND)
   message(STATUS "CUDA backend: ${BoldGreen}ON${ColorReset}")
 else()
   message(STATUS "CUDA backend: ${BoldRed}OFF${ColorReset}")
+endif()
+if(ENABLE_HSA_BACKEND)
+  message(STATUS "HSA backend: ${BoldGreen}ON${ColorReset}")
+else()
+  message(STATUS "HSA backend: ${BoldRed}OFF${ColorReset}")
 endif()
 if(ENABLE_INTEL_BACKEND)
   message(STATUS "Intel backend: ${BoldGreen}ON${ColorReset}")
