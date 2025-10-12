@@ -33,7 +33,8 @@ if(ENABLE_HSA_BACKEND)
     find_package(hsa-runtime64 1.0 REQUIRED)    
     link_directories(hsa_backend hsa-runtime64::hsa-runtime64)
 
-    # Find HSA headers (ROCm does not seem to provide this, which is extremely frustrating)
+    # Find HSA headers
+    # ROCm does not seem to provide this, which is quite frustrating.
     find_path(HSA_INCLUDE_DIR
       NAMES hsa/hsa.h
       HINTS
@@ -133,7 +134,7 @@ if(ENABLE_HSA_BACKEND)
   endif()
 
   target_include_directories(hsa_backend PRIVATE "${HSA_INCLUDE_DIR}")
-  message(STATUS "HSA_INCLUDE_DIR = ${ROCM_PATH}")
+  message(STATUS "Found HSA: ${HSA_INCLUDE_DIR}")
 
   target_link_libraries(hsa_backend PRIVATE hsa-runtime64::hsa-runtime64)
   target_link_libraries(gpufetch hsa_backend)
