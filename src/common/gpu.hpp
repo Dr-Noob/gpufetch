@@ -9,6 +9,7 @@
 
 enum {
   GPU_VENDOR_NVIDIA,
+  GPU_VENDOR_AMD,
   GPU_VENDOR_INTEL
 };
 
@@ -44,6 +45,11 @@ struct topology_c {
   int32_t tensor_cores;
 };
 
+// HSA topology
+struct topology_h {
+  int32_t compute_units;
+};
+
 // Intel topology
 struct topology_i {
   int32_t slices;
@@ -72,6 +78,8 @@ struct gpu_info {
   struct memory* mem;
   struct cache* cach;
   struct topology_c* topo_c;
+  // HSA specific
+  struct topology_h* topo_h;
   // Intel specific
   struct topology_i* topo_i;
 };

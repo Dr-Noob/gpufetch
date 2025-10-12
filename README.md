@@ -33,15 +33,16 @@ gpufetch is a command-line tool written in C++ that displays the GPU information
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [1. Support](#1-support)
-- [2. Backends](#2-backends)
-  - [2.1 CUDA backend is not enabled. Why?](#21-cuda-backend-is-not-enabled-why)
-  - [2.2 The backend is enabled, but gpufetch is unable to detect my GPU](#22-the-backend-is-enabled-but-gpufetch-is-unable-to-detect-my-gpu)
-- [3. Installation (building from source)](#3-installation-building-from-source)
-- [4. Colors](#4-colors)
-  - [4.1 Specifying a name](#41-specifying-a-name)
-  - [4.2 Specifying the colors in RGB format](#42-specifying-the-colors-in-rgb-format)
-- [5. Bugs or improvements](#5-bugs-or-improvements)
+- [Table of contents](#table-of-contents)
+  - [1. Support](#1-support)
+  - [2. Backends](#2-backends)
+    - [2.1 CUDA backend is not enabled. Why?](#21-cuda-backend-is-not-enabled-why)
+    - [2.2 The backend is enabled, but gpufetch is unable to detect my GPU](#22-the-backend-is-enabled-but-gpufetch-is-unable-to-detect-my-gpu)
+  - [3. Installation (building from source)](#3-installation-building-from-source)
+  - [4. Colors](#4-colors)
+    - [4.1 Specifying a name](#41-specifying-a-name)
+    - [4.2 Specifying the colors in RGB format](#42-specifying-the-colors-in-rgb-format)
+  - [5. Bugs or improvements](#5-bugs-or-improvements)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -49,14 +50,16 @@ gpufetch is a command-line tool written in C++ that displays the GPU information
 gpufetch supports the following GPUs:
 
 - **NVIDIA** GPUs (Compute Capability >= 2.0)
+- **AMD** GPUs (Experimental) (RDNA 3.0, CDNA 3.0)
 - **Intel** iGPUs (Generation >= Gen6)
 
 Only compilation under **Linux** is supported.
 
 ## 2. Backends
-gpufetch is made up of two backends:
+gpufetch is made up of three backends:
 
 - CUDA backend
+- HSA backend
 - Intel backend
 
 Backends are enabled and disabled at **compile time**. When compiling gpufetch, check the CMake output to see which backends are enabled.
@@ -111,6 +114,7 @@ By default, `gpufetch` will print the GPU logo with the system color scheme. How
  By specifying a name, gpufetch will use the specific colors of each manufacture. Valid values are:
 
 - intel
+- amd
 - nvidia
 
 ```

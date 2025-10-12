@@ -10,6 +10,7 @@
 
 #include "../intel/uarch.hpp"
 #include "../intel/intel.hpp"
+#include "../hsa/hsa.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -232,6 +233,9 @@ struct ascii_logo* choose_ascii_art_aux(struct ascii_logo* logo_long, struct asc
 void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* term, int lf) {
   if(art->vendor == GPU_VENDOR_NVIDIA) {
     art->art = choose_ascii_art_aux(&logo_nvidia_l, &logo_nvidia, term, lf);
+  }
+  else if(art->vendor == GPU_VENDOR_AMD) {
+    art->art = choose_ascii_art_aux(&logo_amd_l, &logo_amd, term, lf);
   }
   else if(art->vendor == GPU_VENDOR_INTEL) {
     art->art = choose_ascii_art_aux(&logo_intel_l, &logo_intel, term, lf);
@@ -478,6 +482,42 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 }
 #endif
 
+#ifdef BACKEND_HSA
+bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
+  struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
+
+  if(art == NULL)
+    return false;
+
+  char* gpu_name = get_str_gpu_name(gpu);
+  char* sms = get_str_cu(gpu);
+  char* max_frequency = get_str_freq(gpu);
+
+  setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+  setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
+  setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
+
+  const char** attribute_fields = ATTRIBUTE_FIELDS;
+  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  uint32_t longest_field = longest_field_length(art, longest_attribute);
+  choose_ascii_art(art, cs, term, longest_field);
+
+  if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
+    // Despite of choosing the smallest logo, the output does not fit
+    // Choose the shorter field names and recalculate the longest attr
+    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
+    longest_attribute = longest_attribute_length(art, attribute_fields);
+  }
+
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+
+  free(art->attributes);
+  free(art);
+
+  return true;
+}
+#endif
+
 struct terminal* get_terminal_size() {
   struct terminal* term = (struct terminal*) emalloc(sizeof(struct terminal));
 
@@ -517,11 +557,22 @@ bool print_gpufetch(struct gpu_info* gpu, STYLE s, struct color** cs) {
       return false;
     #endif
   }
-  else {
+  else if(gpu->vendor == GPU_VENDOR_AMD) {
+    #ifdef BACKEND_HSA
+      return print_gpufetch_amd(gpu, s, cs, term);
+    #else
+      return false;
+    #endif
+  }
+  else if(gpu->vendor == GPU_VENDOR_INTEL) {
     #ifdef BACKEND_INTEL
       return print_gpufetch_intel(gpu, s, cs, term);
     #else
       return false;
     #endif
+  }
+  else {
+    printErr("Invalid GPU vendor: %d", gpu->vendor);
+    return false;
   }
 }

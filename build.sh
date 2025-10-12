@@ -23,6 +23,8 @@ fi
 # In case you want to explicitely disable a backend, you can:
 # Disable CUDA backend:
 # cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_CUDA_BACKEND=OFF ..
+# Disable HSA backend:
+# cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_HSA_BACKEND=OFF ..
 # Disable Intel backend:
 # cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DENABLE_INTEL_BACKEND=OFF ..
 
