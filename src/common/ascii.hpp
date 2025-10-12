@@ -132,13 +132,13 @@ typedef struct ascii_logo asciiL;
 //                      ------------------------------------------------------------------------------------------
 //                      | LOGO            | W | H | REPLACE | COLORS LOGO           | COLORS TEXT                |
 //                      ------------------------------------------------------------------------------------------
-asciiL logo_nvidia    = { ASCII_NVIDIA,    45, 19, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN} };
-asciiL logo_amd       = { ASCII_AMD,       39, 15, false, {C_FG_WHITE, C_FG_GREEN}, {C_FG_WHITE, C_FG_GREEN} };
-asciiL logo_intel     = { ASCII_INTEL,     48, 14, false, {C_FG_CYAN},              {C_FG_CYAN,  C_FG_WHITE} };
+asciiL logo_nvidia    = { ASCII_NVIDIA,    45, 19, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN}   };
+asciiL logo_amd       = { ASCII_AMD,       39, 15, false, {C_FG_WHITE, C_FG_GREEN}, {C_FG_WHITE, C_FG_GREEN}   };
+asciiL logo_intel     = { ASCII_INTEL,     48, 14, false, {C_FG_CYAN},              {C_FG_CYAN,  C_FG_WHITE}   };
 // Long variants        | ---------------------------------------------------------------------------------------|
-asciiL logo_nvidia_l  = { ASCII_NVIDIA_L,  50, 15, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN} };
-asciiL logo_amd_l     = { ASCII_AMD_L,     62, 19, true,  {C_BG_WHITE, C_BG_GREEN}, {C_FG_WHITE, C_FG_GREEN} };
-asciiL logo_intel_l   = { ASCII_INTEL_L,   62, 19, true,  {C_BG_CYAN, C_BG_WHITE},  {C_FG_CYAN,  C_FG_WHITE} };
-asciiL logo_unknown   = { NULL,            0,  0,  false, {C_NONE},                 {C_NONE,     C_NONE}     };
+asciiL logo_nvidia_l  = { ASCII_NVIDIA_L,  50, 15, false, {C_FG_GREEN, C_FG_WHITE}, {C_FG_WHITE, C_FG_GREEN}   };
+asciiL logo_amd_l     = { ASCII_AMD_L,     62, 19, true,  {C_BG_WHITE, C_BG_WHITE}, {C_FG_CYAN,  C_FG_B_WHITE} };
+asciiL logo_intel_l   = { ASCII_INTEL_L,   62, 19, true,  {C_BG_CYAN, C_BG_WHITE},  {C_FG_CYAN,  C_FG_WHITE}   };
+asciiL logo_unknown   = { NULL,            0,  0,  false, {C_NONE},                 {C_NONE,     C_NONE}       };
 
 #endif
