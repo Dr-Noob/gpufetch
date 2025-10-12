@@ -4,5 +4,6 @@
 #include "../common/gpu.hpp"
 
 struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx);
+char* get_str_cu(struct gpu_info* gpu);
 
 #endif

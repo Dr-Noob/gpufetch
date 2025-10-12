@@ -6,6 +6,11 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include <iostream>
+#include <iomanip>
+#include <hsa/hsa.h>
+#include <hsa/hsa_ext_amd.h>
+
 #include "hsa.hpp"
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
@@ -13,7 +18,11 @@
 
 struct agent_info {
   unsigned deviceId; // ID of the target GPU device
-  char gpu_name[64];
+  char gpu_name[64];  
+  char vendor_name[64];
+  char device_mkt_name[64];
+  uint32_t max_clock_freq;
+  uint32_t compute_unit;
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -42,9 +51,30 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
   if (type == HSA_DEVICE_TYPE_GPU) {
     err = hsa_agent_get_info(agent, HSA_AGENT_INFO_NAME, info->gpu_name);
     RET_IF_HSA_ERR(err);
+
+    // TODO: What if vendor_name is not AMD?
+    err = hsa_agent_get_info(agent, HSA_AGENT_INFO_VENDOR_NAME, info->vendor_name);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_PRODUCT_NAME, &info->device_mkt_name);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MAX_CLOCK_FREQUENCY, &info->max_clock_freq);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, &info->compute_unit);
+    RET_IF_HSA_ERR(err);
   }
 
   return HSA_STATUS_SUCCESS;
+}
+
+struct topology_h* get_topology_info(struct agent_info info) {
+  struct topology_h* topo = (struct topology_h*) emalloc(sizeof(struct topology_h));
+
+  topo->compute_units = info.compute_unit;
+
+  return topo;
 }
 
 struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
@@ -82,11 +112,19 @@ struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
     return NULL;
   }
 
+  gpu->freq = info.max_clock_freq;
   gpu->vendor = GPU_VENDOR_AMD;
-  gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.gpu_name) + 1));
-  strcpy(gpu->name, info.gpu_name);
+  gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
+  strcpy(gpu->name, info.device_mkt_name);
+  gpu->topo_h = get_topology_info(info);
+
+  // TODO: Use gpu_name for uarch detection
 
   // Shut down the HSA runtime
   hsa_shut_down();
   return gpu;
+}
+
+char* get_str_cu(struct gpu_info* gpu) {
+  return get_str_generic(gpu->topo_h->compute_units);
 }

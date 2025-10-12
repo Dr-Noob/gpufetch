@@ -10,6 +10,7 @@
 
 #include "../intel/uarch.hpp"
 #include "../intel/intel.hpp"
+#include "../hsa/hsa.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -483,7 +484,36 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
 
 #ifdef BACKEND_HSA
 bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct terminal* term) {
-  printErr("AMD TODO");
+  struct ascii* art = set_ascii(get_gpu_vendor(gpu), s);
+
+  if(art == NULL)
+    return false;
+
+  char* gpu_name = get_str_gpu_name(gpu);
+  char* sms = get_str_cu(gpu);
+  char* max_frequency = get_str_freq(gpu);
+
+  setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+  setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
+  setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
+
+  const char** attribute_fields = ATTRIBUTE_FIELDS;
+  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  uint32_t longest_field = longest_field_length(art, longest_attribute);
+  choose_ascii_art(art, cs, term, longest_field);
+
+  if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
+    // Despite of choosing the smallest logo, the output does not fit
+    // Choose the shorter field names and recalculate the longest attr
+    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
+    longest_attribute = longest_attribute_length(art, attribute_fields);
+  }
+
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+
+  free(art->attributes);
+  free(art);
+
   return true;
 }
 #endif
