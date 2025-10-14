@@ -12,6 +12,7 @@
 #include <hsa/hsa_ext_amd.h>
 
 #include "hsa.hpp"
+#include "uarch.hpp"
 #include "../common/pci.hpp"
 #include "../common/global.hpp"
 #include "../common/uarch.hpp"
@@ -34,9 +35,8 @@ struct agent_info {
       snprintf(&(err_val[0]), sizeof(err_val), "%#x", (uint32_t)err);         \
       err_str = &(err_val[0]);                                                \
     }                                                                         \
-    printErr("HSA failure at: %s:%d\n",                              \
-                      __FILE__, __LINE__);                           \
-    printErr("Call returned %s\n", err_str);                         \
+    printErr("HSA failure at: %s:%d\n", __FILE__, __LINE__);                  \
+    printErr("Call returned %s\n", err_str);                                  \
     return (err);                                                             \
   }                                                                           \
 }
@@ -52,7 +52,6 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, HSA_AGENT_INFO_NAME, info->gpu_name);
     RET_IF_HSA_ERR(err);
 
-    // TODO: What if vendor_name is not AMD?
     err = hsa_agent_get_info(agent, HSA_AGENT_INFO_VENDOR_NAME, info->vendor_name);
     RET_IF_HSA_ERR(err);
 
@@ -92,11 +91,8 @@ struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
     return NULL;
   }
 
-  hsa_status_t status;
-
-  // Initialize the HSA runtime
-  status = hsa_init();
-  if (status != HSA_STATUS_SUCCESS) {
+  hsa_status_t err = hsa_init();
+  if (err != HSA_STATUS_SUCCESS) {
     printErr("Failed to initialize HSA runtime");
     return NULL;
   }
@@ -105,23 +101,36 @@ struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
   info.deviceId = gpu_idx;
 
   // Iterate over all agents in the system
-  status = hsa_iterate_agents(agent_callback, &info);
-  if (status != HSA_STATUS_SUCCESS) {
+  err = hsa_iterate_agents(agent_callback, &info);
+  if (err != HSA_STATUS_SUCCESS) {
     printErr("Failed to iterate HSA agents");
     hsa_shut_down();
     return NULL;
   }
 
-  gpu->freq = info.max_clock_freq;
+  if (info.vendor_name != "AMD") {
+    printErr("HSA vendor name is: '%s'. Only AMD is supported!", info.vendor_name);
+    return NULL;
+  }
   gpu->vendor = GPU_VENDOR_AMD;
+
+  gpu->freq = info.max_clock_freq;
+  gpu->topo_h = get_topology_info(info);
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
   strcpy(gpu->name, info.device_mkt_name);
-  gpu->topo_h = get_topology_info(info);
+  gpu->arch = get_uarch_from_hsa(gpu);
 
-  // TODO: Use gpu_name for uarch detection
+  if (gpu->arch->TARGET_UNKNOWN_HSA) {
+    printErr("Unknown LLVM target: '%s'", gpu->name);
+    return NULL;
+  }
 
   // Shut down the HSA runtime
-  hsa_shut_down();
+  err = hsa_shut_down();
+  if (err != HSA_STATUS_SUCCESS) {
+    printErr("Failed to shutdown HSA runtime");
+    return NULL;
+  }
   return gpu;
 }
 
