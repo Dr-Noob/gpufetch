@@ -1,3 +1,15 @@
+// TODO: Cleanup includes
+#include <cstdlib>
+#include <cstdint>
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+
+#include "../common/uarch.hpp"
+#include "../common/global.hpp"
+#include "../common/gpu.hpp"
+#include "chips.hpp"
+
 // MICROARCH values
 enum {
   UARCH_UNKNOWN,
@@ -225,7 +237,7 @@ GPUCHIP get_chip_from_target_hsa(int32_t target) {
 
 #define CHECK_TGT_STR_START if (false) {}
 #define CHECK_TGT_STR(target, llvm_target, chip) \
-  else if (target == llvm_target) return chip;
+  else if (strcmp(target, llvm_target) == 0) return chip;
 #define CHECK_TGT_STR_END else { return TARGET_UNKNOWN_HSA; }
 
 // Maps the LLVM target string to the enum value
@@ -259,13 +271,13 @@ int32_t get_llvm_target_from_str(char* target) {
   CHECK_TGT_STR_END
 }
 
-struct uarch* get_uarch_from_hsa(struct gpu_info* gpu) {
+struct uarch* get_uarch_from_hsa(struct gpu_info* gpu, char* gpu_name) {
   struct uarch* arch = (struct uarch*) emalloc(sizeof(struct uarch));
 
-  arch->llvm_target = get_llvm_target_from_str(gpu->name);
+  arch->llvm_target = get_llvm_target_from_str(gpu_name);
   if (arch->llvm_target == TARGET_UNKNOWN_HSA) {
-    // Return early, error will be handled by the caller.
-    return arch;
+    printErr("Unknown LLVM target: '%s'", gpu_name);
+    return NULL;
   }
 
   arch->chip_str = NULL;
@@ -276,7 +288,7 @@ struct uarch* get_uarch_from_hsa(struct gpu_info* gpu) {
 }
 
 // TODO: Shouldnt we check that arch->uarch is valid?
-char* get_str_uarch_hsa(struct uarch* arch) {
+const char* get_str_uarch_hsa(struct uarch* arch) {
   return uarch_str[arch->uarch];
 }
 

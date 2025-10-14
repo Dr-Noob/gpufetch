@@ -11,6 +11,7 @@
 #include "../intel/uarch.hpp"
 #include "../intel/intel.hpp"
 #include "../hsa/hsa.hpp"
+#include "../hsa/uarch.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 

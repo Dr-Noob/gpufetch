@@ -108,7 +108,7 @@ struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
     return NULL;
   }
 
-  if (info.vendor_name != "AMD") {
+  if (strcmp(info.vendor_name, "AMD") != 0) {
     printErr("HSA vendor name is: '%s'. Only AMD is supported!", info.vendor_name);
     return NULL;
   }
@@ -118,10 +118,9 @@ struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
   gpu->topo_h = get_topology_info(info);
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
   strcpy(gpu->name, info.device_mkt_name);
-  gpu->arch = get_uarch_from_hsa(gpu);
+  gpu->arch = get_uarch_from_hsa(gpu, info.gpu_name);
 
-  if (gpu->arch->TARGET_UNKNOWN_HSA) {
-    printErr("Unknown LLVM target: '%s'", gpu->name);
+  if (gpu->arch == NULL) {
     return NULL;
   }
 
