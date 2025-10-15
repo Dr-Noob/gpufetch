@@ -11,6 +11,7 @@
 #include "../intel/uarch.hpp"
 #include "../intel/intel.hpp"
 #include "../hsa/hsa.hpp"
+#include "../hsa/uarch.hpp"
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
@@ -490,10 +491,18 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
     return false;
 
   char* gpu_name = get_str_gpu_name(gpu);
+  char* gpu_chip = get_str_chip(gpu->arch);
+  char* uarch = get_str_uarch_hsa(gpu->arch);
+  char* manufacturing_process = get_str_process(gpu->arch);
   char* sms = get_str_cu(gpu);
   char* max_frequency = get_str_freq(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
+  if (gpu_chip != NULL) {
+    setAttribute(art, ATTRIBUTE_CHIP, gpu_chip);
+  }
+  setAttribute(art, ATTRIBUTE_UARCH, uarch);
+  setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
 

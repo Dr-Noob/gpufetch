@@ -127,7 +127,7 @@ endif()
 if(ENABLE_HSA_BACKEND)
   target_compile_definitions(gpufetch PUBLIC BACKEND_HSA)
 
-  add_library(hsa_backend STATIC ${HSA_DIR}/hsa.cpp)
+  add_library(hsa_backend STATIC ${HSA_DIR}/hsa.cpp ${HSA_DIR}/uarch.cpp)
 
   if(NOT ${PCIUTILS_FOUND})
     add_dependencies(hsa_backend pciutils)

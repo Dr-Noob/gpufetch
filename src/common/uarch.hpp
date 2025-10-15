@@ -16,6 +16,9 @@ struct uarch {
   int32_t cc_minor;
   int32_t compute_capability;
 
+  // HSA specific
+  int32_t llvm_target;
+
   // Intel specific
   int32_t gt;
   int32_t eu;
