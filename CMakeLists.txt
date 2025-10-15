@@ -56,7 +56,7 @@ if(ENABLE_HSA_BACKEND)
     find_path(HSA_INCLUDE_DIR hsa/hsa.h HINTS ${ROCM_PATH}/include)
     find_library(HSA_LIBRARY hsa-runtime64 HINTS ${ROCM_PATH}/lib ${ROCM_PATH}/lib64)
 
-    if (HSA_INCLUDE_DIR and HSA_LIBRARY)
+    if (HSA_INCLUDE_DIR AND HSA_LIBRARY)
       message(STATUS "${BoldYellow}Found ROCm manually${ColorReset}")
     else()
       set(ENABLE_HSA_BACKEND false)
