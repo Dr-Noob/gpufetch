@@ -147,7 +147,12 @@ if(ENABLE_HSA_BACKEND)
   target_include_directories(hsa_backend PRIVATE "${HSA_INCLUDE_DIR}")
   message(STATUS "Found HSA: ${HSA_INCLUDE_DIR}")
 
-  target_link_libraries(hsa_backend PRIVATE ${HSA_LIBRARY})
+  if (HSA_LIBRARY)
+    target_link_libraries(hsa_backend PRIVATE ${HSA_LIBRARY})
+  else()
+    target_link_libraries(hsa_backend PRIVATE hsa-runtime64::hsa-runtime64)
+  endif()
+
   target_link_libraries(gpufetch hsa_backend)
 endif()
 
