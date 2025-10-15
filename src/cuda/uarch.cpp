@@ -5,10 +5,10 @@
 #include <cstdio>
 #include <cstring>
 
+#include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 #include "chips.hpp"
-#include "uarch.hpp"
 
 // Any clock multiplier
 #define CM_ANY               -1

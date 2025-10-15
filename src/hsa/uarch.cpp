@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <cstring>
 
+#include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
-#include "uarch.hpp"
 #include "chips.hpp"
 
 // MICROARCH values

@@ -3,12 +3,12 @@
 #include <cstring>
 #include <cstdio>
 
+#include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
 #include "chips.hpp"
 #include "pci.hpp"
 #include "cpuid.hpp"
-#include "uarch.hpp"
 
 // Data not available
 #define NA                   -1
