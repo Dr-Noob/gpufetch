@@ -31,4 +31,6 @@ struct uarch {
   char* chip_str;
 };
 
+char* get_str_process(struct uarch* arch);
+
 #endif
