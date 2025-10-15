@@ -27,7 +27,6 @@ if(ENABLE_CUDA_BACKEND)
 endif()
 
 if(ENABLE_HSA_BACKEND)
-  # TODO: Needs rocm-cmake, what if its not insalled?
   find_package(ROCmCMakeBuildTools)
   if (ROCmCMakeBuildTools_FOUND)
     find_package(hsa-runtime64 1.0 REQUIRED)    
@@ -49,8 +48,20 @@ if(ENABLE_HSA_BACKEND)
       set(ENABLE_HSA_BACKEND false)
     endif()
   else()
-    set(ENABLE_HSA_BACKEND false)
-    message(STATUS "${BoldYellow}ROCm not found${ColorReset}")
+    # rocm-cmake is not installed, try to manually find neccesary files.
+    if (NOT DEFINED ROCM_PATH)
+      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to ROCm")
+    endif()
+
+    find_path(HSA_INCLUDE_DIR hsa/hsa.h HINTS ${ROCM_PATH}/include)
+    find_library(HSA_LIBRARY hsa-runtime64 HINTS ${ROCM_PATH}/lib ${ROCM_PATH}/lib64)
+
+    if (HSA_INCLUDE_DIR and HSA_LIBRARY)
+      message(STATUS "${BoldYellow}Found ROCm manually${ColorReset}")
+    else()
+      set(ENABLE_HSA_BACKEND false)
+      message(STATUS "${BoldYellow}ROCm not found${ColorReset}")
+    endif()
   endif()
 endif()
 
@@ -136,7 +147,7 @@ if(ENABLE_HSA_BACKEND)
   target_include_directories(hsa_backend PRIVATE "${HSA_INCLUDE_DIR}")
   message(STATUS "Found HSA: ${HSA_INCLUDE_DIR}")
 
-  target_link_libraries(hsa_backend PRIVATE hsa-runtime64::hsa-runtime64)
+  target_link_libraries(hsa_backend PRIVATE ${HSA_LIBRARY})
   target_link_libraries(gpufetch hsa_backend)
 endif()
 
