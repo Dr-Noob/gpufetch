@@ -2,6 +2,7 @@
 #define __HSA_UARCH__
 
 #include "../common/gpu.hpp"
+#include "../common/uarch.hpp"
 
 struct uarch;
 

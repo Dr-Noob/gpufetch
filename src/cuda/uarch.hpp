@@ -2,6 +2,7 @@
 #define __CUDA_UARCH__
 
 #include "../common/gpu.hpp"
+#include "../common/uarch.hpp"
 
 struct uarch;
 
