@@ -307,10 +307,3 @@ const char* get_str_uarch_hsa(struct uarch* arch) {
   }
   return uarch_str[arch->uarch];
 }
-
-// TODO: Move this to common!
-void free_uarch_struct(struct uarch* arch) {
-  free(arch->uarch_str);
-  free(arch->chip_str);
-  free(arch);
-}
