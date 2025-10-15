@@ -287,8 +287,24 @@ struct uarch* get_uarch_from_hsa(struct gpu_info* gpu, char* gpu_name) {
   return arch;
 }
 
-// TODO: Shouldnt we check that arch->uarch is valid?
+bool is_uarch_valid(struct uarch* arch) {
+  if (arch == NULL) {
+    printBug("Invalid uarch: arch is NULL");
+    return false;
+  }
+  if (arch->uarch >= UARCH_UNKNOWN && arch->uarch <= UARCH_CDNA4) {
+    return true;
+  }
+  else {
+    printBug("Invalid uarch: %d", arch->uarch);
+    return false;
+  }
+}
+
 const char* get_str_uarch_hsa(struct uarch* arch) {
+  if (!is_uarch_valid(arch)) {
+    return NULL;
+  }
   return uarch_str[arch->uarch];
 }
 
