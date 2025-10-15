@@ -298,6 +298,21 @@ bool is_uarch_valid(struct uarch* arch) {
   }
 }
 
+bool is_cdna(struct uarch* arch) {
+  return arch->uarch == UARCH_CDNA ||
+         arch->uarch == UARCH_CDNA2 ||
+         arch->uarch == UARCH_CDNA3 ||
+         arch->uarch == UARCH_CDNA4;
+}
+
+char* get_str_chip(struct uarch* arch) {
+  // We dont want to show CDNA chip names as they add
+  // no value, since each architecture maps one to one
+  // to a chip.
+  if (is_cdna(arch)) return NULL;
+  return arch->chip_str;
+}
+
 const char* get_str_uarch_hsa(struct uarch* arch) {
   if (!is_uarch_valid(arch)) {
     return NULL;
