@@ -10,9 +10,10 @@ set(CUDA_DIR "${SRC_DIR}/cuda")
 set(HSA_DIR "${SRC_DIR}/hsa")
 set(INTEL_DIR "${SRC_DIR}/intel")
 
-# Enable Intel backend by default
-if(NOT DEFINED ENABLE_INTEL_BACKEND)
-    set(ENABLE_INTEL_BACKEND true)
+# Make sure that at least one backend is enabled.
+# It does not make sense that the user has not specified any backend.
+if(NOT ENABLE_INTEL_BACKEND AND NOT ENABLE_CUDA_BACKEND AND NOT ENABLE_HSA_BACKEND)
+  message(FATAL_ERROR "No backend was enabled! Please enable at least one backend with -DENABLE_XXX_BACKEND")
 endif()
 
 if(ENABLE_CUDA_BACKEND)
@@ -66,31 +67,51 @@ if(ENABLE_HSA_BACKEND)
   endif()
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-find_package(PCIUTILS)
-if(NOT ${PCIUTILS_FOUND})
-  message(STATUS "${BoldYellow}pciutils not found, downloading and building a local copy...${ColorReset}")
+set(GPUFECH_COMMON
+    ${COMMON_DIR}/main.cpp
+    ${COMMON_DIR}/args.cpp
+    ${COMMON_DIR}/gpu.cpp
+    ${COMMON_DIR}/sort.cpp
+    ${COMMON_DIR}/global.cpp
+    ${COMMON_DIR}/printer.cpp
+    ${COMMON_DIR}/master.cpp
+    ${COMMON_DIR}/uarch.cpp
+)
 
-  # Download and build pciutils
-  set(PCIUTILS_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/pciutils-install)
-  ExternalProject_Add(pciutils
-    GIT_REPOSITORY https://github.com/pciutils/pciutils
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND make SHARED=no HWDB=no
-    BUILD_IN_SOURCE true
-    INSTALL_COMMAND make PREFIX=${PCIUTILS_INSTALL_LOCATION} install-lib
-  )
+if(NOT(ENABLE_HSA_BACKEND AND NOT ENABLE_CUDA_BACKEND AND NOT ENABLE_INTEL_BACKEND))
+  # Look for pciutils only if not building HSA only.
+  #
+  # This has the (intented) secondary effect that if only HSA backend is enabled
+  # by the user, but ROCm cannot be found, pciutils will still be compiled in
+  # order to show the list of GPUs available on the system, so that the user will
+  # get at least some feedback even if HSA is not found.
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+  list(APPEND GPUFECH_COMMON ${COMMON_DIR}/pci.cpp)
+  find_package(PCIUTILS)
+  if(NOT ${PCIUTILS_FOUND})
+    message(STATUS "${BoldYellow}pciutils not found, downloading and building a local copy...${ColorReset}")
 
-  include_directories(${PCIUTILS_INSTALL_LOCATION}/include)
-  link_directories(${PCIUTILS_INSTALL_LOCATION}/lib)
-else()
-  include_directories(${PCIUTILS_INCLUDE_DIR})
-  link_libraries(${PCIUTILS_LIBRARIES})
-  # Needed for linking libpci in FreeBSD
-  link_directories(/usr/local/lib/)
+    # Download and build pciutils
+    set(PCIUTILS_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/pciutils-install)
+    ExternalProject_Add(pciutils
+      GIT_REPOSITORY https://github.com/pciutils/pciutils
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND make SHARED=no HWDB=no
+      BUILD_IN_SOURCE true
+      INSTALL_COMMAND make PREFIX=${PCIUTILS_INSTALL_LOCATION} install-lib
+    )
+
+    include_directories(${PCIUTILS_INSTALL_LOCATION}/include)
+    link_directories(${PCIUTILS_INSTALL_LOCATION}/lib)
+  else()
+    include_directories(${PCIUTILS_INCLUDE_DIR})
+    link_libraries(${PCIUTILS_LIBRARIES})
+    # Needed for linking libpci in FreeBSD
+    link_directories(/usr/local/lib/)
+  endif()
 endif()
 
-add_executable(gpufetch ${COMMON_DIR}/main.cpp ${COMMON_DIR}/args.cpp ${COMMON_DIR}/gpu.cpp ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/sort.cpp ${COMMON_DIR}/global.cpp ${COMMON_DIR}/printer.cpp ${COMMON_DIR}/master.cpp ${COMMON_DIR}/uarch.cpp)
+add_executable(gpufetch ${GPUFECH_COMMON})
 set(SANITY_FLAGS -Wfloat-equal -Wshadow -Wpointer-arith -Wall -Wextra -pedantic -fstack-protector-all -pedantic)
 target_compile_features(gpufetch PRIVATE cxx_std_11)
 target_compile_options(gpufetch PRIVATE ${SANITY_FLAGS})
