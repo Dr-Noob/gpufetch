@@ -45,20 +45,20 @@ enum {
   ATTRIBUTE_CHIP,          // ALL
   ATTRIBUTE_UARCH,         // ALL
   ATTRIBUTE_TECHNOLOGY,    // ALL
-  ATTRIBUTE_GT,            // Intel
   ATTRIBUTE_FREQUENCY,     // ALL
+  ATTRIBUTE_PEAK,          // ALL
   ATTRIBUTE_COMPUTE_UNITS, // HSA
   ATTRIBUTE_STREAMINGMP,   // CUDA
   ATTRIBUTE_CORESPERMP,    // CUDA
   ATTRIBUTE_CUDA_CORES,    // CUDA
   ATTRIBUTE_TENSOR_CORES,  // CUDA
-  ATTRIBUTE_EUS,           // Intel
   ATTRIBUTE_L2,            // CUDA
   ATTRIBUTE_MEMORY,        // CUDA
   ATTRIBUTE_MEMORY_FREQ,   // CUDA
   ATTRIBUTE_BUS_WIDTH,     // CUDA
-  ATTRIBUTE_PEAK,          // ALL
-  ATTRIBUTE_PEAK_TENSOR    // CUDA
+  ATTRIBUTE_PEAK_TENSOR,   // CUDA
+  ATTRIBUTE_EUS,           // Intel
+  ATTRIBUTE_GT,            // Intel
 };
 
 static const AttributeField ATTRIBUTE_INFO[] = {
@@ -66,20 +66,20 @@ static const AttributeField ATTRIBUTE_INFO[] = {
   { ATTRIBUTE_CHIP,          "GPU processor:",          "Processor:" },
   { ATTRIBUTE_UARCH,         "Microarchitecture:",      "uArch:" },
   { ATTRIBUTE_TECHNOLOGY,    "Technology:",             "Technology:" },
-  { ATTRIBUTE_GT,            "Graphics Tier:",          "GT:" },
   { ATTRIBUTE_FREQUENCY,     "Max Frequency:",          "Max Freq.:" },
+  { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
   { ATTRIBUTE_COMPUTE_UNITS, "Compute Units (CUs):",    "CUs" },
   { ATTRIBUTE_STREAMINGMP,   "SMs:",                    "SMs:" },
   { ATTRIBUTE_CORESPERMP,    "Cores/SM:",               "Cores/SM:" },
   { ATTRIBUTE_CUDA_CORES,    "CUDA Cores:",             "CUDA Cores:" },
   { ATTRIBUTE_TENSOR_CORES,  "Tensor Cores:",           "Tensor Cores:" },
-  { ATTRIBUTE_EUS,           "Execution Units:",        "EUs:" },
   { ATTRIBUTE_L2,            "L2 Size:",                "L2 Size:" },
   { ATTRIBUTE_MEMORY,        "Memory:",                 "Memory:" },
   { ATTRIBUTE_MEMORY_FREQ,   "Memory frequency:",       "Memory freq.:" },
   { ATTRIBUTE_BUS_WIDTH,     "Bus width:",              "Bus width:" },
-  { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
   { ATTRIBUTE_PEAK_TENSOR,   "Peak Performance (MMA):", "Peak Perf.(MMA):" },
+  { ATTRIBUTE_EUS,           "Execution Units:",        "EUs:" },
+  { ATTRIBUTE_GT,            "Graphics Tier:",          "GT:" },
 };
 
 struct terminal {
