@@ -71,7 +71,6 @@ set(GPUFECH_COMMON
     ${COMMON_DIR}/main.cpp
     ${COMMON_DIR}/args.cpp
     ${COMMON_DIR}/gpu.cpp
-    ${COMMON_DIR}/sort.cpp
     ${COMMON_DIR}/global.cpp
     ${COMMON_DIR}/printer.cpp
     ${COMMON_DIR}/master.cpp
@@ -86,7 +85,9 @@ if(NOT(ENABLE_HSA_BACKEND AND NOT ENABLE_CUDA_BACKEND AND NOT ENABLE_INTEL_BACKE
   # order to show the list of GPUs available on the system, so that the user will
   # get at least some feedback even if HSA is not found.
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-  list(APPEND GPUFECH_COMMON ${COMMON_DIR}/pci.cpp)
+  list(APPEND GPUFECH_COMMON ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/sort.cpp)
+  set(CMAKE_ENABLE_PCIUTILS ON)
+
   find_package(PCIUTILS)
   if(NOT ${PCIUTILS_FOUND})
     message(STATUS "${BoldYellow}pciutils not found, downloading and building a local copy...${ColorReset}")
@@ -115,6 +116,10 @@ add_executable(gpufetch ${GPUFECH_COMMON})
 set(SANITY_FLAGS -Wfloat-equal -Wshadow -Wpointer-arith -Wall -Wextra -pedantic -fstack-protector-all -pedantic)
 target_compile_features(gpufetch PRIVATE cxx_std_11)
 target_compile_options(gpufetch PRIVATE ${SANITY_FLAGS})
+
+if (CMAKE_ENABLE_PCIUTILS)
+  target_compile_definitions(gpufetch PUBLIC BACKEND_USE_PCI)
+endif()
 
 if(ENABLE_INTEL_BACKEND)
   target_compile_definitions(gpufetch PUBLIC BACKEND_INTEL)

@@ -8,6 +8,10 @@
 #include "../cuda/cuda.hpp"
 #include "../cuda/uarch.hpp"
 
+#ifdef BACKEND_USE_PCI
+#include "pci.hpp"
+#endif
+
 static const char* VERSION = "0.30";
 
 void print_help(char *argv[]) {
@@ -79,8 +83,12 @@ int main(int argc, char* argv[]) {
   }
 
   if(get_num_gpus_available(list) == 0) {
+#ifdef BACKEND_USE_PCI    
     printErr("No GPU was detected! Available GPUs are:");
     print_gpus_list_pci();
+#else
+    printErr("No GPU was detected!");
+#endif    
     printf("Please, make sure that the appropiate backend is enabled:\n");
     print_enabled_backends();
     printf("Visit https://github.com/Dr-Noob/gpufetch#2-backends for more information\n");

@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#include "../cuda/pci.hpp"
-
 #define UNKNOWN_FREQ -1
 
 enum {
