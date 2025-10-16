@@ -5,8 +5,8 @@
 
 #include "cuda.hpp"
 #include "uarch.hpp"
+#include "pci.hpp"
 #include "gpufetch_helper_cuda.hpp"
-#include "../common/pci.hpp"
 #include "../common/global.hpp"
 #include "../common/uarch.hpp"
 

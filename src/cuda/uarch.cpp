@@ -8,6 +8,7 @@
 #include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
+#include "pci.hpp"
 #include "chips.hpp"
 
 // Any clock multiplier
