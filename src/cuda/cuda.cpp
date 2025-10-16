@@ -33,10 +33,8 @@ int get_tensor_cores(struct uarch* arch, int sm, int major) {
   if(major == 7) {
     // TU116 does not have tensor cores!
     // https://www.anandtech.com/show/13973/nvidia-gtx-1660-ti-review-feat-evga-xc-gaming/2
-    if(arch->chip == CHIP_TU116   || arch->chip == CHIP_TU116BM ||
-       arch->chip == CHIP_TU116GL || arch->chip == CHIP_TU116M) {
+    if (is_chip_TU116(arch))
       return 0;
-    }
     return sm * 8;
   }
   else if(major == 8) return sm * 4;

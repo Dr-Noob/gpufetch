@@ -13,5 +13,6 @@ char* get_str_cc(struct uarch* arch);
 char* get_str_chip(struct uarch* arch);
 char* get_str_process(struct uarch* arch);
 void free_uarch_struct(struct uarch* arch);
+bool is_chip_TU116(struct uarch* arch);
 
 #endif
