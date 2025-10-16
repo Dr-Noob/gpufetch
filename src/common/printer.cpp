@@ -37,19 +37,20 @@ enum {
   ATTRIBUTE_CHIP,
   ATTRIBUTE_UARCH,
   ATTRIBUTE_TECHNOLOGY,
-  ATTRIBUTE_GT,
+  ATTRIBUTE_GT,           // Intel
   ATTRIBUTE_FREQUENCY,
-  ATTRIBUTE_STREAMINGMP,
-  ATTRIBUTE_CORESPERMP,
-  ATTRIBUTE_CUDA_CORES,
-  ATTRIBUTE_TENSOR_CORES,
-  ATTRIBUTE_EUS,
-  ATTRIBUTE_L2,
-  ATTRIBUTE_MEMORY,
-  ATTRIBUTE_MEMORY_FREQ,
-  ATTRIBUTE_BUS_WIDTH,
+  ATTRIBUTE_COMPUTE_UNITS,// CUDA
+  ATTRIBUTE_STREAMINGMP,  // CUDA
+  ATTRIBUTE_CORESPERMP,   // CUDA
+  ATTRIBUTE_CUDA_CORES,   // CUDA
+  ATTRIBUTE_TENSOR_CORES, // CUDA
+  ATTRIBUTE_EUS,          // Intel
+  ATTRIBUTE_L2,           // CUDA
+  ATTRIBUTE_MEMORY,       // CUDA
+  ATTRIBUTE_MEMORY_FREQ,  // CUDA
+  ATTRIBUTE_BUS_WIDTH,    // CUDA
   ATTRIBUTE_PEAK,
-  ATTRIBUTE_PEAK_TENSOR,
+  ATTRIBUTE_PEAK_TENSOR,  // CUDA
 };
 
 static const char* ATTRIBUTE_FIELDS [] = {
@@ -59,6 +60,7 @@ static const char* ATTRIBUTE_FIELDS [] = {
   "Technology:",
   "Graphics Tier:",
   "Max Frequency:",
+  "Compute Units (CUs):",
   "SMs:",
   "Cores/SM:",
   "CUDA Cores:",
@@ -79,6 +81,7 @@ static const char* ATTRIBUTE_FIELDS_SHORT [] = {
   "Technology:",
   "GT:",
   "Max Freq.:",
+  "CUs:",
   "SMs:",
   "Cores/SM:",
   "CUDA Cores:",
@@ -494,7 +497,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   char* gpu_chip = get_str_chip(gpu->arch);
   char* uarch = get_str_uarch_hsa(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
-  char* sms = get_str_cu(gpu);
+  char* cus = get_str_cu(gpu);
   char* max_frequency = get_str_freq(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
@@ -504,7 +507,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
-  setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
+  setAttribute(art, ATTRIBUTE_COMPUTE_UNITS, cus);
 
   const char** attribute_fields = ATTRIBUTE_FIELDS;
   uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
