@@ -77,6 +77,8 @@ set(GPUFECH_COMMON
     ${COMMON_DIR}/uarch.cpp
 )
 
+set(GPUFETCH_LINK_TARGETS z)
+
 if(NOT(ENABLE_HSA_BACKEND AND NOT ENABLE_CUDA_BACKEND AND NOT ENABLE_INTEL_BACKEND))
   # Look for pciutils only if not building HSA only.
   #
@@ -86,6 +88,7 @@ if(NOT(ENABLE_HSA_BACKEND AND NOT ENABLE_CUDA_BACKEND AND NOT ENABLE_INTEL_BACKE
   # get at least some feedback even if HSA is not found.
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
   list(APPEND GPUFECH_COMMON ${COMMON_DIR}/pci.cpp ${COMMON_DIR}/sort.cpp)
+  list(APPEND GPUFETCH_LINK_TARGETS pci)
   set(CMAKE_ENABLE_PCIUTILS ON)
 
   find_package(PCIUTILS)
@@ -182,7 +185,7 @@ if(ENABLE_HSA_BACKEND)
   target_link_libraries(gpufetch hsa_backend)
 endif()
 
-target_link_libraries(gpufetch pci z)
+target_link_libraries(gpufetch ${GPUFETCH_LINK_TARGETS})
 install(TARGETS gpufetch DESTINATION bin)
 
 if(NOT WIN32)

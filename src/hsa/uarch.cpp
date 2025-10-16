@@ -127,7 +127,7 @@ enum {
 #define CHECK_UARCH_START if (false) {}
 #define CHECK_UARCH(arch, chip_, str, uarch, process) \
    else if (arch->chip == chip_) fill_uarch(arch, str, uarch, process);
-#define CHECK_UARCH_END else { if(arch->chip != CHIP_UNKNOWN_CUDA) printBug("map_chip_to_uarch_hsa: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, UNK); }
+#define CHECK_UARCH_END else { if(arch->chip != CHIP_UNKNOWN_HSA) printBug("map_chip_to_uarch_hsa: Unknown chip id: %d", arch->chip); fill_uarch(arch, STRING_UNKNOWN, UARCH_UNKNOWN, UNK); }
 
 void fill_uarch(struct uarch* arch, char const *str, MICROARCH u, uint32_t process) {
   arch->chip_str = (char *) emalloc(sizeof(char) * (strlen(str)+1));
