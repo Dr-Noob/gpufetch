@@ -32,64 +32,54 @@
 #define MAX_ATTRIBUTES      100
 #define MAX_TERM_SIZE       1024
 
+typedef struct {
+  int id;
+  const char *name;
+  const char *shortname;
+} AttributeField;
+
+// AttributeField IDs
+//                         Used by
 enum {
-  ATTRIBUTE_NAME,
-  ATTRIBUTE_CHIP,
-  ATTRIBUTE_UARCH,
-  ATTRIBUTE_TECHNOLOGY,
-  ATTRIBUTE_GT,
-  ATTRIBUTE_FREQUENCY,
-  ATTRIBUTE_STREAMINGMP,
-  ATTRIBUTE_CORESPERMP,
-  ATTRIBUTE_CUDA_CORES,
-  ATTRIBUTE_TENSOR_CORES,
-  ATTRIBUTE_EUS,
-  ATTRIBUTE_L2,
-  ATTRIBUTE_MEMORY,
-  ATTRIBUTE_MEMORY_FREQ,
-  ATTRIBUTE_BUS_WIDTH,
-  ATTRIBUTE_PEAK,
-  ATTRIBUTE_PEAK_TENSOR,
+  ATTRIBUTE_NAME,          // ALL
+  ATTRIBUTE_CHIP,          // ALL
+  ATTRIBUTE_UARCH,         // ALL
+  ATTRIBUTE_TECHNOLOGY,    // ALL
+  ATTRIBUTE_FREQUENCY,     // ALL
+  ATTRIBUTE_PEAK,          // ALL
+  ATTRIBUTE_COMPUTE_UNITS, // HSA
+  ATTRIBUTE_STREAMINGMP,   // CUDA
+  ATTRIBUTE_CORESPERMP,    // CUDA
+  ATTRIBUTE_CUDA_CORES,    // CUDA
+  ATTRIBUTE_TENSOR_CORES,  // CUDA
+  ATTRIBUTE_L2,            // CUDA
+  ATTRIBUTE_MEMORY,        // CUDA
+  ATTRIBUTE_MEMORY_FREQ,   // CUDA
+  ATTRIBUTE_BUS_WIDTH,     // CUDA
+  ATTRIBUTE_PEAK_TENSOR,   // CUDA
+  ATTRIBUTE_EUS,           // Intel
+  ATTRIBUTE_GT,            // Intel
 };
 
-static const char* ATTRIBUTE_FIELDS [] = {
-  "Name:",
-  "GPU processor:",
-  "Microarchitecture:",
-  "Technology:",
-  "Graphics Tier:",
-  "Max Frequency:",
-  "SMs:",
-  "Cores/SM:",
-  "CUDA Cores:",
-  "Tensor Cores:",
-  "Execution Units:",
-  "L2 Size:",
-  "Memory:",
-  "Memory frequency:",
-  "Bus width:",
-  "Peak Performance:",
-  "Peak Performance (MMA):",
-};
-
-static const char* ATTRIBUTE_FIELDS_SHORT [] = {
-  "Name:",
-  "Processor:",
-  "uArch:",
-  "Technology:",
-  "GT:",
-  "Max Freq.:",
-  "SMs:",
-  "Cores/SM:",
-  "CUDA Cores:",
-  "Tensor Cores:",
-  "EUs:",
-  "L2 Size:",
-  "Memory:",
-  "Memory freq.:",
-  "Bus width:",
-  "Peak Perf.:",
-  "Peak Perf.(MMA):",
+static const AttributeField ATTRIBUTE_INFO[] = {
+  { ATTRIBUTE_NAME,          "Name:",                   "Name:" },
+  { ATTRIBUTE_CHIP,          "GPU processor:",          "Processor:" },
+  { ATTRIBUTE_UARCH,         "Microarchitecture:",      "uArch:" },
+  { ATTRIBUTE_TECHNOLOGY,    "Technology:",             "Technology:" },
+  { ATTRIBUTE_FREQUENCY,     "Max Frequency:",          "Max Freq.:" },
+  { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
+  { ATTRIBUTE_COMPUTE_UNITS, "Compute Units (CUs):",    "CUs" },
+  { ATTRIBUTE_STREAMINGMP,   "SMs:",                    "SMs:" },
+  { ATTRIBUTE_CORESPERMP,    "Cores/SM:",               "Cores/SM:" },
+  { ATTRIBUTE_CUDA_CORES,    "CUDA Cores:",             "CUDA Cores:" },
+  { ATTRIBUTE_TENSOR_CORES,  "Tensor Cores:",           "Tensor Cores:" },
+  { ATTRIBUTE_L2,            "L2 Size:",                "L2 Size:" },
+  { ATTRIBUTE_MEMORY,        "Memory:",                 "Memory:" },
+  { ATTRIBUTE_MEMORY_FREQ,   "Memory frequency:",       "Memory freq.:" },
+  { ATTRIBUTE_BUS_WIDTH,     "Bus width:",              "Bus width:" },
+  { ATTRIBUTE_PEAK_TENSOR,   "Peak Performance (MMA):", "Peak Perf.(MMA):" },
+  { ATTRIBUTE_EUS,           "Execution Units:",        "EUs:" },
+  { ATTRIBUTE_GT,            "Graphics Tier:",          "GT:" },
 };
 
 struct terminal {
@@ -276,13 +266,14 @@ void choose_ascii_art(struct ascii* art, struct color** cs, struct terminal* ter
   }
 }
 
-uint32_t longest_attribute_length(struct ascii* art, const char** attribute_fields) {
+uint32_t longest_attribute_length(struct ascii* art, bool use_short) {
   uint32_t max = 0;
   uint64_t len = 0;
 
   for(uint32_t i=0; i < art->n_attributes_set; i++) {
     if(art->attributes[i]->value != NULL) {
-      len = strlen(attribute_fields[art->attributes[i]->type]);
+      const char* str = use_short ? ATTRIBUTE_INFO[art->attributes[i]->type].shortname : ATTRIBUTE_INFO[art->attributes[i]->type].name;
+      len = strlen(str);
       if(len > max) max = len;
     }
   }
@@ -306,7 +297,7 @@ uint32_t longest_field_length(struct ascii* art, int la) {
   return max;
 }
 
-void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, const char** attribute_fields) {
+void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, bool use_short) {
   struct ascii_logo* logo = art->art;
   int attr_to_print = 0;
   int attr_type;
@@ -350,11 +341,13 @@ void print_ascii_generic(struct ascii* art, uint32_t la, int32_t text_space, con
       attr_value = art->attributes[attr_to_print]->value;
       attr_to_print++;
 
-      space_right = 1 + (la - strlen(attribute_fields[attr_type]));
+      const char* attr_str = use_short ? ATTRIBUTE_INFO[attr_type].shortname : ATTRIBUTE_INFO[attr_type].name;
+
+      space_right = 1 + (la - strlen(attr_str));
       current_space = max(0, text_space);
 
-      printf("%s%.*s%s", logo->color_text[0], current_space, attribute_fields[attr_type], art->reset);
-      current_space = max(0, current_space - (int) strlen(attribute_fields[attr_type]));
+      printf("%s%.*s%s", logo->color_text[0], current_space, attr_str, art->reset);
+      current_space = max(0, current_space - (int) strlen(attr_str));
       printf("%*s", min(current_space, space_right), "");
       current_space = max(0, current_space - min(current_space, space_right));
       printf("%s%.*s%s", logo->color_text[1], current_space, attr_value, art->reset);
@@ -388,19 +381,19 @@ bool print_gpufetch_intel(struct gpu_info* gpu, STYLE s, struct color** cs, stru
   setAttribute(art, ATTRIBUTE_EUS, eus);
   setAttribute(art, ATTRIBUTE_PEAK, pp);
 
-  const char** attribute_fields = ATTRIBUTE_FIELDS;
-  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  bool use_short = false;
+  uint32_t longest_attribute = longest_attribute_length(art, use_short);
   uint32_t longest_field = longest_field_length(art, longest_attribute);
   choose_ascii_art(art, cs, term, longest_field);
 
   if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
     // Despite of choosing the smallest logo, the output does not fit
     // Choose the shorter field names and recalculate the longest attr
-    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
-    longest_attribute = longest_attribute_length(art, attribute_fields);
+    use_short = true;
+    longest_attribute = longest_attribute_length(art, use_short);
   }
 
-  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, use_short);
 
   return true;
 }
@@ -457,19 +450,19 @@ bool print_gpufetch_cuda(struct gpu_info* gpu, STYLE s, struct color** cs, struc
     setAttribute(art, ATTRIBUTE_PEAK_TENSOR, pp_tensor);
   }
 
-  const char** attribute_fields = ATTRIBUTE_FIELDS;
-  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  bool use_short = false;
+  uint32_t longest_attribute = longest_attribute_length(art, use_short);
   uint32_t longest_field = longest_field_length(art, longest_attribute);
   choose_ascii_art(art, cs, term, longest_field);
 
   if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
     // Despite of choosing the smallest logo, the output does not fit
     // Choose the shorter field names and recalculate the longest attr
-    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
-    longest_attribute = longest_attribute_length(art, attribute_fields);
+    use_short = true;
+    longest_attribute = longest_attribute_length(art, use_short);
   }
 
-  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, use_short);
 
   free(manufacturing_process);
   free(max_frequency);
@@ -494,7 +487,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   char* gpu_chip = get_str_chip(gpu->arch);
   char* uarch = get_str_uarch_hsa(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
-  char* sms = get_str_cu(gpu);
+  char* cus = get_str_cu(gpu);
   char* max_frequency = get_str_freq(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
@@ -504,21 +497,21 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   setAttribute(art, ATTRIBUTE_UARCH, uarch);
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
-  setAttribute(art, ATTRIBUTE_STREAMINGMP, sms);
+  setAttribute(art, ATTRIBUTE_COMPUTE_UNITS, cus);
 
-  const char** attribute_fields = ATTRIBUTE_FIELDS;
-  uint32_t longest_attribute = longest_attribute_length(art, attribute_fields);
+  bool use_short = false;
+  uint32_t longest_attribute = longest_attribute_length(art, use_short);
   uint32_t longest_field = longest_field_length(art, longest_attribute);
   choose_ascii_art(art, cs, term, longest_field);
 
   if(!ascii_fits_screen(term->w, *art->art, longest_field)) {
     // Despite of choosing the smallest logo, the output does not fit
     // Choose the shorter field names and recalculate the longest attr
-    attribute_fields = ATTRIBUTE_FIELDS_SHORT;
-    longest_attribute = longest_attribute_length(art, attribute_fields);
+    use_short = true;
+    longest_attribute = longest_attribute_length(art, use_short);
   }
 
-  print_ascii_generic(art, longest_attribute, term->w - art->art->width, attribute_fields);
+  print_ascii_generic(art, longest_attribute, term->w - art->art->width, use_short);
 
   free(art->attributes);
   free(art);
