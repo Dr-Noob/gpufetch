@@ -8,6 +8,7 @@
 #include "../common/uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/gpu.hpp"
+#include "pci.hpp"
 #include "chips.hpp"
 
 // Any clock multiplier
@@ -360,4 +361,9 @@ void free_uarch_struct(struct uarch* arch) {
   free(arch->uarch_str);
   free(arch->chip_str);
   free(arch);
+}
+
+bool is_chip_TU116(struct uarch* arch) {
+  return arch->chip == CHIP_TU116   || arch->chip == CHIP_TU116BM ||
+         arch->chip == CHIP_TU116GL || arch->chip == CHIP_TU116M;
 }

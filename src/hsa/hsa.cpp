@@ -13,7 +13,6 @@
 
 #include "hsa.hpp"
 #include "uarch.hpp"
-#include "../common/pci.hpp"
 #include "../common/global.hpp"
 #include "../common/uarch.hpp"
 
@@ -76,7 +75,7 @@ struct topology_h* get_topology_info(struct agent_info info) {
   return topo;
 }
 
-struct gpu_info* get_gpu_info_hsa(struct pci_dev *devices, int gpu_idx) {
+struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
   gpu->idx = gpu_idx;
