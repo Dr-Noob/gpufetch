@@ -25,6 +25,7 @@ struct agent_info {
   uint32_t compute_unit;
   uint32_t bus_width;
   uint32_t lds_size;
+  uint32_t global_size;
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -42,18 +43,31 @@ struct agent_info {
   }                                                                           \
 }
 
-hsa_status_t get_lds_size_callback(hsa_region_t region, void* data) {
+hsa_status_t region_callback(hsa_region_t region, void* data) {
   hsa_region_segment_t segment;
   hsa_status_t err = hsa_region_get_info(region, HSA_REGION_INFO_SEGMENT, &segment);
-  RET_IF_HSA_ERR(err);      
+  RET_IF_HSA_ERR(err);
+
+  uint32_t *mems = reinterpret_cast<uint32_t *>(data);
 
   if (segment == HSA_REGION_SEGMENT_GROUP) {
+    // LDS memory
     size_t size = 0;
 
     err = hsa_region_get_info(region, HSA_REGION_INFO_SIZE, &size);
     RET_IF_HSA_ERR(err);
 
-    *(size_t*)data = size;    
+    mems[0] = size;    
+  }
+  else if (segment == HSA_REGION_SEGMENT_GLOBAL) {
+    // Global memory
+    // LDS memory
+    size_t size = 0;
+
+    err = hsa_region_get_info(region, HSA_REGION_INFO_SIZE, &size);
+    RET_IF_HSA_ERR(err);
+
+    mems[1] = size;
   }
   return HSA_STATUS_SUCCESS;
 }
@@ -85,8 +99,12 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
     RET_IF_HSA_ERR(err);
 
-    err = hsa_agent_iterate_regions(agent, get_lds_size_callback, &info->lds_size);
+    uint32_t mems[2];
+    err = hsa_agent_iterate_regions(agent, region_callback, &mems);
     RET_IF_HSA_ERR(err);
+
+    info->lds_size = mems[0];
+    info->global_size = mems[1];
   }
 
   return HSA_STATUS_SUCCESS;
@@ -105,6 +123,7 @@ struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
   
   mem->bus_width = info.bus_width;
   mem->lds_size = info.lds_size;
+  mem->size_bytes = info.global_size;
 
   return mem;
 }
