@@ -82,7 +82,7 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     RET_IF_HSA_ERR(err);
 
     // According to the documentation, this is deprecated. But what should I be using then?
-    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_REGION_INFO_BUS_WIDTH, &info->bus_width);
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
     RET_IF_HSA_ERR(err);
 
     err = hsa_agent_iterate_regions(agent, get_lds_size_callback, &info->lds_size);
@@ -152,7 +152,7 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
   strcpy(gpu->name, info.device_mkt_name);
   gpu->arch = get_uarch_from_hsa(gpu, info.gpu_name);
-  gpu->mem = get_memory_info(gpu, deviceProp);
+  gpu->mem = get_memory_info(gpu, info);
 
   if (gpu->arch == NULL) {
     return NULL;

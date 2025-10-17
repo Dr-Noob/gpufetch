@@ -70,7 +70,7 @@ static const AttributeField ATTRIBUTE_INFO[] = {
   { ATTRIBUTE_FREQUENCY,     "Max Frequency:",          "Max Freq.:" },
   { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
   { ATTRIBUTE_COMPUTE_UNITS, "Compute Units (CUs):",    "CUs" },
-  { ATTRIBUTE_LDS_SIZE,      "Local Data Share (LDS):"  "LDS:" },
+  { ATTRIBUTE_LDS_SIZE,      "LDS size:",               "LDS:" },
   { ATTRIBUTE_STREAMINGMP,   "SMs:",                    "SMs:" },
   { ATTRIBUTE_CORESPERMP,    "Cores/SM:",               "Cores/SM:" },
   { ATTRIBUTE_CUDA_CORES,    "CUDA Cores:",             "CUDA Cores:" },

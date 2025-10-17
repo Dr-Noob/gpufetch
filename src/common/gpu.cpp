@@ -106,7 +106,7 @@ char* get_str_lds_size(struct gpu_info* gpu) {
   assert(strlen(STRING_UNKNOWN)+1 <= size);
   char* string = (char *) ecalloc(size, sizeof(char));
 
-  sprintf(string, "%d KB", gpu->mem->lds_size);
+  sprintf(string, "%d KB", gpu->mem->lds_size / 1024);
 
   return string;
 }
