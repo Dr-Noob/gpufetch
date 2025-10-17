@@ -23,6 +23,8 @@ struct agent_info {
   char device_mkt_name[64];
   uint32_t max_clock_freq;
   uint32_t compute_unit;
+  uint32_t bus_width;
+  uint32_t lds_size;
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -38,6 +40,22 @@ struct agent_info {
     printErr("Call returned %s\n", err_str);                                  \
     return (err);                                                             \
   }                                                                           \
+}
+
+hsa_status_t get_lds_size_callback(hsa_region_t region, void* data) {
+  hsa_region_segment_t segment;
+  hsa_status_t err = hsa_region_get_info(region, HSA_REGION_INFO_SEGMENT, &segment);
+  RET_IF_HSA_ERR(err);      
+
+  if (segment == HSA_REGION_SEGMENT_GROUP) {
+    size_t size = 0;
+
+    err = hsa_region_get_info(region, HSA_REGION_INFO_SIZE, &size);
+    RET_IF_HSA_ERR(err);
+    
+    *(size_t*)data = size;    
+  }
+  return HSA_STATUS_SUCCESS;
 }
 
 hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
@@ -61,6 +79,13 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     RET_IF_HSA_ERR(err);
 
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, &info->compute_unit);
+    RET_IF_HSA_ERR(err);
+
+    // According to the documentation, this is deprecated. But what should I be using then?
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_REGION_INFO_BUS_WIDTH, &info->bus_width);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_iterate_regions(agent, get_lds_size_callback, &info->lds_size);
     RET_IF_HSA_ERR(err);
   }
 
