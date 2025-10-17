@@ -102,6 +102,7 @@ char* get_str_bus_width(struct gpu_info* gpu) {
 }
 
 char* get_str_lds_size(struct gpu_info* gpu) {
+  // TODO: Show XX KB (XX MB Total) like in cpufetch
   uint32_t size = 3+1+3+1;
   assert(strlen(STRING_UNKNOWN)+1 <= size);
   char* string = (char *) ecalloc(size, sizeof(char));

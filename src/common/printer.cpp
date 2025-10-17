@@ -502,7 +502,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_COMPUTE_UNITS, cus);
   setAttribute(art, ATTRIBUTE_LDS_SIZE, lds_size);
-  setAttribute(art, ATTRIBUTE_MEMORY, mem);
+  // setAttribute(art, ATTRIBUTE_MEMORY, mem_size);
   setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);
 
   bool use_short = false;
