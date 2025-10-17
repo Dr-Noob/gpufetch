@@ -52,7 +52,7 @@ hsa_status_t get_lds_size_callback(hsa_region_t region, void* data) {
 
     err = hsa_region_get_info(region, HSA_REGION_INFO_SIZE, &size);
     RET_IF_HSA_ERR(err);
-    
+
     *(size_t*)data = size;    
   }
   return HSA_STATUS_SUCCESS;
@@ -100,6 +100,15 @@ struct topology_h* get_topology_info(struct agent_info info) {
   return topo;
 }
 
+struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
+  struct memory* mem = (struct memory*) emalloc(sizeof(struct memory));
+  
+  mem->bus_width = info.bus_width;
+  mem->lds_size = info.lds_size;
+
+  return mem;
+}
+
 struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
@@ -143,6 +152,7 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
   strcpy(gpu->name, info.device_mkt_name);
   gpu->arch = get_uarch_from_hsa(gpu, info.gpu_name);
+  gpu->mem = get_memory_info(gpu, deviceProp);
 
   if (gpu->arch == NULL) {
     return NULL;

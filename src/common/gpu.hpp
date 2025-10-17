@@ -61,6 +61,7 @@ struct memory {
   int32_t bus_width;
   int32_t freq;
   int32_t clk_mul; // clock multiplier
+  int32_t lds_size; // HSA specific for now
 };
 
 struct gpu_info {
@@ -88,6 +89,7 @@ char* get_str_freq(struct gpu_info* gpu);
 char* get_str_memory_size(struct gpu_info* gpu);
 char* get_str_memory_type(struct gpu_info* gpu);
 char* get_str_bus_width(struct gpu_info* gpu);
+char* get_str_lds_size(struct gpu_info* gpu);
 char* get_str_memory_clock(struct gpu_info* gpu);
 char* get_str_l2(struct gpu_info* gpu);
 char* get_str_peak_performance(struct gpu_info* gpu);
