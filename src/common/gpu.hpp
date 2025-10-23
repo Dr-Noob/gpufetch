@@ -46,6 +46,9 @@ struct topology_c {
 // HSA topology
 struct topology_h {
   int32_t compute_units;
+  int32_t num_shader_engines;
+  int32_t simds_per_cu;
+  int32_t num_xcc;
 };
 
 // Intel topology
