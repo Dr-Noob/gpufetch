@@ -50,7 +50,7 @@ hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
 
   uint64_t *mems = reinterpret_cast<uint64_t *>(data);
 
-  if (segment == HSA_REGION_SEGMENT_GROUP) {
+  if (segment == HSA_AMD_SEGMENT_GROUP) {
     // LDS memory
     size_t size = 0;
 
@@ -59,7 +59,7 @@ hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
 
     mems[0] = size;    
   }
-  else if (segment == HSA_REGION_SEGMENT_GLOBAL) {
+  else if (segment == HSA_AMD_SEGMENT_GLOBAL) {
     // Global memory
     uint32_t global_flags = 0;
     
@@ -110,6 +110,17 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
     RET_IF_HSA_ERR(err);
 
+    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES, &info->num_shader_engines);
+    // RET_IF_HSA_ERR(err);
+
+    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU, &info->simds_per_cu);
+    // RET_IF_HSA_ERR(err);
+
+    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_XCC, &info->num_xcc);
+    // RET_IF_HSA_ERR(err);
+
+    // Matrix cores?
+
     uint64_t mems[2] = {0, 0};
     err = hsa_amd_agent_iterate_memory_pools(agent, memory_pool_callback, &mems);
     RET_IF_HSA_ERR(err);
@@ -135,8 +146,6 @@ struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
   mem->bus_width = info.bus_width;
   mem->lds_size = info.lds_size;
   mem->size_bytes = info.global_size;
-
-  printf("xxx: %ld %ld\n", mem->size_bytes, info.global_size);
 
   return mem;
 }
