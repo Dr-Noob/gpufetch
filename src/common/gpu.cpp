@@ -101,6 +101,17 @@ char* get_str_bus_width(struct gpu_info* gpu) {
   return string;
 }
 
+char* get_str_lds_size(struct gpu_info* gpu) {
+  // TODO: Show XX KB (XX MB Total) like in cpufetch
+  uint32_t size = 3+1+3+1;
+  assert(strlen(STRING_UNKNOWN)+1 <= size);
+  char* string = (char *) ecalloc(size, sizeof(char));
+
+  sprintf(string, "%d KB", gpu->mem->lds_size / 1024);
+
+  return string;
+}
+
 char* get_str_memory_clock(struct gpu_info* gpu) {
   return get_freq_as_str_mhz(gpu->mem->freq);
 }

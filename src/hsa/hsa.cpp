@@ -23,6 +23,9 @@ struct agent_info {
   char device_mkt_name[64];
   uint32_t max_clock_freq;
   uint32_t compute_unit;
+  uint32_t bus_width;
+  uint32_t lds_size;
+  uint64_t global_size;
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -38,6 +41,51 @@ struct agent_info {
     printErr("Call returned %s\n", err_str);                                  \
     return (err);                                                             \
   }                                                                           \
+}
+
+hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
+  struct agent_info* info = reinterpret_cast<struct agent_info *>(data);
+
+  hsa_amd_segment_t segment;
+  hsa_status_t err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SEGMENT, &segment);
+  RET_IF_HSA_ERR(err);
+
+  if (segment == HSA_AMD_SEGMENT_GROUP) {
+    // LDS memory
+    // We want to make sure that this memory pool is not repeated.
+    if (info->lds_size != 0) {
+      printErr("Found HSA_AMD_SEGMENT_GROUP twice!");
+      return HSA_STATUS_ERROR;
+    }
+    uint32_t size = 0;
+
+    err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &size);
+    RET_IF_HSA_ERR(err);
+
+    info->lds_size = size;    
+  }
+  else if (segment == HSA_AMD_SEGMENT_GLOBAL) {
+    // Global memory
+    uint32_t global_flags = 0;
+    
+    err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_GLOBAL_FLAGS, &global_flags);
+    RET_IF_HSA_ERR(err);
+
+    if (global_flags & HSA_AMD_MEMORY_POOL_GLOBAL_FLAG_EXTENDED_SCOPE_FINE_GRAINED) {
+      if (info->global_size != 0) {
+        printErr("Found HSA_AMD_MEMORY_POOL_GLOBAL_FLAG_EXTENDED_SCOPE_FINE_GRAINED twice!");
+        return HSA_STATUS_ERROR;
+      }
+
+      uint64_t size = 0;
+
+      err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &size);
+      RET_IF_HSA_ERR(err);
+
+      info->global_size = size;
+    }    
+  }
+  return HSA_STATUS_SUCCESS;
 }
 
 hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
@@ -62,6 +110,17 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
 
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, &info->compute_unit);
     RET_IF_HSA_ERR(err);
+
+    // According to the documentation, this is deprecated. But what should I be using then?
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
+    RET_IF_HSA_ERR(err);
+
+    // We will check against zero to see if it was set beforehand.
+    info->global_size = 0;
+    info->lds_size = 0;
+    // This will fill global_size and lds_size.
+    err = hsa_amd_agent_iterate_memory_pools(agent, memory_pool_callback, data);
+    RET_IF_HSA_ERR(err);
   }
 
   return HSA_STATUS_SUCCESS;
@@ -73,6 +132,16 @@ struct topology_h* get_topology_info(struct agent_info info) {
   topo->compute_units = info.compute_unit;
 
   return topo;
+}
+
+struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
+  struct memory* mem = (struct memory*) emalloc(sizeof(struct memory));
+  
+  mem->bus_width = info.bus_width;
+  mem->lds_size = info.lds_size;
+  mem->size_bytes = info.global_size;
+
+  return mem;
 }
 
 struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
@@ -118,6 +187,7 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
   strcpy(gpu->name, info.device_mkt_name);
   gpu->arch = get_uarch_from_hsa(gpu, info.gpu_name);
+  gpu->mem = get_memory_info(gpu, info);
 
   if (gpu->arch == NULL) {
     return NULL;

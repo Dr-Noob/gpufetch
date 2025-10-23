@@ -48,14 +48,15 @@ enum {
   ATTRIBUTE_FREQUENCY,     // ALL
   ATTRIBUTE_PEAK,          // ALL
   ATTRIBUTE_COMPUTE_UNITS, // HSA
+  ATTRIBUTE_LDS_SIZE,      // HSA
   ATTRIBUTE_STREAMINGMP,   // CUDA
   ATTRIBUTE_CORESPERMP,    // CUDA
   ATTRIBUTE_CUDA_CORES,    // CUDA
   ATTRIBUTE_TENSOR_CORES,  // CUDA
   ATTRIBUTE_L2,            // CUDA
-  ATTRIBUTE_MEMORY,        // CUDA
+  ATTRIBUTE_MEMORY,        // CUDA,HSA
   ATTRIBUTE_MEMORY_FREQ,   // CUDA
-  ATTRIBUTE_BUS_WIDTH,     // CUDA
+  ATTRIBUTE_BUS_WIDTH,     // CUDA,HSA
   ATTRIBUTE_PEAK_TENSOR,   // CUDA
   ATTRIBUTE_EUS,           // Intel
   ATTRIBUTE_GT,            // Intel
@@ -69,6 +70,7 @@ static const AttributeField ATTRIBUTE_INFO[] = {
   { ATTRIBUTE_FREQUENCY,     "Max Frequency:",          "Max Freq.:" },
   { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
   { ATTRIBUTE_COMPUTE_UNITS, "Compute Units (CUs):",    "CUs" },
+  { ATTRIBUTE_LDS_SIZE,      "LDS size:",               "LDS:" },
   { ATTRIBUTE_STREAMINGMP,   "SMs:",                    "SMs:" },
   { ATTRIBUTE_CORESPERMP,    "Cores/SM:",               "Cores/SM:" },
   { ATTRIBUTE_CUDA_CORES,    "CUDA Cores:",             "CUDA Cores:" },
@@ -487,6 +489,9 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   char* manufacturing_process = get_str_process(gpu->arch);
   char* cus = get_str_cu(gpu);
   char* max_frequency = get_str_freq(gpu);
+  char* bus_width = get_str_bus_width(gpu);
+  char* mem_size = get_str_memory_size(gpu);
+  char* lds_size = get_str_lds_size(gpu);
 
   setAttribute(art, ATTRIBUTE_NAME, gpu_name);
   if (gpu_chip != NULL) {
@@ -496,6 +501,9 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_COMPUTE_UNITS, cus);
+  setAttribute(art, ATTRIBUTE_LDS_SIZE, lds_size);
+  setAttribute(art, ATTRIBUTE_MEMORY, mem_size);
+  setAttribute(art, ATTRIBUTE_BUS_WIDTH, bus_width);
 
   bool use_short = false;
   uint32_t longest_attribute = longest_attribute_length(art, use_short);
