@@ -44,20 +44,20 @@ struct agent_info {
 }
 
 hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
+  struct agent_info* info = reinterpret_cast<struct agent_info *>(data);
+
   hsa_amd_segment_t segment;
   hsa_status_t err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SEGMENT, &segment);
   RET_IF_HSA_ERR(err);
 
-  uint64_t *mems = reinterpret_cast<uint64_t *>(data);
-
   if (segment == HSA_AMD_SEGMENT_GROUP) {
     // LDS memory
-    size_t size = 0;
+    uint32_t size = 0;
 
     err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &size);
     RET_IF_HSA_ERR(err);
 
-    mems[0] = size;    
+    info->lds_size = size;    
   }
   else if (segment == HSA_AMD_SEGMENT_GLOBAL) {
     // Global memory
@@ -67,7 +67,7 @@ hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
     RET_IF_HSA_ERR(err);
 
     if (global_flags & HSA_AMD_MEMORY_POOL_GLOBAL_FLAG_EXTENDED_SCOPE_FINE_GRAINED) {
-      if (mems[1] != 0) {
+      if (info->global_size != 0) {
         printErr("Found HSA_AMD_MEMORY_POOL_GLOBAL_FLAG_EXTENDED_SCOPE_FINE_GRAINED twice!");
         return HSA_STATUS_ERROR;
       }
@@ -77,7 +77,7 @@ hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
       err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &size);
       RET_IF_HSA_ERR(err);
 
-      mems[1] = size;
+      info->global_size = size;
     }    
   }
   return HSA_STATUS_SUCCESS;
@@ -110,23 +110,9 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
     RET_IF_HSA_ERR(err);
 
-    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES, &info->num_shader_engines);
-    // RET_IF_HSA_ERR(err);
-
-    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU, &info->simds_per_cu);
-    // RET_IF_HSA_ERR(err);
-
-    // err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_XCC, &info->num_xcc);
-    // RET_IF_HSA_ERR(err);
-
-    // Matrix cores?
-
-    uint64_t mems[2] = {0, 0};
-    err = hsa_amd_agent_iterate_memory_pools(agent, memory_pool_callback, &mems);
+    info->global_size = 0;
+    err = hsa_amd_agent_iterate_memory_pools(agent, memory_pool_callback, data);
     RET_IF_HSA_ERR(err);
-
-    info->lds_size = mems[0];
-    info->global_size = mems[1];
   }
 
   return HSA_STATUS_SUCCESS;
