@@ -130,8 +130,6 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_XCC, &info->num_xcc);
     RET_IF_HSA_ERR(err);
 
-    // TODO: Matrix cores?
-
     // We will check against zero to see if it was set beforehand.
     info->global_size = 0;
     info->lds_size = 0;
