@@ -31,6 +31,7 @@ struct agent_info {
   uint32_t num_shader_engines;
   uint32_t simds_per_cu;
   uint32_t num_xcc;            // Acccelerator Complex Dies (XCDs)
+  uint32_t matrix_cores;       // Cores with WMMA/MFMA capabilities
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -149,6 +150,9 @@ struct topology_h* get_topology_info(struct agent_info info) {
   topo->num_shader_engines = info.num_shader_engines; // not printed at the moment
   topo->simds_per_cu = info.simds_per_cu;             // not printed at the moment
   topo->num_xcc = info.num_xcc;
+  // Old GPUs (GCN I guess) might not have matrix cores.
+  // Not sure what would happen here?
+  topo->matrix_cores = topo->compute_units * topo->simds_per_cu;
 
   return topo;
 }
@@ -232,4 +236,9 @@ char* get_str_xcds(struct gpu_info* gpu) {
     return NULL;
   }
   return get_str_generic(gpu->topo_h->num_xcc);
+}
+
+char* get_str_matrix_cores(struct gpu_info* gpu) {
+  // TODO: Show XX (WMMA/MFMA)
+  return get_str_generic(gpu->topo_h->matrix_cores);
 }

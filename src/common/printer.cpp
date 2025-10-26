@@ -48,6 +48,7 @@ enum {
   ATTRIBUTE_FREQUENCY,     // ALL
   ATTRIBUTE_PEAK,          // ALL
   ATTRIBUTE_COMPUTE_UNITS, // HSA
+  ATTRIBUTE_MATRIX_CORES,  // HSA
   ATTRIBUTE_XCDS,          // HSA
   ATTRIBUTE_LDS_SIZE,      // HSA
   ATTRIBUTE_STREAMINGMP,   // CUDA
@@ -71,6 +72,7 @@ static const AttributeField ATTRIBUTE_INFO[] = {
   { ATTRIBUTE_FREQUENCY,     "Max Frequency:",          "Max Freq.:" },
   { ATTRIBUTE_PEAK,          "Peak Performance:",       "Peak Perf.:" },
   { ATTRIBUTE_COMPUTE_UNITS, "Compute Units (CUs):",    "CUs" },
+  { ATTRIBUTE_MATRIX_CORES,  "Matrix Cores: ",          "Matrix Cores:" },
   { ATTRIBUTE_XCDS,          "XCDs:",                   "XCDs" },
   { ATTRIBUTE_LDS_SIZE,      "LDS size:",               "LDS:" },
   { ATTRIBUTE_STREAMINGMP,   "SMs:",                    "SMs:" },
@@ -490,6 +492,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   char* uarch = get_str_uarch_hsa(gpu->arch);
   char* manufacturing_process = get_str_process(gpu->arch);
   char* cus = get_str_cu(gpu);
+  char* matrix_cores = get_str_matrix_cores(gpu);
   char* xcds = get_str_xcds(gpu);
   char* max_frequency = get_str_freq(gpu);
   char* bus_width = get_str_bus_width(gpu);
@@ -504,6 +507,7 @@ bool print_gpufetch_amd(struct gpu_info* gpu, STYLE s, struct color** cs, struct
   setAttribute(art, ATTRIBUTE_TECHNOLOGY, manufacturing_process);
   setAttribute(art, ATTRIBUTE_FREQUENCY, max_frequency);
   setAttribute(art, ATTRIBUTE_COMPUTE_UNITS, cus);
+  setAttribute(art, ATTRIBUTE_MATRIX_CORES, matrix_cores);
   if (xcds != NULL) {
     setAttribute(art, ATTRIBUTE_XCDS, xcds);
   }
