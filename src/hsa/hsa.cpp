@@ -22,10 +22,16 @@ struct agent_info {
   char vendor_name[64];
   char device_mkt_name[64];
   uint32_t max_clock_freq;
-  uint32_t compute_unit;
+  // Memory
   uint32_t bus_width;
   uint32_t lds_size;
   uint64_t global_size;
+  // Topology
+  uint32_t compute_unit;
+  uint32_t num_shader_engines;
+  uint32_t simds_per_cu;
+  uint32_t num_xcc;            // Acccelerator Complex Dies (XCDs)
+  uint32_t matrix_cores;       // Cores with WMMA/MFMA capabilities
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -115,6 +121,15 @@ hsa_status_t agent_callback(hsa_agent_t agent, void *data) {
     err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_MEMORY_WIDTH, &info->bus_width);
     RET_IF_HSA_ERR(err);
 
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SHADER_ENGINES, &info->num_shader_engines);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_SIMDS_PER_CU, &info->simds_per_cu);
+    RET_IF_HSA_ERR(err);
+
+    err = hsa_agent_get_info(agent, (hsa_agent_info_t) HSA_AMD_AGENT_INFO_NUM_XCC, &info->num_xcc);
+    RET_IF_HSA_ERR(err);
+
     // We will check against zero to see if it was set beforehand.
     info->global_size = 0;
     info->lds_size = 0;
@@ -130,6 +145,12 @@ struct topology_h* get_topology_info(struct agent_info info) {
   struct topology_h* topo = (struct topology_h*) emalloc(sizeof(struct topology_h));
 
   topo->compute_units = info.compute_unit;
+  topo->num_shader_engines = info.num_shader_engines; // not printed at the moment
+  topo->simds_per_cu = info.simds_per_cu;             // not printed at the moment
+  topo->num_xcc = info.num_xcc;
+  // Old GPUs (GCN I guess) might not have matrix cores.
+  // Not sure what would happen here?
+  topo->matrix_cores = topo->compute_units * topo->simds_per_cu;
 
   return topo;
 }
@@ -204,4 +225,18 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
 
 char* get_str_cu(struct gpu_info* gpu) {
   return get_str_generic(gpu->topo_h->compute_units);
+}
+
+char* get_str_xcds(struct gpu_info* gpu) {
+  // If there is a single XCD, then we dont want to
+  // print it.
+  if (gpu->topo_h->num_xcc == 1) {
+    return NULL;
+  }
+  return get_str_generic(gpu->topo_h->num_xcc);
+}
+
+char* get_str_matrix_cores(struct gpu_info* gpu) {
+  // TODO: Show XX (WMMA/MFMA)
+  return get_str_generic(gpu->topo_h->matrix_cores);
 }
