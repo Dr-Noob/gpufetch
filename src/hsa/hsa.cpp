@@ -30,7 +30,7 @@ struct agent_info {
   uint32_t compute_unit;
   uint32_t num_shader_engines;
   uint32_t simds_per_cu;
-  uint32_t num_xcc;
+  uint32_t num_xcc;            // Acccelerator Complex Dies (XCDs)
 };
 
 #define RET_IF_HSA_ERR(err) { \
@@ -146,11 +146,9 @@ struct topology_h* get_topology_info(struct agent_info info) {
   struct topology_h* topo = (struct topology_h*) emalloc(sizeof(struct topology_h));
 
   topo->compute_units = info.compute_unit;
-  topo->num_shader_engines = info.num_shader_engines;
-  topo->simds_per_cu = info.simds_per_cu;
+  topo->num_shader_engines = info.num_shader_engines; // not printed at the moment
+  topo->simds_per_cu = info.simds_per_cu;             // not printed at the moment
   topo->num_xcc = info.num_xcc;
-
-  printf("%d %d %d\n", topo->num_shader_engines, topo->simds_per_cu, topo->num_xcc);
 
   return topo;
 }
@@ -225,4 +223,13 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
 
 char* get_str_cu(struct gpu_info* gpu) {
   return get_str_generic(gpu->topo_h->compute_units);
+}
+
+char* get_str_xcds(struct gpu_info* gpu) {
+  // If there is a single XCD, then we dont want to
+  // print it.
+  if (gpu->topo_h->num_xcc == 1) {
+    return NULL;
+  }
+  return get_str_generic(gpu->topo_h->num_xcc);
 }
