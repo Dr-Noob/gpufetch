@@ -17,6 +17,7 @@ enum {
   UARCH_RDNA,
   UARCH_RDNA2,
   UARCH_RDNA3,
+  UARCH_RDNA3_5,
   UARCH_RDNA4,
   // CDNA (Compute DNA)
   UARCH_CDNA,
@@ -30,6 +31,7 @@ static const char *uarch_str[] = {
   /*[UARCH_RDNA]      = */ "RDNA",
   /*[UARCH_RDNA2]     = */ "RDNA2",
   /*[UARCH_RDNA3]     = */ "RDNA3",
+  /*[UARCH_RDNA3_5]   = */ "RDNA3.5",
   /*[UARCH_RDNA4]     = */ "RDNA4",
   /*[UARCH_CDNA]      = */ "CDNA",
   /*[UARCH_CDNA2]     = */ "CDNA2",
@@ -146,24 +148,26 @@ void map_chip_to_uarch_hsa(struct uarch* arch) {
   CHECK_UARCH_START
 
   // RDNA
-  CHECK_UARCH(arch, CHIP_NAVI_10,  "Navi 10", UARCH_RDNA,  7)
-  CHECK_UARCH(arch, CHIP_NAVI_12,  "Navi 12", UARCH_RDNA,  7)
-  CHECK_UARCH(arch, CHIP_NAVI_14,  "Navi 14", UARCH_RDNA,  7)
-  CHECK_UARCH(arch, CHIP_NAVI_21,  "Navi 21", UARCH_RDNA2, 7)
-  CHECK_UARCH(arch, CHIP_NAVI_22,  "Navi 22", UARCH_RDNA2, 7)
-  CHECK_UARCH(arch, CHIP_NAVI_23,  "Navi 23", UARCH_RDNA2, 7)
-  CHECK_UARCH(arch, CHIP_NAVI_24,  "Navi 24", UARCH_RDNA2, 6)
-  CHECK_UARCH(arch, CHIP_NAVI_31,  "Navi 31", UARCH_RDNA3, 6)
-  CHECK_UARCH(arch, CHIP_NAVI_32,  "Navi 32", UARCH_RDNA3, 6)
-  CHECK_UARCH(arch, CHIP_NAVI_33,  "Navi 33", UARCH_RDNA3, 6)
-  CHECK_UARCH(arch, CHIP_NAVI_44,  "Navi 44", UARCH_RDNA4, 4)
-  CHECK_UARCH(arch, CHIP_NAVI_48,  "Navi 48", UARCH_RDNA4, 4)
+  CHECK_UARCH(arch, CHIP_NAVI_10,     "Navi 10",     UARCH_RDNA,    7)
+  CHECK_UARCH(arch, CHIP_NAVI_12,     "Navi 12",     UARCH_RDNA,    7)
+  CHECK_UARCH(arch, CHIP_NAVI_14,     "Navi 14",     UARCH_RDNA,    7)
+  CHECK_UARCH(arch, CHIP_NAVI_21,     "Navi 21",     UARCH_RDNA2,   7)
+  CHECK_UARCH(arch, CHIP_NAVI_22,     "Navi 22",     UARCH_RDNA2,   7)
+  CHECK_UARCH(arch, CHIP_NAVI_23,     "Navi 23",     UARCH_RDNA2,   7)
+  CHECK_UARCH(arch, CHIP_NAVI_24,     "Navi 24",     UARCH_RDNA2,   6)
+  CHECK_UARCH(arch, CHIP_NAVI_31,     "Navi 31",     UARCH_RDNA3,   6)
+  CHECK_UARCH(arch, CHIP_NAVI_32,     "Navi 32",     UARCH_RDNA3,   6)
+  CHECK_UARCH(arch, CHIP_NAVI_33,     "Navi 33",     UARCH_RDNA3,   6)
+  CHECK_UARCH(arch, CHIP_STRIX_POINT, "Strix Point", UARCH_RDNA3_5, 4) // https://www.techpowerup.com/gpu-specs/amd-strix-point.g1079
+  CHECK_UARCH(arch, CHIP_STRIX_HALO,  "Strix Halo",  UARCH_RDNA3_5, 4) // https://www.techpowerup.com/gpu-specs/amd-strix-halo.g1096
+  CHECK_UARCH(arch, CHIP_NAVI_44,     "Navi 44",     UARCH_RDNA4,   4)
+  CHECK_UARCH(arch, CHIP_NAVI_48,     "Navi 48",     UARCH_RDNA4,   4)
   // CDNA
   // NOTE: We will not show chip name for CDNA, thus use empty str
-  CHECK_UARCH(arch, CHIP_ARCTURUS,        "", UARCH_CDNA,  7)
-  CHECK_UARCH(arch, CHIP_ALDEBARAN,       "", UARCH_CDNA2, 6)
-  CHECK_UARCH(arch, CHIP_AQUA_VANJARAM,   "", UARCH_CDNA3, 6)
-  CHECK_UARCH(arch, CHIP_CDNA_NEXT,       "", UARCH_CDNA4, 6) // big difference between MCD and rest of the chip process
+  CHECK_UARCH(arch, CHIP_ARCTURUS,               "", UARCH_CDNA,    7)
+  CHECK_UARCH(arch, CHIP_ALDEBARAN,              "", UARCH_CDNA2,   6)
+  CHECK_UARCH(arch, CHIP_AQUA_VANJARAM,          "", UARCH_CDNA3,   6)
+  CHECK_UARCH(arch, CHIP_CDNA_NEXT,              "", UARCH_CDNA4,   6) // big difference between MCD and rest of the chip process
   
   CHECK_UARCH_END
 }
@@ -207,8 +211,8 @@ GPUCHIP get_chip_from_target_hsa(int32_t target) {
   // CHECK_TGT(target, TARGET_GFX1103, TODO)
   /// RDNA3.5
   /// -------------------------------------------
-  // CHECK_TGT(target, TARGET_GFX1150, TODO)
-  // CHECK_TGT(target, TARGET_GFX1151, TODO)
+  CHECK_TGT(target, TARGET_GFX1150, CHIP_STRIX_POINT)
+  CHECK_TGT(target, TARGET_GFX1151, CHIP_STRIX_HALO)
   // CHECK_TGT(target, TARGET_GFX1152, TODO)
   // CHECK_TGT(target, TARGET_GFX1153, TODO)
   /// RDNA4
@@ -257,6 +261,8 @@ int32_t get_llvm_target_from_str(char* target) {
   CHECK_TGT_STR(target, "gfx1101", TARGET_GFX1101)
   CHECK_TGT_STR(target, "gfx1102", TARGET_GFX1102)
   CHECK_TGT_STR(target, "gfx1103", TARGET_GFX1103)
+  CHECK_TGT_STR(target, "gfx1150", TARGET_GFX1150)
+  CHECK_TGT_STR(target, "gfx1151", TARGET_GFX1151)
   CHECK_TGT_STR(target, "gfx1200", TARGET_GFX1200)
   CHECK_TGT_STR(target, "gfx1201", TARGET_GFX1201)
   CHECK_TGT_STR(target, "gfx1250", TARGET_GFX1250)

@@ -165,6 +165,25 @@ struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
   return mem;
 }
 
+char* get_gpu_name(char* device_mkt_name, char* gpu_name) {
+  char* name;
+
+  // TODO: Not sure why this happens?
+  // Strix Halo may report a plain "AMD Radeon Graphics" as the market name. If this is the case,
+  // hijack the name and print "AMD Strix Halo" instead.
+  if (strcmp(device_mkt_name, "AMD Radeon Graphics") == 0 && strcmp(gpu_name, "gfx1151") == 0) {
+    const char* override_name = "AMD Strix Halo";
+    name = (char *) emalloc(sizeof(char) * (strlen(override_name) + 1));
+    strcpy(name, override_name);
+  }
+  else {
+    name = (char *) emalloc(sizeof(char) * (strlen(device_mkt_name) + 1));
+    strcpy(name, device_mkt_name);
+  }
+
+  return name;
+}
+
 struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
   struct gpu_info* gpu = (struct gpu_info*) emalloc(sizeof(struct gpu_info));
   gpu->pci = NULL;
@@ -205,9 +224,8 @@ struct gpu_info* get_gpu_info_hsa(int gpu_idx) {
 
   gpu->freq = info.max_clock_freq;
   gpu->topo_h = get_topology_info(info);
-  gpu->name = (char *) emalloc(sizeof(char) * (strlen(info.device_mkt_name) + 1));
-  strcpy(gpu->name, info.device_mkt_name);
   gpu->arch = get_uarch_from_hsa(gpu, info.gpu_name);
+  gpu->name = get_gpu_name(info.device_mkt_name, info.gpu_name);
   gpu->mem = get_memory_info(gpu, info);
 
   if (gpu->arch == NULL) {
