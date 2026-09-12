@@ -75,6 +75,7 @@ set(GPUFECH_COMMON
     ${COMMON_DIR}/printer.cpp
     ${COMMON_DIR}/master.cpp
     ${COMMON_DIR}/uarch.cpp
+    ${COMMON_DIR}/cpuid.cpp
 )
 
 set(GPUFETCH_LINK_TARGETS z)

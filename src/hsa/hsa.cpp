@@ -15,6 +15,7 @@
 #include "uarch.hpp"
 #include "../common/global.hpp"
 #include "../common/uarch.hpp"
+#include "../common/cpuid.hpp"
 
 struct agent_info {
   unsigned deviceId; // ID of the target GPU device
@@ -48,6 +49,15 @@ struct agent_info {
     return (err);                                                             \
   }                                                                           \
 }
+
+#define CPU_UARCH_START if (false) {}
+#define CHECK_CPU_UARCH(cpuid_, name_, ef_, f_, em_, m_, s_, mkt_name_) \
+   else if (ef_ == cpuid_->efamily && \
+             f_ == cpuid_->family && \
+             (em_ == NA || em_ == cpuid_->emodel) && \
+             (m_ == NA || m_ == cpuid_->model) && \
+             (s_ == NA || s_ == cpuid_->stepping)) fill_gpu_name_from_cpuid(name_, mkt_name_);
+#define CPU_UARCH_END else { }
 
 hsa_status_t memory_pool_callback(hsa_amd_memory_pool_t pool, void* data) {
   struct agent_info* info = reinterpret_cast<struct agent_info *>(data);
@@ -165,18 +175,51 @@ struct memory* get_memory_info(struct gpu_info* gpu, struct agent_info info) {
   return mem;
 }
 
-char* get_gpu_name(char* device_mkt_name, char* gpu_name) {
-  char* name;
+void fill_gpu_name_from_cpuid(char** name, const char* mkt_name) {
+  *name = (char *) emalloc(sizeof(char) * (strlen(mkt_name) + 1));
+  strcpy(*name, mkt_name);
+}
 
-  // TODO: Not sure why this happens?
-  // Strix Halo may report a plain "AMD Radeon Graphics" as the market name. If this is the case,
-  // hijack the name and print "AMD Strix Halo" instead.
-  if (strcmp(device_mkt_name, "AMD Radeon Graphics") == 0 && strcmp(gpu_name, "gfx1151") == 0) {
-    const char* override_name = "AMD Strix Halo";
-    name = (char *) emalloc(sizeof(char) * (strlen(override_name) + 1));
-    strcpy(name, override_name);
+char* get_gpu_name_from_cpuid(struct cpuid* cpuid) {
+  char* name = NULL;
+
+  // Reference:
+  // https://instlatx64.github.io/InstLatx64/
+  // https://www.techpowerup.com/gpu-specs/radeon-8060s.c4270
+  //
+  // ------------------------------------------------------------------- //
+  // EF: Extended Family                                                 //
+  // F:  Family                                                          //
+  // EM: Extended Model                                                  //
+  // M: Model                                                            //
+  // S: Stepping                                                         //
+  // ------------------------------------------------------------------- //
+  //                            EF   F    EM   M    S                    //
+  CPU_UARCH_START
+  CHECK_CPU_UARCH(cpuid, &name, 0xB, 0xF, 0x7, 0x0, NA, "AMD Radeon 8060S")
+  CPU_UARCH_END
+
+  return name;
+}
+
+char* get_gpu_name(char* device_mkt_name, char* gpu_name) {
+  char* name = NULL;
+  struct cpuid* cpuid = get_cpuid();
+  bool generic_name = false;
+
+  // If the market name is the generic "AMD Radeon Graphics" string, then
+  // try to infer the GPU name from the cpuid.
+  if (strcmp(device_mkt_name, "AMD Radeon Graphics") == 0) {
+    name = get_gpu_name_from_cpuid(cpuid);
+    generic_name = true;
   }
-  else {
+
+  // If we were unable to infer the GPU name from the cpuid, use the
+  // marketing name.
+  if (name == NULL) {
+    if (generic_name) {
+      printf("WARNING: Unable to infer GPU name from CPUID\n");
+    }
     name = (char *) emalloc(sizeof(char) * (strlen(device_mkt_name) + 1));
     strcpy(name, device_mkt_name);
   }
